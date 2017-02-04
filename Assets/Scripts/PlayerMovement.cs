@@ -6,24 +6,19 @@ public class PlayerMovement : MonoBehaviour {
 
     Rigidbody2D rb2d;
     public float acc;
-    public float maxSpeed;
+
+    public int keys = 0;
 
     void Awake ()
     {
         rb2d = GetComponent<Rigidbody2D>();
     }
-	
+
 	void FixedUpdate ()
     {
         float xMotion = Input.GetAxis("Horizontal");
         float yMotion = Input.GetAxis("Vertical");
-        rb2d.AddForce(Vector2.right * xMotion * acc);
-        rb2d.AddForce(Vector2.up * yMotion * acc);
-        Vector2 vel = rb2d.velocity;
-        if (Mathf.Abs(vel.x) > maxSpeed)
-            vel.x = Mathf.Sign(vel.x) * maxSpeed;
-        if (Mathf.Abs(vel.y) > maxSpeed)
-            vel.y = Mathf.Sign(vel.y) * maxSpeed;
-        rb2d.velocity = vel;
+        Vector2 targetForce = Vector2.right * xMotion * acc + Vector2.up * yMotion * acc;
+        rb2d.AddForce(targetForce);
 	}
 }

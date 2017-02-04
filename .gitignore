@@ -1,3 +1,6 @@
+# Custom ignores
+/Levels/
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

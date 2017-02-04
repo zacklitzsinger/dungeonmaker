@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour {
 
     Rigidbody2D rb2d;
-    public float acc;
+    public float acceleration;
 
     public int keys = 0;
 
@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour {
     {
         float xMotion = Input.GetAxis("Horizontal");
         float yMotion = Input.GetAxis("Vertical");
-        Vector2 targetForce = Vector2.right * xMotion * acc + Vector2.up * yMotion * acc;
+        Vector2 targetForce = Vector2.right * xMotion * acceleration + Vector2.up * yMotion * acceleration;
         rb2d.AddForce(targetForce);
 	}
 }

@@ -2,6 +2,9 @@
 using System.Runtime.Serialization;
 using System.Collections;
 
+/// <summary>
+/// Allow Vector2 to be serializable.
+/// </summary>
 public class Vector2SerializationSurrogate : ISerializationSurrogate
 {
 

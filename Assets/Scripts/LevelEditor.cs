@@ -8,7 +8,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class LevelEditor : MonoBehaviour {
+public class LevelEditor : MonoBehaviour
+{
 
     public bool editing = true;
     public GameObject selectedPrefab;
@@ -18,13 +19,14 @@ public class LevelEditor : MonoBehaviour {
     public Texture selectionBox;
     public int gridX = 32, gridY = 32;
 
-    public LevelData levelData = new LevelData();
+    public LevelInfo levelData = new LevelInfo();
     public InputField levelNameInput;
     public BinaryFormatter bf = new BinaryFormatter();
 
     void Start()
     {
-        foreach (GameObject option in prefabOptions) {
+        foreach (GameObject option in prefabOptions)
+        {
             GameObject button = Instantiate(prefabButton, buttonParent.transform);
             RectTransform rectTransform = button.GetComponent<RectTransform>();
             rectTransform.offsetMin = Vector2.zero;
@@ -51,23 +53,25 @@ public class LevelEditor : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
         if (Input.GetButtonDown("Edit"))
         {
             editing = !editing;
         }
         if (EventSystem.current.IsPointerOverGameObject())
             return;
-        if (Input.GetMouseButton(0) && editing)
+        if (Input.GetMouseButton(0) && editing && selectedPrefab != null)
         {
+            ObjectInfo info = selectedPrefab.GetComponent<ObjectData>().info;
             Vector3 pos = Camera.main.ScreenToWorldPoint(ConvertPositionToGrid(Input.mousePosition));
             pos.z = 0;
             if (!levelData.tilemap.ContainsKey(pos))
-                levelData.tilemap[pos] = new List<string>();
-            if (levelData.tilemap[pos].Contains(selectedPrefab.name))
+                levelData.tilemap[pos] = new List<ObjectInfo>();
+            if (levelData.tilemap[pos].Exists((o) => { return o.type == info.type; }))
                 return;
-            GameObject newObj = CreateObjectAtGrid(pos, selectedPrefab);
-            levelData.tilemap[pos].Add(newObj.name);
+            CreateObjectAtGrid(pos, selectedPrefab);
+            levelData.tilemap[pos].Add(info);
         }
     }
 
@@ -104,25 +108,27 @@ public class LevelEditor : MonoBehaviour {
     public void LoadFromDisk()
     {
         FileStream fstream = File.Open(Path.Combine("Levels", levelData.name), FileMode.Open);
-        levelData = (LevelData)bf.Deserialize(fstream);
+        levelData = (LevelInfo)bf.Deserialize(fstream);
         fstream.Close();
 
-        foreach(Transform child in transform)
+        foreach (Transform child in transform)
         {
             Destroy(child.gameObject);
         }
 
-        foreach(KeyValuePair<Vector2, List<string>> pair in levelData.tilemap)
-            foreach(string tileName in pair.Value)
+        foreach (KeyValuePair<Vector2, List<ObjectInfo>> pair in levelData.tilemap)
+            foreach (ObjectInfo info in pair.Value)
+            {
+                string tileName = info.name;
+                GameObject go = Array.Find<GameObject>(prefabOptions, (g) => { return g.name == tileName; });
+                if (go == null)
                 {
-                    GameObject go = Array.Find<GameObject>(prefabOptions, (g) => { return g.name == tileName;  });
-                    if (go == null)
-                    {
-                        Debug.LogWarning("Could not find game object named: " + tileName);
-                        continue;
-                    }
-                    CreateObjectAtGrid(pair.Key, go);
+                    Debug.LogWarning("Could not find game object named: " + tileName);
+                    continue;
                 }
+                GameObject newObj = CreateObjectAtGrid(pair.Key, go);
+                newObj.GetComponent<ObjectData>().info = info;
+            }
     }
 
     Vector3 ConvertPositionToGrid(Vector3 pos)

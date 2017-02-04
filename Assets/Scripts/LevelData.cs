@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class LevelData
+public class LevelInfo
 {
     public string name;
-    public Dictionary<Vector2, List<string>> tilemap = new Dictionary<Vector2, List<string>>();
+    public Dictionary<Vector2, List<ObjectInfo>> tilemap = new Dictionary<Vector2, List<ObjectInfo>>();
 }

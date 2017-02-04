@@ -62,10 +62,12 @@ public class LevelEditor : MonoBehaviour {
         {
             Vector3 pos = Camera.main.ScreenToWorldPoint(ConvertPositionToGrid(Input.mousePosition));
             pos.z = 0;
-            if (levelData.tilemap.ContainsKey(pos))
+            if (!levelData.tilemap.ContainsKey(pos))
+                levelData.tilemap[pos] = new List<string>();
+            if (levelData.tilemap[pos].Contains(selectedPrefab.name))
                 return;
             GameObject newObj = CreateObjectAtGrid(pos, selectedPrefab);
-            levelData.tilemap[pos] = newObj.name;
+            levelData.tilemap[pos].Add(newObj.name);
         }
     }
 
@@ -110,16 +112,17 @@ public class LevelEditor : MonoBehaviour {
             Destroy(child.gameObject);
         }
 
-        foreach(KeyValuePair<Vector2, string> pair in levelData.tilemap)
-        {
-            GameObject go = Array.Find<GameObject>(prefabOptions, (g) => { return g.name == pair.Value;  });
-            if (go == null)
-            {
-                Debug.LogWarning("Could not find game object named: " + pair.Value);
-                continue;
-            }
-            CreateObjectAtGrid(pair.Key, go);
-        }
+        foreach(KeyValuePair<Vector2, List<string>> pair in levelData.tilemap)
+            foreach(string tileName in pair.Value)
+                {
+                    GameObject go = Array.Find<GameObject>(prefabOptions, (g) => { return g.name == tileName;  });
+                    if (go == null)
+                    {
+                        Debug.LogWarning("Could not find game object named: " + tileName);
+                        continue;
+                    }
+                    CreateObjectAtGrid(pair.Key, go);
+                }
     }
 
     Vector3 ConvertPositionToGrid(Vector3 pos)

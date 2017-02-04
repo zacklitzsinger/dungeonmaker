@@ -7,5 +7,5 @@ using UnityEngine;
 public class LevelData
 {
     public string name;
-    public Dictionary<Vector2, string> tilemap = new Dictionary<Vector2, string>();
+    public Dictionary<Vector2, List<string>> tilemap = new Dictionary<Vector2, List<string>>();
 }

@@ -55,7 +55,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 50
+  m_LinearDrag: 10
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -88,7 +88,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e259a2142481a24fb4e514b505fb1bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  acceleration: 500
+  editor: {fileID: 0}
+  acceleration: 100
+  rollFrames: 25
+  rollForce: 800
+  remRollFrames: 0
   keys: 0
 --- !u!212 &212973353828650820
 SpriteRenderer:

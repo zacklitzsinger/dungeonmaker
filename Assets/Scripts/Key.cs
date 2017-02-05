@@ -8,7 +8,7 @@ public class Key : MonoBehaviour {
     {
         if (other.gameObject.tag == "Player")
         {
-            other.GetComponent<PlayerMovement>().keys++;
+            other.GetComponent<Player>().keys++;
             Destroy(gameObject);
         }
     }

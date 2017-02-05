@@ -1370,7 +1370,14 @@ Prefab:
       propertyPath: editor
       value: 
       objectReference: {fileID: 1034605465}
-    m_RemovedComponents: []
+    - target: {fileID: 114357101590825330, guid: ab07e018232fda244b3bbfb7d0e9d885,
+        type: 2}
+      propertyPath: sword
+      value: 
+      objectReference: {fileID: 114238712412134878, guid: 440d7f478f067ab44b2b58da49e7d917,
+        type: 2}
+    m_RemovedComponents:
+    - {fileID: 114835902505811550, guid: ab07e018232fda244b3bbfb7d0e9d885, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: ab07e018232fda244b3bbfb7d0e9d885, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &1466254426

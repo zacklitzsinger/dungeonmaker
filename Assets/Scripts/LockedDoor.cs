@@ -8,7 +8,7 @@ public class LockedDoor : MonoBehaviour {
     {
         if (collision.gameObject.tag == "Player")
         {
-            var player = collision.gameObject.GetComponent<PlayerMovement>();
+            var player = collision.gameObject.GetComponent<Player>();
             if (player.keys > 0)
             {
                 player.keys--;

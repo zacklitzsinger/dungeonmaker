@@ -41,6 +41,9 @@ TagManager:
   - name: Floor
     uniqueID: 2104001661
     locked: 0
+  - name: Floor Attachments
+    uniqueID: 3671561519
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

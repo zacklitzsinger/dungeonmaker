@@ -20,9 +20,12 @@ GameObject:
   m_Component:
   - component: {fileID: 4238989630657178}
   - component: {fileID: 212390731372897270}
-  - component: {fileID: 114238712412134878}
+  - component: {fileID: 61843042662235576}
+  - component: {fileID: 114744713971349162}
+  - component: {fileID: 95681616803749666}
+  - component: {fileID: 114712017682502596}
   m_Layer: 0
-  m_Name: Sword
+  m_Name: Spikes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35,13 +38,44 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1002282342740670}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114238712412134878
+--- !u!61 &61843042662235576
+BoxCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1002282342740670}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 6200000, guid: bc9f1f72ce5eaa34b987f7d06f8c3cfd, type: 2}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+--- !u!95 &95681616803749666
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1002282342740670}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2757563b16cda554a8d61af17371a85e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114712017682502596
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -49,10 +83,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 1002282342740670}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc05caa22c4ed0340b24d5f70927c998, type: 3}
+  m_Script: {fileID: 11500000, guid: b24aa5307b3c54a44b538f8453aaa20a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  remainingFrames: 15
+  active: 0
+  framesDown: 60
+  framesUp: 60
+  remFrames: 0
+--- !u!114 &114744713971349162
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1002282342740670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7ee4e40eca2f1241b95124f3997a91c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  info:
+    name: Spikes
+    type: 1
 --- !u!212 &212390731372897270
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -82,9 +133,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -983159143
+  m_SortingLayerID: -623405777
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 91a49f5411b8d444e9a30057e620568e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 971a941b18c3e6743bfa110794e84745, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

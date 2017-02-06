@@ -20,6 +20,7 @@ public class LevelEditor : MonoBehaviour
     public int gridX = 32, gridY = 32;
 
     public LevelInfo levelData = new LevelInfo();
+    public GameObject sidebar;
     public InputField levelNameInput;
     public BinaryFormatter bf = new BinaryFormatter();
 
@@ -57,10 +58,8 @@ public class LevelEditor : MonoBehaviour
     {
         if (Input.GetButtonDown("Edit"))
             editing = !editing;
-        if (editing)
-            Time.timeScale = 0;
-        else
-            Time.timeScale = 1;
+        Time.timeScale = (editing ? 0 : 1);
+        sidebar.SetActive(editing);
         if (EventSystem.current.IsPointerOverGameObject() || !editing)
             return;
         if (Input.GetMouseButton(0) && editing && selectedPrefab != null)

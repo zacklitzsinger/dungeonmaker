@@ -23,7 +23,6 @@ GameObject:
   - component: {fileID: 114357101590825330}
   - component: {fileID: 50582811179672188}
   - component: {fileID: 61929064592490676}
-  - component: {fileID: 114835902505811550}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -90,25 +89,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   editor: {fileID: 0}
-  sword: {fileID: 0}
+  sword: {fileID: 114238712412134878, guid: 440d7f478f067ab44b2b58da49e7d917, type: 2}
   acceleration: 100
   rollFrames: 22
   rollForce: 800
-  remRollFrames: 0
+  remStateFrames: 0
   keys: 0
   state: 0
---- !u!114 &114835902505811550
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1147360471527010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ed02e545277a204991eda99a5cc0977, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sword: {fileID: 114238712412134878, guid: 440d7f478f067ab44b2b58da49e7d917, type: 2}
 --- !u!212 &212973353828650820
 SpriteRenderer:
   m_ObjectHideFlags: 1

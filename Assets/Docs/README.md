@@ -4,7 +4,7 @@ For now, this is just a collection of random thoughts.
 ## Basic game feature todos
 - [ ] Puzzle mechanics
   - [x] Locked doors and keys
-- [ ] Saving/loading levels
+- [x] Saving/loading levels
 - [ ] Central server to store/browse levels
 - [ ] Combat
   - [ ]Damage

@@ -56,22 +56,35 @@ public class LevelEditor : MonoBehaviour
     void Update()
     {
         if (Input.GetButtonDown("Edit"))
-        {
             editing = !editing;
-        }
-        if (EventSystem.current.IsPointerOverGameObject())
+        if (editing)
+            Time.timeScale = 0;
+        else
+            Time.timeScale = 1;
+        if (EventSystem.current.IsPointerOverGameObject() || !editing)
             return;
         if (Input.GetMouseButton(0) && editing && selectedPrefab != null)
         {
             ObjectInfo info = selectedPrefab.GetComponent<ObjectData>().info;
-            Vector3 pos = Camera.main.ScreenToWorldPoint(ConvertPositionToGrid(Input.mousePosition));
-            pos.z = 0;
+            Vector2 pos = Camera.main.ScreenToWorldPoint(ConvertPositionToGrid(Input.mousePosition));
             if (!levelData.tilemap.ContainsKey(pos))
                 levelData.tilemap[pos] = new List<ObjectInfo>();
             if (levelData.tilemap[pos].Exists((o) => { return o.type == info.type; }))
                 return;
             CreateObjectAtGrid(pos, selectedPrefab);
             levelData.tilemap[pos].Add(info);
+        }
+        if (Input.GetMouseButton(1))
+        {
+            Vector2 mouseGridPos = Camera.main.ScreenToWorldPoint(ConvertPositionToGrid(Input.mousePosition));
+            Collider2D[] colliders = Physics2D.OverlapPointAll(mouseGridPos);
+            foreach(Collider2D collider in colliders)
+            {
+                if (collider.transform.parent != transform)
+                    continue;
+                levelData.tilemap.Remove(mouseGridPos);
+                Destroy(collider.gameObject);
+            }
         }
     }
 

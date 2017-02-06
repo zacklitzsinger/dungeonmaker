@@ -19,8 +19,6 @@ public class Player : MonoBehaviour {
     public int rollFrames; // Number of frames it takes to roll
     public float rollForce; // Force with which to roll
 
-    public int attackFrames;
-
     public int remStateFrames; // Remaining frames to continue current state; 0 when in idle
 
     public int keys = 0;

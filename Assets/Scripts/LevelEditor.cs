@@ -8,9 +8,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class LevelEditor : MonoBehaviour
+public class LevelEditor : MonoBehaviour, ICustomSerializable
 {
-
     public bool editing = true;
     public GameObject selectedPrefab;
     public GameObject[] prefabOptions;
@@ -19,10 +18,11 @@ public class LevelEditor : MonoBehaviour
     public Texture selectionBox;
     public int gridX = 32, gridY = 32;
 
-    public LevelInfo levelData = new LevelInfo();
     public GameObject sidebar;
     public InputField levelNameInput;
-    public BinaryFormatter bf = new BinaryFormatter();
+
+    public string levelName;
+    public Dictionary<Vector2, List<GameObject>> tilemap = new Dictionary<Vector2, List<GameObject>>();
 
     void Start()
     {
@@ -42,15 +42,8 @@ public class LevelEditor : MonoBehaviour
 
         levelNameInput.onValueChanged.AddListener((string str) =>
         {
-            levelData.name = str;
+            levelName = str;
         });
-
-        // Set up binary formatter
-        SurrogateSelector surrogateSelector = new SurrogateSelector();
-        Vector2SerializationSurrogate vector2SS = new Vector2SerializationSurrogate();
-
-        surrogateSelector.AddSurrogate(typeof(Vector2), new StreamingContext(StreamingContextStates.All), vector2SS);
-        bf.SurrogateSelector = surrogateSelector;
     }
 
     // Update is called once per frame
@@ -58,21 +51,30 @@ public class LevelEditor : MonoBehaviour
     {
         if (Input.GetButtonDown("Edit"))
             editing = !editing;
+
+        // Pause time while editing
         Time.timeScale = (editing ? 0 : 1);
+
+        // Hide editing sidebar while editing
         sidebar.SetActive(editing);
+
         if (EventSystem.current.IsPointerOverGameObject() || !editing)
             return;
+
+        // Allow placing of objects by left clicking
         if (Input.GetMouseButton(0) && editing && selectedPrefab != null)
         {
-            ObjectInfo info = selectedPrefab.GetComponent<ObjectData>().info;
+            ObjectData data = selectedPrefab.GetComponent<ObjectData>();
             Vector2 pos = Camera.main.ScreenToWorldPoint(ConvertPositionToGrid(Input.mousePosition));
-            if (!levelData.tilemap.ContainsKey(pos))
-                levelData.tilemap[pos] = new List<ObjectInfo>();
-            if (levelData.tilemap[pos].Exists((o) => { return o.type == info.type; }))
+            if (!tilemap.ContainsKey(pos))
+                tilemap[pos] = new List<GameObject>();
+            if (tilemap[pos].Exists((o) => { return o.GetComponent<ObjectData>().type == data.type; }))
                 return;
-            CreateObjectAtGrid(pos, selectedPrefab);
-            levelData.tilemap[pos].Add(info);
+            GameObject go = CreateObjectAtGrid(pos, selectedPrefab);
+            tilemap[pos].Add(go);
         }
+
+        // Allow removal of objects by right clicking
         if (Input.GetMouseButton(1))
         {
             Vector2 mouseGridPos = Camera.main.ScreenToWorldPoint(ConvertPositionToGrid(Input.mousePosition));
@@ -81,7 +83,7 @@ public class LevelEditor : MonoBehaviour
             {
                 if (collider.transform.parent != transform)
                     continue;
-                levelData.tilemap.Remove(mouseGridPos);
+                tilemap.Remove(mouseGridPos);
                 Destroy(collider.gameObject);
             }
         }
@@ -98,6 +100,8 @@ public class LevelEditor : MonoBehaviour
     {
         if (EventSystem.current.IsPointerOverGameObject() || !editing)
             return;
+
+        // Draw currently selected grid square
         Vector3 pos = ConvertPositionToGrid(Input.mousePosition);
         pos.y = Screen.height - pos.y;
         pos.x -= gridX / 2;
@@ -111,36 +115,21 @@ public class LevelEditor : MonoBehaviour
         {
             Directory.CreateDirectory("Levels");
         }
-        string filename = Path.Combine("Levels", levelData.name);
+        string filename = Path.Combine("Levels", levelName);
         FileStream fstream = File.Open(filename, FileMode.Create);
-        bf.Serialize(fstream, levelData);
-        fstream.Close();
+        using (BinaryWriter bw = new BinaryWriter(fstream))
+            Serialize(bw);
     }
 
     public void LoadFromDisk()
     {
-        FileStream fstream = File.Open(Path.Combine("Levels", levelData.name), FileMode.Open);
-        levelData = (LevelInfo)bf.Deserialize(fstream);
-        fstream.Close();
-
+        FileStream fstream = File.Open(Path.Combine("Levels", levelName), FileMode.Open);
         foreach (Transform child in transform)
         {
             Destroy(child.gameObject);
         }
-
-        foreach (KeyValuePair<Vector2, List<ObjectInfo>> pair in levelData.tilemap)
-            foreach (ObjectInfo info in pair.Value)
-            {
-                string tileName = info.name;
-                GameObject go = Array.Find<GameObject>(prefabOptions, (g) => { return g.name == tileName; });
-                if (go == null)
-                {
-                    Debug.LogWarning("Could not find game object named: " + tileName);
-                    continue;
-                }
-                GameObject newObj = CreateObjectAtGrid(pair.Key, go);
-                newObj.GetComponent<ObjectData>().info = info;
-            }
+        using (BinaryReader br = new BinaryReader(fstream))
+            Deserialize(br);
     }
 
     Vector3 ConvertPositionToGrid(Vector3 pos)
@@ -148,5 +137,72 @@ public class LevelEditor : MonoBehaviour
         pos.x = pos.x + gridX / 2 - pos.x % gridX;
         pos.y = pos.y + gridY / 2 - pos.y % gridY;
         return pos;
+    }
+
+    public void Serialize(BinaryWriter bw)
+    {
+        bw.Write(levelName);
+        bw.Write(tilemap.Count);
+        foreach(KeyValuePair<Vector2, List<GameObject>> pair in tilemap)
+        {
+            bw.Write(pair.Key.x);
+            bw.Write(pair.Key.y);
+            bw.Write(pair.Value.Count);
+            foreach(GameObject go in pair.Value)
+            {
+                SerializeObject(go, bw);
+            }
+        }
+    }
+
+    void SerializeObject(GameObject go, BinaryWriter bw)
+    {
+        bw.Write(go.name);
+        var components = go.GetComponents<ICustomSerializable>();
+        bw.Write(components.Length);
+        foreach (ICustomSerializable s in components)
+        {
+            bw.Write(s.GetType().ToString());
+            s.Serialize(bw);
+        }
+
+        // TODO: Write something to signify that we are done?
+    }
+
+    public void Deserialize(BinaryReader br)
+    {
+        levelName = br.ReadString();
+        int tileCount = br.ReadInt32();
+        for(int i = 0; i < tileCount; i++)
+        {
+            Vector2 pos = new Vector2(br.ReadSingle(), br.ReadSingle());
+            int goCount = br.ReadInt32();
+            List<GameObject> goList = new List<GameObject>();
+            for(int j = 0; j < goCount; j++)
+            {
+                string goName = br.ReadString();
+                GameObject prefab = Array.Find(prefabOptions, (o) => { return o.name == goName; });
+                if (prefab == null)
+                {
+                    throw new Exception("Could not find prefab in level named " + goName);
+                }
+                GameObject go = CreateObjectAtGrid(pos, prefab);
+                goList.Add(go);
+                DeserializeObject(go, br);
+            }
+        }
+    }
+
+
+    void DeserializeObject(GameObject go, BinaryReader br)
+    {
+        // Skip reading the game object name because it's what gets instantiated
+        var count = br.ReadInt32();
+        for (int i = 0; i < count; i++)
+        {
+            var type = br.ReadString();
+            var s = (ICustomSerializable)go.GetComponent(type);
+            s.Deserialize(br);
+        }
     }
 }

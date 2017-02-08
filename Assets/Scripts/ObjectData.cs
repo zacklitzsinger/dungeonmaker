@@ -1,26 +1,31 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public enum ObjectType
 {
+    None = 0,
     Floor,
     FloorAttachment, // E.g., spikes, grass, etc.
     Wall,
     Interactable
 }
 
-[Serializable]
-public class ObjectInfo
+public class ObjectData : MonoBehaviour, ICustomSerializable
 {
-    public string name;
     public ObjectType type;
-}
 
-public class ObjectData : MonoBehaviour
-{
-    public ObjectInfo info;
+    public void Deserialize(BinaryReader br)
+    {
+        type = (ObjectType)br.ReadInt32();
+    }
+
+    public void Serialize(BinaryWriter bw)
+    {
+        bw.Write((int)type);
+    }
 }
 
 

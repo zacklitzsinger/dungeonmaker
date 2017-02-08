@@ -12,14 +12,13 @@ public enum PlayerState
 public class Player : MonoBehaviour {
 
     Rigidbody2D rb2d;
-    LevelEditor editor;
     public Sword sword;
 
     public float acceleration;
     public int rollFrames; // Number of frames it takes to roll
     public float rollForce; // Force with which to roll
 
-    public int remStateFrames; // Remaining frames to continue current state; 0 when in idle
+    [ReadOnly] public int remStateFrames; // Remaining frames to continue current state; 0 when in idle
 
     public int keys = 0;
 
@@ -27,7 +26,6 @@ public class Player : MonoBehaviour {
 
     void Awake ()
     {
-        editor = GameObject.Find("LevelEditor").GetComponent<LevelEditor>();
         rb2d = GetComponent<Rigidbody2D>();
     }
 

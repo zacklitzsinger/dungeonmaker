@@ -7,7 +7,7 @@ public class Spikes : MonoBehaviour {
     public bool active = false;
     public int framesDown;
     public int framesUp;
-    public int remFrames;
+    [ReadOnly] public int remFrames;
 
     public int damage;
 

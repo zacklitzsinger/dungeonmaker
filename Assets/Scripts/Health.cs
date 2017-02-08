@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Health : MonoBehaviour {
 
     public int health;
     public int invulnFrames;
-    public int remInvulnFrames;
+    [ReadOnly] public int remInvulnFrames;
 
     public int Damage(int dmg)
     {

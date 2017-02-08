@@ -65,6 +65,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         if (Input.GetMouseButton(0) && editing && selectedPrefab != null)
         {
             ObjectData data = selectedPrefab.GetComponent<ObjectData>();
+            if (data == null)
+                throw new Exception("Selected prefab missing ObjectData");
             Vector2 pos = Camera.main.ScreenToWorldPoint(ConvertPositionToGrid(Input.mousePosition));
             if (!tilemap.ContainsKey(pos))
                 tilemap[pos] = new List<GameObject>();
@@ -128,6 +130,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         {
             Destroy(child.gameObject);
         }
+        tilemap.Clear();
         using (BinaryReader br = new BinaryReader(fstream))
             Deserialize(br);
     }
@@ -178,7 +181,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             Vector2 pos = new Vector2(br.ReadSingle(), br.ReadSingle());
             int goCount = br.ReadInt32();
             List<GameObject> goList = new List<GameObject>();
-            for(int j = 0; j < goCount; j++)
+            tilemap[pos] = goList;
+            for (int j = 0; j < goCount; j++)
             {
                 string goName = br.ReadString();
                 GameObject prefab = Array.Find(prefabOptions, (o) => { return o.name == goName; });

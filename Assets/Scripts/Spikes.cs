@@ -9,11 +9,21 @@ public class Spikes : MonoBehaviour {
     public int framesUp;
     public int remFrames;
 
+    public int damage;
+
     Animator animator;
 
     void Awake()
     {
         animator = GetComponent<Animator>();
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        Health health = other.GetComponent<Health>();
+        if (health == null)
+            return;
+        health.Damage(damage);
     }
 
     void FixedUpdate()
@@ -26,6 +36,7 @@ public class Spikes : MonoBehaviour {
             else
                 remFrames = framesUp;
             active = !active;
+            GetComponent<Collider2D>().enabled = active;
         }
         animator.SetBool("active", active);
         

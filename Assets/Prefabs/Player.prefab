@@ -23,6 +23,8 @@ GameObject:
   - component: {fileID: 114357101590825330}
   - component: {fileID: 50582811179672188}
   - component: {fileID: 61929064592490676}
+  - component: {fileID: 114554694894238124}
+  - component: {fileID: 114388379784414160}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -88,7 +90,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e259a2142481a24fb4e514b505fb1bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  editor: {fileID: 0}
   sword: {fileID: 114238712412134878, guid: 440d7f478f067ab44b2b58da49e7d917, type: 2}
   acceleration: 100
   rollFrames: 22
@@ -96,6 +97,32 @@ MonoBehaviour:
   remStateFrames: 0
   keys: 0
   state: 0
+--- !u!114 &114388379784414160
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147360471527010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6389aa04a6ae654fbe3575aa65009f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 5
+  invulnFrames: 60
+  remInvulnFrames: 0
+--- !u!114 &114554694894238124
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147360471527010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7ee4e40eca2f1241b95124f3997a91c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 4
 --- !u!212 &212973353828650820
 SpriteRenderer:
   m_ObjectHideFlags: 1

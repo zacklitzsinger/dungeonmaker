@@ -12,7 +12,7 @@ public enum PlayerState
 public class Player : MonoBehaviour {
 
     Rigidbody2D rb2d;
-    public LevelEditor editor;
+    LevelEditor editor;
     public Sword sword;
 
     public float acceleration;
@@ -27,6 +27,7 @@ public class Player : MonoBehaviour {
 
     void Awake ()
     {
+        editor = GameObject.Find("LevelEditor").GetComponent<LevelEditor>();
         rb2d = GetComponent<Rigidbody2D>();
     }
 

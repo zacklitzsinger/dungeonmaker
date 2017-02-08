@@ -90,6 +90,7 @@ MonoBehaviour:
   framesDown: 60
   framesUp: 60
   remFrames: 0
+  damage: 1
 --- !u!114 &114744713971349162
 MonoBehaviour:
   m_ObjectHideFlags: 1

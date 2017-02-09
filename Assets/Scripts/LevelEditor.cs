@@ -8,18 +8,29 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+public enum EditMode
+{
+    Test,
+    Edit,
+    Circuit
+}
+
 public class LevelEditor : MonoBehaviour, ICustomSerializable
 {
-    public bool editing = true;
+    public EditMode mode = EditMode.Edit;
+    [ReadOnly]
     public GameObject selectedPrefab;
+    public GameObject selectedGameObject;
     public GameObject[] prefabOptions;
-    public GameObject prefabButton;
-    public GameObject buttonParent;
-    public Texture selectionBox;
     public int gridX = 32, gridY = 32;
 
+    // UI
     public GameObject sidebar;
     public InputField levelNameInput;
+    public Text editModeLabel;
+    public GameObject prefabButton;
+    public GameObject sidebarContent;
+    public Texture selectionBox;
 
     public string levelName;
     public Dictionary<Vector2, List<GameObject>> tilemap = new Dictionary<Vector2, List<GameObject>>();
@@ -28,7 +39,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     {
         foreach (GameObject option in prefabOptions)
         {
-            GameObject button = Instantiate(prefabButton, buttonParent.transform);
+            GameObject button = Instantiate(prefabButton, sidebarContent.transform);
             RectTransform rectTransform = button.GetComponent<RectTransform>();
             rectTransform.offsetMin = Vector2.zero;
             rectTransform.offsetMax = Vector2.zero;
@@ -49,46 +60,94 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     // Update is called once per frame
     void Update()
     {
+        // Allow cycling of edit mode
         if (Input.GetButtonDown("Edit"))
-            editing = !editing;
+        {
+            mode = (EditMode)(((int)mode + 1) % Enum.GetNames(typeof(EditMode)).Length);
+        }
 
         // Pause time while editing
-        Time.timeScale = (editing ? 0 : 1);
+        Time.timeScale = (mode >= EditMode.Edit ? 0 : 1);
+
+        editModeLabel.text = mode.ToString();
 
         // Hide editing sidebar while editing
-        sidebar.SetActive(editing);
+        sidebar.SetActive(mode >= EditMode.Edit);
+        sidebarContent.SetActive(mode == EditMode.Edit);
 
-        if (EventSystem.current.IsPointerOverGameObject() || !editing)
+        if (EventSystem.current.IsPointerOverGameObject() || mode == EditMode.Test)
             return;
 
-        // Allow placing of objects by left clicking
-        if (Input.GetMouseButton(0) && editing && selectedPrefab != null)
+        switch (mode)
         {
-            ObjectData data = selectedPrefab.GetComponent<ObjectData>();
-            if (data == null)
-                throw new Exception("Selected prefab missing ObjectData");
-            Vector2 pos = Camera.main.ScreenToWorldPoint(ConvertPositionToGrid(Input.mousePosition));
-            if (!tilemap.ContainsKey(pos))
-                tilemap[pos] = new List<GameObject>();
-            if (tilemap[pos].Exists((o) => { return o.GetComponent<ObjectData>().type == data.type; }))
-                return;
-            GameObject go = CreateObjectAtGrid(pos, selectedPrefab);
-            tilemap[pos].Add(go);
-        }
+            case EditMode.Edit:
 
-        // Allow removal of objects by right clicking
-        if (Input.GetMouseButton(1))
-        {
-            Vector2 mouseGridPos = Camera.main.ScreenToWorldPoint(ConvertPositionToGrid(Input.mousePosition));
-            Collider2D[] colliders = Physics2D.OverlapPointAll(mouseGridPos);
-            foreach(Collider2D collider in colliders)
-            {
-                if (collider.transform.parent != transform)
-                    continue;
-                tilemap.Remove(mouseGridPos);
-                Destroy(collider.gameObject);
-            }
+                // Allow placing of objects by left clicking
+                if (Input.GetMouseButton(0) && selectedPrefab != null)
+                {
+                    ObjectData data = selectedPrefab.GetComponent<ObjectData>();
+                    if (data == null)
+                        throw new Exception("Selected prefab missing ObjectData");
+                    Vector2 pos = GetGridMousePosition();
+                    if (!tilemap.ContainsKey(pos))
+                        tilemap[pos] = new List<GameObject>();
+                    if (tilemap[pos].Exists((o) => { return o.GetComponent<ObjectData>().type == data.type; }))
+                        return;
+                    GameObject go = CreateObjectAtGrid(pos, selectedPrefab);
+                    tilemap[pos].Add(go);
+                }
+
+                // Allow removal of objects by right clicking
+                if (Input.GetMouseButton(1))
+                {
+                    Vector2 mouseGridPos = GetGridMousePosition();
+                    Collider2D[] colliders = Physics2D.OverlapPointAll(mouseGridPos);
+                    foreach (Collider2D collider in colliders)
+                    {
+                        if (collider.transform.parent != transform)
+                            continue;
+                        tilemap.Remove(mouseGridPos);
+                        Destroy(collider.gameObject);
+                    }
+                }
+                break;
+
+            case EditMode.Circuit:
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                    if (go.GetComponent<Circuit>())
+                    {
+                        selectedGameObject = go;
+                    }
+                }
+                if (Input.GetMouseButtonUp(0) && selectedGameObject)
+                {
+                    GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                    if (go)
+                    {
+                        Circuit circuit = go.GetComponent<Circuit>();
+                        Circuit otherCircuit = selectedGameObject.GetComponent<Circuit>();
+                        if (circuit)
+                        {
+                            circuit.Connect(otherCircuit);
+                            otherCircuit.Connect(circuit);
+                            selectedGameObject = null;
+                        }
+                    }
+                    else
+                    {
+                        selectedGameObject = null;
+                    }
+                }
+                break;
         }
+    }
+
+    Vector2 GetGridMousePosition()
+    {
+        return Camera.main.ScreenToWorldPoint(ConvertPositionToGrid(Input.mousePosition));
     }
 
     GameObject CreateObjectAtGrid(Vector2 point, GameObject obj)
@@ -98,17 +157,44 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         return newObj;
     }
 
+    GameObject GetGameObjectAtPoint(Vector2 point)
+    {
+        Collider2D[] colliders = Physics2D.OverlapPointAll(point);
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider.transform.parent != transform)
+                continue;
+            return collider.gameObject;
+        }
+        return null;
+    }
+
     void OnGUI()
     {
-        if (EventSystem.current.IsPointerOverGameObject() || !editing)
+        if (EventSystem.current.IsPointerOverGameObject())
             return;
 
-        // Draw currently selected grid square
-        Vector3 pos = ConvertPositionToGrid(Input.mousePosition);
-        pos.y = Screen.height - pos.y;
-        pos.x -= gridX / 2;
-        pos.y -= gridY / 2;
-        GUI.DrawTexture(new Rect(pos, new Vector2(gridX, gridY)), selectionBox);
+        if (mode == EditMode.Edit)
+        {
+            // Draw currently selected grid square
+            Vector3 pos = ConvertPositionToGrid(Input.mousePosition);
+            pos.y = Screen.height - pos.y;
+            pos.x -= gridX / 2;
+            pos.y -= gridY / 2;
+            GUI.DrawTexture(new Rect(pos, new Vector2(gridX, gridY)), selectionBox);
+        }
+
+        if (mode == EditMode.Circuit)
+        {
+            if (selectedGameObject)
+            {
+                Line line = Camera.main.GetComponent<Line>();
+                List<Vector2> points = new List<Vector2>();
+                points.Add(selectedGameObject.transform.position);
+                points.Add(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                line.DrawLine(points, Color.red);
+            }
+        }
     }
 
     public void SaveToDisk()
@@ -146,12 +232,12 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     {
         bw.Write(levelName);
         bw.Write(tilemap.Count);
-        foreach(KeyValuePair<Vector2, List<GameObject>> pair in tilemap)
+        foreach (KeyValuePair<Vector2, List<GameObject>> pair in tilemap)
         {
             bw.Write(pair.Key.x);
             bw.Write(pair.Key.y);
             bw.Write(pair.Value.Count);
-            foreach(GameObject go in pair.Value)
+            foreach (GameObject go in pair.Value)
             {
                 SerializeObject(go, bw);
             }
@@ -176,7 +262,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     {
         levelName = br.ReadString();
         int tileCount = br.ReadInt32();
-        for(int i = 0; i < tileCount; i++)
+        for (int i = 0; i < tileCount; i++)
         {
             Vector2 pos = new Vector2(br.ReadSingle(), br.ReadSingle());
             int goCount = br.ReadInt32();

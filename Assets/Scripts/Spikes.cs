@@ -28,16 +28,23 @@ public class Spikes : MonoBehaviour {
 
     void FixedUpdate()
     {
-        remFrames--;
-        if (remFrames <= 0)
+        Circuit circuit = GetComponent<Circuit>();
+        if (circuit)
+            active = circuit.Powered;
+        else
         {
-            if (active)
-                remFrames = framesDown;
-            else
-                remFrames = framesUp;
-            active = !active;
-            GetComponent<Collider2D>().enabled = active;
+            remFrames--;
+            if (remFrames <= 0)
+            {
+                if (active)
+                    remFrames = framesDown;
+                else
+                    remFrames = framesUp;
+                active = !active;
+                
+            }
         }
+        GetComponent<Collider2D>().enabled = active;
         animator.SetBool("active", active);
         
     }

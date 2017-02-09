@@ -6,8 +6,13 @@ public class Line : MonoBehaviour {
 
     Material lineMat;
 
-    List <Vector2> points = new List<Vector2>();
-    Color color;
+    List<LineInfo> lines = new List<LineInfo>();
+
+    struct LineInfo
+    {
+        public Vector2[] points;
+        public Color color;
+    }
 
     void Awake()
     {
@@ -18,19 +23,20 @@ public class Line : MonoBehaviour {
     {
         GL.Begin(GL.LINES);
         lineMat.SetPass(0);
-        GL.Color(color);
-        foreach(Vector2 point in points)
+        
+        foreach(LineInfo info in lines)
         {
-            GL.Vertex(point);
+            GL.Color(info.color);
+            foreach(Vector2 point in info.points)
+                GL.Vertex(point);
         }
         GL.End();
-        points.Clear();
+        lines.Clear();
     }
 
-    public void DrawLine(List<Vector2> points, Color c)
+    public void DrawLine(Vector2[] points, Color c)
     {
-        this.points = points;
-        this.color = c;
+        this.lines.Add(new LineInfo() { points = points, color = c });
     }
 
 }

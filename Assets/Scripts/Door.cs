@@ -6,19 +6,18 @@ public class Door : MonoBehaviour {
 
     public bool open = false;
 
-    Circuit circuit;
     Animator animator;
 
     void Awake()
     {
         animator = GetComponent<Animator>();
-        circuit = GetComponent<Circuit>();
     }
-
 
     void FixedUpdate()
     {
-        open = circuit.Powered;
+        Circuit circuit = GetComponent<Circuit>();
+        if (circuit)
+            open = circuit.Powered;
         GetComponent<Collider2D>().enabled = !open;
         animator.SetBool("open", open);
     }

@@ -114,21 +114,21 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
             case EditMode.Circuit:
 
+                // Start creating a connection
                 if (Input.GetMouseButtonDown(0))
                 {
                     GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                    if (go.GetComponent<Circuit>())
-                    {
-                        selectedGameObject = go;
-                    }
+                    selectedGameObject = go;
                 }
+
+                // Finish placing a connection
                 if (Input.GetMouseButtonUp(0) && selectedGameObject)
                 {
                     GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
                     if (go)
                     {
-                        Circuit circuit = go.GetComponent<Circuit>();
-                        Circuit otherCircuit = selectedGameObject.GetComponent<Circuit>();
+                        Circuit circuit = go.GetComponent<Circuit>() ?? go.AddComponent<Circuit>();
+                        Circuit otherCircuit = selectedGameObject.GetComponent<Circuit>() ?? selectedGameObject.AddComponent<Circuit>();
                         if (circuit)
                         {
                             circuit.Connect(otherCircuit);
@@ -186,13 +186,26 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
         if (mode == EditMode.Circuit)
         {
+            Line line = Camera.main.GetComponent<Line>();
+            // Draw line from selected object to mouse if we are placing a circuit
             if (selectedGameObject)
             {
-                Line line = Camera.main.GetComponent<Line>();
-                List<Vector2> points = new List<Vector2>();
-                points.Add(selectedGameObject.transform.position);
-                points.Add(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                Vector2[] points = new Vector2[] { selectedGameObject.transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition)};
                 line.DrawLine(points, Color.red);
+            }
+
+            // Draw circuits - technically draws each line twice, but shouldn't matter
+            foreach(Transform child in transform)
+            {
+                Circuit circuit = child.GetComponent<Circuit>();
+                if (circuit)
+                {
+                    foreach(Circuit connection in circuit.connections)
+                    {
+                        Vector2[] points = new Vector2[] { circuit.transform.position, connection.transform.position };
+                        line.DrawLine(points, Color.red);
+                    }
+                }
             }
         }
     }

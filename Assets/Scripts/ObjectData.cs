@@ -6,7 +6,7 @@ using UnityEngine;
 
 public enum ObjectType
 {
-    None = 0,
+    None,
     Floor,
     FloorAttachment, // E.g., spikes, grass, etc.
     Wall,

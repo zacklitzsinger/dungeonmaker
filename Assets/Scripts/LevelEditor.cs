@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
@@ -12,6 +13,7 @@ public enum EditMode
 {
     Test,
     Create,
+    Edit,
     Circuit
 }
 
@@ -31,11 +33,22 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public GameObject prefabButton;
     public GameObject sidebarContent;
     public Texture selectionBox;
+    public Toggle prefabToggle;
 
     public string levelName;
     public Dictionary<Vector2, List<GameObject>> tilemap = new Dictionary<Vector2, List<GameObject>>();
 
     void Start()
+    {
+        SidebarCreateButtons();
+
+        levelNameInput.onValueChanged.AddListener((string str) =>
+        {
+            levelName = str;
+        });
+    }
+
+    void SidebarCreateButtons()
     {
         foreach (GameObject option in prefabOptions)
         {
@@ -50,11 +63,23 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 selectedPrefab = option;
             });
         }
+    }
 
-        levelNameInput.onValueChanged.AddListener((string str) =>
-        {
-            levelName = str;
-        });
+    void ClearSidebar()
+    {
+        foreach (Transform child in sidebarContent.transform)
+            Destroy(child.gameObject);
+    }
+
+    void ChangeMode(EditMode newMode)
+    {
+        if (mode == newMode)
+            return;
+        mode = newMode;
+        selectedGameObject = null;
+        ClearSidebar();
+        if (mode == EditMode.Create)
+            SidebarCreateButtons();
     }
 
     // Update is called once per frame
@@ -62,15 +87,19 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     {
         if (Input.GetButtonDown("Create Mode"))
         {
-            mode = EditMode.Create;
+            ChangeMode(EditMode.Create);
+        }
+        else if (Input.GetButtonDown("Edit Mode"))
+        {
+            ChangeMode(EditMode.Edit);
         }
         else if (Input.GetButtonDown("Circuit Mode"))
         {
-            mode = EditMode.Circuit;
+            ChangeMode(EditMode.Circuit);
         }
         else if (Input.GetButtonDown("Test Mode"))
         {
-            mode = EditMode.Test;
+            ChangeMode(EditMode.Test);
         }
 
         // Pause time while editing
@@ -80,7 +109,6 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
         // Hide editing sidebar while editing
         sidebar.SetActive(mode >= EditMode.Create);
-        sidebarContent.SetActive(mode == EditMode.Create);
 
         if (EventSystem.current.IsPointerOverGameObject() || mode == EditMode.Test)
             return;
@@ -119,13 +147,44 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 }
                 break;
 
+            case EditMode.Edit:
+
+                // Start by selecting an object
+                if (Input.GetMouseButtonDown(0))
+                {
+                    selectedGameObject = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                    ClearSidebar();
+                    // Create UI for editable game object
+                    foreach (ICustomSerializable component in selectedGameObject.GetComponents<ICustomSerializable>())
+                    {
+                        foreach (FieldInfo fieldInfo in component.GetType().GetFields())
+                        {
+                            foreach (PlayerEditableAttribute attr in fieldInfo.GetCustomAttributes(typeof(PlayerEditableAttribute), true))
+                            {
+                                if (fieldInfo.FieldType == typeof(bool))
+                                {
+                                    Toggle toggle = Instantiate(prefabToggle, sidebarContent.transform);
+                                    toggle.isOn = (bool)fieldInfo.GetValue(component);
+                                    toggle.GetComponentInChildren<Text>().text = attr.Name;
+                                    toggle.onValueChanged.AddListener((val) =>
+                                    {
+                                        fieldInfo.SetValue(component, val);
+                                    });
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+                break;
+
             case EditMode.Circuit:
 
                 // Start creating a connection
                 if (Input.GetMouseButtonDown(0))
                 {
-                    GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                    selectedGameObject = go;
+                    selectedGameObject = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
                 }
 
                 // Finish placing a connection
@@ -167,13 +226,19 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     GameObject GetGameObjectAtPoint(Vector2 point)
     {
         Collider2D[] colliders = Physics2D.OverlapPointAll(point);
+        ObjectData choice = null;
         foreach (Collider2D collider in colliders)
         {
-            if (collider.transform.parent != transform)
+            ObjectData data = collider.GetComponent<ObjectData>();
+            // Must be an object the level editor knows about
+            if (collider.transform.parent != transform || data == null)
                 continue;
-            return collider.gameObject;
+            if (choice == null)
+                choice = data;
+            else if (choice.type < data.type)
+                choice = data;
         }
-        return null;
+        return choice ? choice.gameObject: null;
     }
 
     void OnGUI()
@@ -181,39 +246,40 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         if (EventSystem.current.IsPointerOverGameObject())
             return;
 
-        if (mode == EditMode.Create)
+        switch (mode)
         {
-            // Draw currently selected grid square
-            Vector3 pos = ConvertPositionToGrid(Input.mousePosition);
-            pos.y = Screen.height - pos.y;
-            pos.x -= gridX / 2;
-            pos.y -= gridY / 2;
-            GUI.DrawTexture(new Rect(pos, new Vector2(gridX, gridY)), selectionBox);
-        }
+            case EditMode.Create:
+                // Draw currently selected grid square
+                Vector3 pos = ConvertPositionToGrid(Input.mousePosition);
+                pos.y = Screen.height - pos.y;
+                pos.x -= gridX / 2;
+                pos.y -= gridY / 2;
+                GUI.DrawTexture(new Rect(pos, new Vector2(gridX, gridY)), selectionBox);
+                break;
 
-        if (mode == EditMode.Circuit)
-        {
-            Line line = Camera.main.GetComponent<Line>();
-            // Draw line from selected object to mouse if we are placing a circuit
-            if (selectedGameObject)
-            {
-                Vector2[] points = new Vector2[] { selectedGameObject.transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition) };
-                line.DrawLine(points, Color.red);
-            }
-
-            // Draw circuits - technically draws each line twice, but shouldn't matter
-            foreach (Transform child in transform)
-            {
-                Circuit circuit = child.GetComponent<Circuit>();
-                if (circuit)
+            case EditMode.Circuit:
+                Line line = Camera.main.GetComponent<Line>();
+                // Draw line from selected object to mouse if we are placing a circuit
+                if (selectedGameObject)
                 {
-                    foreach (Circuit connection in circuit.connections)
+                    Vector2[] points = new Vector2[] { selectedGameObject.transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition) };
+                    line.DrawLine(points, Color.red);
+                }
+
+                // Draw circuits - technically draws each line twice, but shouldn't matter
+                foreach (Transform child in transform)
+                {
+                    Circuit circuit = child.GetComponent<Circuit>();
+                    if (circuit)
                     {
-                        Vector2[] points = new Vector2[] { circuit.transform.position, connection.transform.position };
-                        line.DrawLine(points, Color.red);
+                        foreach (Circuit connection in circuit.connections)
+                        {
+                            Vector2[] points = new Vector2[] { circuit.transform.position, connection.transform.position };
+                            line.DrawLine(points, Color.red);
+                        }
                     }
                 }
-            }
+                break;
         }
     }
 

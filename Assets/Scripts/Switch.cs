@@ -1,7 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using System.IO;
+using UnityEngine;
 
-public class Switch : MonoBehaviour {
+public class Switch : MonoBehaviour, ICustomSerializable
+{
 
+    [PlayerEditable("Permanent")]
+    public bool permanent = false;
     public bool active = false;
 
     Animator animator;
@@ -21,14 +26,26 @@ public class Switch : MonoBehaviour {
 
     void OnTriggerExit2D(Collider2D other)
     {
+        if (permanent)
+            return;
         active = false;
         Circuit circuit = GetComponent<Circuit>();
         if (circuit)
             circuit.AdjustPower(-1);
     }
 
-    void FixedUpdate()
+    void Update()
     {
         animator.SetBool("active", active);
+    }
+
+    public void Serialize(BinaryWriter bw)
+    {
+        bw.Write(permanent);
+    }
+
+    public void Deserialize(BinaryReader br)
+    {
+        permanent = br.ReadBoolean();
     }
 }

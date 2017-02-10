@@ -1,10 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
-public class Door : MonoBehaviour {
+public class Door : MonoBehaviour, ICustomSerializable {
 
     public bool open = false;
+
+    [PlayerEditable("Invert")]
+    public bool invert = false;
 
     Animator animator;
 
@@ -13,12 +18,26 @@ public class Door : MonoBehaviour {
         animator = GetComponent<Animator>();
     }
 
+    void Update()
+    {
+        animator.SetBool("open", open);
+    }
+
     void FixedUpdate()
     {
         Circuit circuit = GetComponent<Circuit>();
         if (circuit)
-            open = circuit.Powered;
+            open = circuit.Powered ^ invert;
         GetComponent<Collider2D>().enabled = !open;
-        animator.SetBool("open", open);
+    }
+
+    public void Serialize(BinaryWriter bw)
+    {
+        bw.Write(invert);
+    }
+
+    public void Deserialize(BinaryReader br)
+    {
+        invert = br.ReadBoolean();
     }
 }

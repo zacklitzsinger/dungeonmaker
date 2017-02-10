@@ -55,7 +55,7 @@ public class Player : MonoBehaviour {
         }
         else
         {
-            rb2d.AddForce(targetMotion * acceleration);
+            rb2d.AddForce((targetMotion.magnitude > 1 ? targetMotion.normalized : targetMotion) * acceleration);
         }
 
         if (Input.GetButtonDown("Attack"))

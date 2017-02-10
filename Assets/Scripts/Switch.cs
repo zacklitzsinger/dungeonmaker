@@ -8,6 +8,8 @@ public class Switch : MonoBehaviour, ICustomSerializable
     [PlayerEditable("Permanent")]
     public bool permanent = false;
     public bool active = false;
+    [ReadOnly]
+    public int count;
 
     Animator animator;
 
@@ -19,6 +21,7 @@ public class Switch : MonoBehaviour, ICustomSerializable
     void OnTriggerEnter2D(Collider2D other)
     {
         active = true;
+        count++;
         Circuit circuit = GetComponent<Circuit>();
         if (circuit)
             circuit.AdjustPower(1);
@@ -28,10 +31,14 @@ public class Switch : MonoBehaviour, ICustomSerializable
     {
         if (permanent)
             return;
-        active = false;
-        Circuit circuit = GetComponent<Circuit>();
-        if (circuit)
-            circuit.AdjustPower(-1);
+        count--;
+        if (count <= 0)
+        {
+            active = false;
+            Circuit circuit = GetComponent<Circuit>();
+            if (circuit)
+                circuit.AdjustPower(-1);
+        }
     }
 
     void Update()

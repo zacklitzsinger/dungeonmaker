@@ -126,8 +126,14 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                     Vector2 pos = GetGridMousePosition();
                     if (!tilemap.ContainsKey(pos))
                         tilemap[pos] = new List<GameObject>();
-                    if (tilemap[pos].Exists((o) => { return o.GetComponent<ObjectData>().type == data.type; }))
-                        return;
+                    GameObject sameGroupGameObject = tilemap[pos].Find((o) => { return o.GetComponent<ObjectData>().type == data.type; });
+                    if (sameGroupGameObject)
+                    {
+                        if (sameGroupGameObject.name == selectedPrefab.name)
+                            return;
+                        tilemap[pos].Remove(sameGroupGameObject);
+                        Destroy(sameGroupGameObject);
+                    }
                     GameObject go = CreateObjectAtGrid(pos, selectedPrefab);
                     tilemap[pos].Add(go);
                 }

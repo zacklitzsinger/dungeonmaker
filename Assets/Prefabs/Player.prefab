@@ -22,10 +22,10 @@ GameObject:
   - component: {fileID: 212973353828650820}
   - component: {fileID: 114357101590825330}
   - component: {fileID: 50582811179672188}
-  - component: {fileID: 61929064592490676}
   - component: {fileID: 114554694894238124}
   - component: {fileID: 114388379784414160}
   - component: {fileID: 114156922443397688}
+  - component: {fileID: 58542871478462818}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -40,7 +40,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1147360471527010}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -6.8757663, y: 1.4109426, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -58,7 +58,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 10
+  m_LinearDrag: 25
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -66,8 +66,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &61929064592490676
-BoxCollider2D:
+--- !u!58 &58542871478462818
+CircleCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -79,7 +79,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Size: {x: 0.8, y: 0.8}
+  m_Radius: 0.5
 --- !u!114 &114156922443397688
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -104,9 +104,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sword: {fileID: 114238712412134878, guid: 440d7f478f067ab44b2b58da49e7d917, type: 2}
-  acceleration: 100
+  acceleration: 150
   rollFrames: 22
-  rollForce: 800
+  rollForce: 1500
   remStateFrames: 0
   keys: 0
   state: 0

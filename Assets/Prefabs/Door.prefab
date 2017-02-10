@@ -87,6 +87,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   open: 0
+  invert: 0
 --- !u!114 &114744713971349162
 MonoBehaviour:
   m_ObjectHideFlags: 1

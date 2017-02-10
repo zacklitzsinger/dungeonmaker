@@ -11,13 +11,13 @@ using UnityEngine.UI;
 public enum EditMode
 {
     Test,
-    Edit,
+    Create,
     Circuit
 }
 
 public class LevelEditor : MonoBehaviour, ICustomSerializable
 {
-    public EditMode mode = EditMode.Edit;
+    public EditMode mode = EditMode.Create;
     [ReadOnly]
     public GameObject selectedPrefab;
     public GameObject selectedGameObject;
@@ -60,27 +60,34 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     // Update is called once per frame
     void Update()
     {
-        // Allow cycling of edit mode
-        if (Input.GetButtonDown("Edit"))
+        if (Input.GetButtonDown("Create Mode"))
         {
-            mode = (EditMode)(((int)mode + 1) % Enum.GetNames(typeof(EditMode)).Length);
+            mode = EditMode.Create;
+        }
+        else if (Input.GetButtonDown("Circuit Mode"))
+        {
+            mode = EditMode.Circuit;
+        }
+        else if (Input.GetButtonDown("Test Mode"))
+        {
+            mode = EditMode.Test;
         }
 
         // Pause time while editing
-        Time.timeScale = (mode >= EditMode.Edit ? 0 : 1);
+        Time.timeScale = (mode >= EditMode.Create ? 0 : 1);
 
         editModeLabel.text = mode.ToString();
 
         // Hide editing sidebar while editing
-        sidebar.SetActive(mode >= EditMode.Edit);
-        sidebarContent.SetActive(mode == EditMode.Edit);
+        sidebar.SetActive(mode >= EditMode.Create);
+        sidebarContent.SetActive(mode == EditMode.Create);
 
         if (EventSystem.current.IsPointerOverGameObject() || mode == EditMode.Test)
             return;
 
         switch (mode)
         {
-            case EditMode.Edit:
+            case EditMode.Create:
 
                 // Allow placing of objects by left clicking
                 if (Input.GetMouseButton(0) && selectedPrefab != null)
@@ -174,7 +181,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         if (EventSystem.current.IsPointerOverGameObject())
             return;
 
-        if (mode == EditMode.Edit)
+        if (mode == EditMode.Create)
         {
             // Draw currently selected grid square
             Vector3 pos = ConvertPositionToGrid(Input.mousePosition);
@@ -190,17 +197,17 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             // Draw line from selected object to mouse if we are placing a circuit
             if (selectedGameObject)
             {
-                Vector2[] points = new Vector2[] { selectedGameObject.transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition)};
+                Vector2[] points = new Vector2[] { selectedGameObject.transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition) };
                 line.DrawLine(points, Color.red);
             }
 
             // Draw circuits - technically draws each line twice, but shouldn't matter
-            foreach(Transform child in transform)
+            foreach (Transform child in transform)
             {
                 Circuit circuit = child.GetComponent<Circuit>();
                 if (circuit)
                 {
-                    foreach(Circuit connection in circuit.connections)
+                    foreach (Circuit connection in circuit.connections)
                     {
                         Vector2[] points = new Vector2[] { circuit.transform.position, connection.transform.position };
                         line.DrawLine(points, Color.red);

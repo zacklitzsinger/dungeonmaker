@@ -14,6 +14,7 @@ public class Switch : MonoBehaviour, ICustomSerializable
     public int count;
 
     Animator animator;
+    Circuit circuit;
 
     void Awake()
     {
@@ -24,9 +25,6 @@ public class Switch : MonoBehaviour, ICustomSerializable
     {
         active = true;
         count++;
-        Circuit circuit = GetComponent<Circuit>();
-        if (circuit)
-            circuit.AdjustPower(invert ? -1 : 1);
     }
 
     void OnTriggerExit2D(Collider2D other)
@@ -35,17 +33,26 @@ public class Switch : MonoBehaviour, ICustomSerializable
             return;
         count--;
         if (count <= 0)
-        {
             active = false;
-            Circuit circuit = GetComponent<Circuit>();
-            if (circuit)
-                circuit.AdjustPower(invert ? 1 : -1);
-        }
     }
 
     void Update()
     {
         animator.SetBool("active", active);
+        if (circuit == null)
+        {
+            circuit = GetComponent<Circuit>();
+            if (circuit != null)
+                SetupCircuit();
+        }
+    }
+
+    void SetupCircuit()
+    {
+        circuit.conditions.Add(() =>
+        {
+            return active ^ invert;
+        });
     }
 
     public void Serialize(BinaryWriter bw)

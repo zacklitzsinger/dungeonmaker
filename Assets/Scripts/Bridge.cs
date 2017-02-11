@@ -27,7 +27,7 @@ public class Bridge : MonoBehaviour {
         Circuit circuit = GetComponent<Circuit>();
         if (circuit)
             active = circuit.Powered ^ invert;
-        GetComponent<Collider2D>().enabled = active;
+        gameObject.layer = active ? LayerMask.NameToLayer("Default") : LayerMask.NameToLayer("CollisionDisabled");
     }
 
     public void Serialize(BinaryWriter bw)

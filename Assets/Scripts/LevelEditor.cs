@@ -325,11 +325,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     public void SaveToDisk()
     {
-        if (!Directory.Exists("Levels"))
-        {
-            Directory.CreateDirectory("Levels");
-        }
-        string filename = Path.Combine("Levels", levelName);
+        Debug.Log(Application.persistentDataPath);
+        string filename = Path.Combine(Application.persistentDataPath, levelName);
         FileStream fstream = File.Create(filename);
         using (BinaryWriter bw = new BinaryWriter(fstream))
             Serialize(bw);
@@ -337,7 +334,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     public void LoadFromDisk()
     {
-        FileStream fstream = File.OpenRead(Path.Combine("Levels", levelName));
+        FileStream fstream = File.OpenRead(Path.Combine(Application.persistentDataPath, levelName));
         foreach (Transform child in transform)
         {
             Destroy(child.gameObject);

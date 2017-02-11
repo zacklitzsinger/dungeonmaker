@@ -295,7 +295,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                     Sprite sprite = selectedPrefab.GetComponent<SpriteRenderer>().sprite;
                     Vector2 pos = Input.mousePosition;
                     pos.y = Screen.height - pos.y;
-                    GUI.DrawTexture(new Rect(pos - sprite.textureRect.size/2, sprite.textureRect.size), sprite.texture);
+                    // Tex coords are in % of the full texture rather than being a direct source rectangle
+                    Rect texCoords = new Rect(sprite.rect.x / sprite.texture.width, sprite.rect.y / sprite.texture.height, sprite.rect.width / sprite.texture.width, sprite.rect.height / sprite.texture.height);
+                    GUI.DrawTextureWithTexCoords(new Rect(pos - sprite.rect.size / 2, sprite.rect.size), sprite.texture, texCoords);
                 }
                 
                 break;

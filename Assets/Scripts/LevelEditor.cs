@@ -147,8 +147,11 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 if (Input.GetMouseButtonDown(0))
                 {
                     selectedGameObject = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                    ClearSidebar();
-                    UIEditSelectedGameObject();
+                    if (selectedGameObject)
+                    {
+                        ClearSidebar();
+                        UIEditSelectedGameObject();
+                    }
                 }
 
                 break;
@@ -282,11 +285,19 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         {
             case EditMode.Create:
                 // Draw currently selected grid square
-                Vector3 pos = ConvertPositionToGrid(Input.mousePosition);
-                pos.y = Screen.height - pos.y;
-                pos.x -= gridX / 2;
-                pos.y -= gridY / 2;
-                GUI.DrawTexture(new Rect(pos, new Vector2(gridX, gridY)), selectionBox);
+                Vector3 gridPos = ConvertPositionToGrid(Input.mousePosition);
+                gridPos.y = Screen.height - gridPos.y;
+                gridPos.x -= gridX / 2;
+                gridPos.y -= gridY / 2;
+                GUI.DrawTexture(new Rect(gridPos, new Vector2(gridX, gridY)), selectionBox);
+                if (selectedPrefab)
+                {
+                    Sprite sprite = selectedPrefab.GetComponent<SpriteRenderer>().sprite;
+                    Vector2 pos = Input.mousePosition;
+                    pos.y = Screen.height - pos.y;
+                    GUI.DrawTexture(new Rect(pos - sprite.textureRect.size/2, sprite.textureRect.size), sprite.texture);
+                }
+                
                 break;
 
             case EditMode.Circuit:

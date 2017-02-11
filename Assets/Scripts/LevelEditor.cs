@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -174,7 +172,6 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                         Circuit otherCircuit = selectedGameObject.GetComponent<Circuit>() ?? selectedGameObject.AddComponent<Circuit>();
                         if (circuit)
                         {
-                            circuit.Connect(otherCircuit);
                             otherCircuit.Connect(circuit);
                             selectedGameObject = null;
                         }
@@ -307,8 +304,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 // Draw line from selected object to mouse if we are placing a circuit
                 if (selectedGameObject)
                 {
-                    Vector2[] points = new Vector2[] { selectedGameObject.transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition) };
-                    line.DrawLine(points, Color.red);
+                    line.DrawArrow(selectedGameObject.transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition), Color.red);
                 }
 
                 // Draw circuits - technically draws each line twice, but shouldn't matter
@@ -317,10 +313,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                     Circuit circuit = child.GetComponent<Circuit>();
                     if (circuit)
                     {
-                        foreach (Circuit connection in circuit.connections)
+                        foreach (Circuit output in circuit.outputs)
                         {
-                            Vector2[] points = new Vector2[] { circuit.transform.position, connection.transform.position };
-                            line.DrawLine(points, Color.red);
+                            line.DrawArrow(circuit.transform.position, output.transform.position, Color.red);
                         }
                     }
                 }

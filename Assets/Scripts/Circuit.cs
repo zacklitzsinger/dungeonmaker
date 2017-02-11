@@ -14,14 +14,16 @@ public class Circuit : MonoBehaviour
         }
     }
     [ReadOnly]
-    public List<Circuit> connections = new List<Circuit>();
+    public List<Circuit> inputs = new List<Circuit>();
+    [ReadOnly]
+    public List<Circuit> outputs = new List<Circuit>();
 
-    public bool Connect(Circuit other)
+    public void Connect(Circuit other)
     {
-        if (connections.Contains(other))
-            return false;
-        connections.Add(other);
-        return true;
+        if (!outputs.Contains(other))
+            outputs.Add(other);
+        if (!other.inputs.Contains(this))
+            other.inputs.Add(this);
     }
 
     public void AdjustPower(int power, List<Circuit> visitedNodes = null)
@@ -32,11 +34,11 @@ public class Circuit : MonoBehaviour
         }
         visitedNodes.Add(this);
         powerAmount += power;
-        foreach (Circuit connection in connections)
+        foreach (Circuit output in outputs)
         {
-            if (visitedNodes.Contains(connection))
+            if (visitedNodes.Contains(output))
                 continue;
-            connection.AdjustPower(power, visitedNodes);
+            output.AdjustPower(power, visitedNodes);
         }
     }
 }

@@ -7,6 +7,8 @@ public class Switch : MonoBehaviour, ICustomSerializable
 
     [PlayerEditable("Permanent")]
     public bool permanent = false;
+    [PlayerEditable("Invert")]
+    public bool invert = false;
     public bool active = false;
     [ReadOnly]
     public int count;
@@ -24,7 +26,7 @@ public class Switch : MonoBehaviour, ICustomSerializable
         count++;
         Circuit circuit = GetComponent<Circuit>();
         if (circuit)
-            circuit.AdjustPower(1);
+            circuit.AdjustPower(invert ? -1 : 1);
     }
 
     void OnTriggerExit2D(Collider2D other)
@@ -37,7 +39,7 @@ public class Switch : MonoBehaviour, ICustomSerializable
             active = false;
             Circuit circuit = GetComponent<Circuit>();
             if (circuit)
-                circuit.AdjustPower(-1);
+                circuit.AdjustPower(invert ? 1 : -1);
         }
     }
 

@@ -153,7 +153,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 11.125
+  orthographic size: 11.015625
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -966,7 +966,7 @@ Canvas:
   m_RenderMode: 0
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
-  m_PixelPerfect: 0
+  m_PixelPerfect: 1
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
@@ -1481,6 +1481,7 @@ MonoBehaviour:
   - {fileID: 1002282342740670, guid: d3eba96de9d999f488a84a20e347c9b5, type: 2}
   - {fileID: 1002282342740670, guid: 0feedde9e50597d4e902f9bfa90a9c59, type: 2}
   - {fileID: 1147360471527010, guid: ab07e018232fda244b3bbfb7d0e9d885, type: 2}
+  - {fileID: 1002282342740670, guid: 9853dd019d516bd44beb88e1c069dc11, type: 2}
   gridX: 32
   gridY: 32
   sidebar: {fileID: 851146842}

@@ -34,9 +34,13 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public GameObject sidebarContent;
     public Texture selectionBox;
     public Toggle prefabToggle;
+    Vector2 lastMousePosition;
 
     public string levelName;
     public Dictionary<Vector2, List<GameObject>> tilemap = new Dictionary<Vector2, List<GameObject>>();
+
+    // When testing, save to a temporary file beforehand so we can reload the level after finishing
+    private string tempFilename;
 
     void Start()
     {
@@ -75,11 +79,16 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     {
         if (mode == newMode)
             return;
+        EditMode prevMode = mode;
         mode = newMode;
         selectedGameObject = null;
         ClearSidebar();
         if (mode == EditMode.Create)
             SidebarCreateButtons();
+        if (mode == EditMode.Test)
+            SaveToTemp();
+        if (prevMode == EditMode.Test)
+            LoadFromTemp();
     }
 
     // Update is called once per frame
@@ -120,36 +129,15 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 // Allow placing of objects by left clicking
                 if (Input.GetMouseButton(0) && selectedPrefab != null)
                 {
-                    ObjectData data = selectedPrefab.GetComponent<ObjectData>();
-                    if (data == null)
-                        throw new Exception("Selected prefab missing ObjectData");
                     Vector2 pos = GetGridMousePosition();
-                    if (!tilemap.ContainsKey(pos))
-                        tilemap[pos] = new List<GameObject>();
-                    GameObject sameGroupGameObject = tilemap[pos].Find((o) => { return o.GetComponent<ObjectData>().type == data.type; });
-                    if (sameGroupGameObject)
-                    {
-                        if (sameGroupGameObject.name == selectedPrefab.name)
-                            return;
-                        tilemap[pos].Remove(sameGroupGameObject);
-                        Destroy(sameGroupGameObject);
-                    }
-                    GameObject go = CreateObjectAtGrid(pos, selectedPrefab);
-                    tilemap[pos].Add(go);
+                    CreateSelectedPrefabAtGridPosition(pos);
                 }
 
                 // Allow removal of objects by right clicking
                 if (Input.GetMouseButton(1))
                 {
                     Vector2 mouseGridPos = GetGridMousePosition();
-                    Collider2D[] colliders = Physics2D.OverlapPointAll(mouseGridPos);
-                    foreach (Collider2D collider in colliders)
-                    {
-                        if (collider.transform.parent != transform)
-                            continue;
-                        tilemap.Remove(mouseGridPos);
-                        Destroy(collider.gameObject);
-                    }
+                    DestroyGameObjectsAtGridPosition(mouseGridPos);
                 }
                 break;
 
@@ -160,27 +148,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 {
                     selectedGameObject = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
                     ClearSidebar();
-                    // Create UI for editable game object
-                    foreach (ICustomSerializable component in selectedGameObject.GetComponents<ICustomSerializable>())
-                    {
-                        foreach (FieldInfo fieldInfo in component.GetType().GetFields())
-                        {
-                            foreach (PlayerEditableAttribute attr in fieldInfo.GetCustomAttributes(typeof(PlayerEditableAttribute), true))
-                            {
-                                if (fieldInfo.FieldType == typeof(bool))
-                                {
-                                    Toggle toggle = Instantiate(prefabToggle, sidebarContent.transform);
-                                    toggle.isOn = (bool)fieldInfo.GetValue(component);
-                                    toggle.GetComponentInChildren<Text>().text = attr.Name;
-                                    toggle.onValueChanged.AddListener((val) =>
-                                    {
-                                        fieldInfo.SetValue(component, val);
-                                    });
-                                }
-
-                            }
-                        }
-                    }
+                    UIEditSelectedGameObject();
                 }
 
                 break;
@@ -217,6 +185,39 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         }
     }
 
+    GameObject CreateSelectedPrefabAtGridPosition(Vector2 gridPos)
+    {
+        ObjectData data = selectedPrefab.GetComponent<ObjectData>();
+        if (data == null)
+            throw new Exception("Selected prefab missing ObjectData");
+        if (!tilemap.ContainsKey(gridPos))
+            tilemap[gridPos] = new List<GameObject>();
+        GameObject sameGroupGameObject = tilemap[gridPos].Find((o) => { return o.GetComponent<ObjectData>().type == data.type; });
+        if (sameGroupGameObject)
+        {
+            // Don't replace if it's the same exact type of object
+            if (sameGroupGameObject.name == selectedPrefab.name)
+                return null;
+            tilemap[gridPos].Remove(sameGroupGameObject);
+            Destroy(sameGroupGameObject);
+        }
+        GameObject go = CreateObjectAtGrid(gridPos, selectedPrefab);
+        tilemap[gridPos].Add(go);
+        return go;
+    }
+
+    void DestroyGameObjectsAtGridPosition(Vector2 gridPos)
+    {
+        Collider2D[] colliders = Physics2D.OverlapPointAll(gridPos);
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider.transform.parent != transform)
+                continue;
+            tilemap.Remove(gridPos);
+            Destroy(collider.gameObject);
+        }
+    }
+
     Vector2 GetGridMousePosition()
     {
         return Camera.main.ScreenToWorldPoint(ConvertPositionToGrid(Input.mousePosition));
@@ -245,6 +246,31 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 choice = data;
         }
         return choice ? choice.gameObject: null;
+    }
+
+    void UIEditSelectedGameObject()
+    {
+        // Create UI for editable game object
+        foreach (ICustomSerializable component in selectedGameObject.GetComponents<ICustomSerializable>())
+        {
+            foreach (FieldInfo fieldInfo in component.GetType().GetFields())
+            {
+                foreach (PlayerEditableAttribute attr in fieldInfo.GetCustomAttributes(typeof(PlayerEditableAttribute), true))
+                {
+                    if (fieldInfo.FieldType == typeof(bool))
+                    {
+                        Toggle toggle = Instantiate(prefabToggle, sidebarContent.transform);
+                        toggle.isOn = (bool)fieldInfo.GetValue(component);
+                        toggle.GetComponentInChildren<Text>().text = attr.Name;
+                        toggle.onValueChanged.AddListener((val) =>
+                        {
+                            fieldInfo.SetValue(component, val);
+                        });
+                    }
+
+                }
+            }
+        }
     }
 
     void OnGUI()
@@ -296,14 +322,34 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             Directory.CreateDirectory("Levels");
         }
         string filename = Path.Combine("Levels", levelName);
-        FileStream fstream = File.Open(filename, FileMode.Create);
+        FileStream fstream = File.Create(filename);
         using (BinaryWriter bw = new BinaryWriter(fstream))
             Serialize(bw);
     }
 
     public void LoadFromDisk()
     {
-        FileStream fstream = File.Open(Path.Combine("Levels", levelName), FileMode.Open);
+        FileStream fstream = File.OpenRead(Path.Combine("Levels", levelName));
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
+        tilemap.Clear();
+        using (BinaryReader br = new BinaryReader(fstream))
+            Deserialize(br);
+    }
+
+    public void SaveToTemp()
+    {
+        tempFilename = Path.GetTempFileName();
+        FileStream fstream = File.Create(tempFilename);
+        using (BinaryWriter bw = new BinaryWriter(fstream))
+            Serialize(bw);
+    }
+
+    public void LoadFromTemp()
+    {
+        FileStream fstream = File.OpenRead(tempFilename);
         foreach (Transform child in transform)
         {
             Destroy(child.gameObject);
@@ -362,6 +408,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             tilemap[pos] = goList;
             for (int j = 0; j < goCount; j++)
             {
+                // TODO: Should separate deserialization with instantiating game objects so levels can easily be reset
                 string goName = br.ReadString();
                 GameObject prefab = Array.Find(prefabOptions, (o) => { return o.name == goName; });
                 if (prefab == null)

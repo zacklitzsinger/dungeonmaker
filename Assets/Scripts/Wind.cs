@@ -6,6 +6,7 @@ public class Wind : MonoBehaviour {
 
     public float force;
     public bool active = true;
+    public float size = 5;
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -19,6 +20,8 @@ public class Wind : MonoBehaviour {
 
     void Update()
     {
+        GetComponent<BoxCollider2D>().size = new Vector2(1, size);
+        transform.localPosition = new Vector2(0, (size + 1) / 2);
         ParticleSystem ps = GetComponentInChildren<ParticleSystem>();
         if (active)
             ps.Play();

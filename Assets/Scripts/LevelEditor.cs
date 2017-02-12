@@ -237,16 +237,16 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     void DestroyGameObjectsAtGridPosition(Vector2 gridPos)
     {
-        Collider2D[] colliders = Physics2D.OverlapPointAll(gridPos);
-        foreach (Collider2D collider in colliders)
+        if (!tilemap.ContainsKey(gridPos))
+            return;
+        List<GameObject> goList = tilemap[gridPos];
+        foreach (GameObject go in goList)
         {
-            if (collider.transform.parent != transform)
-                continue;
-            tilemap.Remove(gridPos);
-            Guid id = collider.GetComponent<ObjectData>().guid;
+            Guid id = go.GetComponent<ObjectData>().guid;
             guidmap.Remove(id);
-            Destroy(collider.gameObject);
+            Destroy(go);
         }
+        tilemap.Remove(gridPos);
     }
 
     Vector2 GetGridMousePosition()

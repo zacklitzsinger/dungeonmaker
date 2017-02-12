@@ -153,7 +153,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 11.015625
+  orthographic size: 11.296875
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1484,8 +1484,6 @@ MonoBehaviour:
   - {fileID: 1002282342740670, guid: 9853dd019d516bd44beb88e1c069dc11, type: 2}
   - {fileID: 1002282342740670, guid: 15e2fd0170a5ab54286b729c24f87c7c, type: 2}
   rotation: 0
-  gridX: 32
-  gridY: 32
   sidebar: {fileID: 851146842}
   levelNameInput: {fileID: 455753647}
   editModeLabel: {fileID: 848277122}

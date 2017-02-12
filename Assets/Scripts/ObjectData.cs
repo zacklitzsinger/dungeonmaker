@@ -15,6 +15,9 @@ public enum ObjectType
 
 public class ObjectData : MonoBehaviour, ICustomSerializable
 {
+    readonly int GUID_LENGTH = Guid.Empty.ToByteArray().Length;
+
+    public Guid guid;
     public ObjectType type;
 
     public void Deserialize(BinaryReader br)

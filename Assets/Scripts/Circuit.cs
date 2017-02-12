@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
-public class Circuit : MonoBehaviour
+public class Circuit : MonoBehaviour, ICustomSerializable
 {
     [ReadOnly]
     public int powerAmount;
@@ -79,6 +80,34 @@ public class Circuit : MonoBehaviour
             if (visitedNodes.Contains(output))
                 continue;
             output.AdjustPower(power, visitedNodes);
+        }
+    }
+
+    public void Serialize(BinaryWriter bw)
+    {
+        bw.Write(inputs.Count);
+        foreach(Circuit input in inputs)
+            bw.Write(input.GetComponent<ObjectData>().guid);
+        bw.Write(outputs.Count);
+        foreach (Circuit output in outputs)
+            bw.Write(output.GetComponent<ObjectData>().guid);
+    }
+
+    public void Deserialize(BinaryReader br)
+    {
+        int inputsCount = br.ReadInt32();
+        for (int i = 0; i < inputsCount; i++)
+        {
+            Guid id = br.ReadGuid();
+            GameObject go = LevelEditor.main.guidmap[id];
+            inputs.Add(go.GetComponent<Circuit>() ?? go.AddComponent<Circuit>());
+        }
+        int outputsCount = br.ReadInt32();
+        for (int i = 0; i < outputsCount; i++)
+        {
+            Guid id = br.ReadGuid();
+            GameObject go = LevelEditor.main.guidmap[id];
+            outputs.Add(go.GetComponent<Circuit>() ?? go.AddComponent<Circuit>());
         }
     }
 }

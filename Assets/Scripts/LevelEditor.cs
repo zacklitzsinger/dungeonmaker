@@ -17,6 +17,8 @@ public enum EditMode
 
 public class LevelEditor : MonoBehaviour, ICustomSerializable
 {
+    public static LevelEditor main;
+
     public EditMode mode = EditMode.Create;
     [ReadOnly]
     public GameObject selectedPrefab;
@@ -32,16 +34,18 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public GameObject sidebarContent;
     public Texture selectionBox;
     public Toggle prefabToggle;
-    Vector2 lastMousePosition;
 
     public string levelName;
     public Dictionary<Vector2, List<GameObject>> tilemap = new Dictionary<Vector2, List<GameObject>>();
+    public Dictionary<Guid, GameObject> guidmap = new Dictionary<Guid, GameObject>();
 
     // When testing, save to a temporary file beforehand so we can reload the level after finishing
     private string tempFilename;
 
     void Start()
     {
+        main = this;
+
         SidebarCreateButtons();
 
         levelNameInput.onValueChanged.AddListener((string str) =>
@@ -203,6 +207,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         }
         GameObject go = CreateObjectAtGrid(gridPos, selectedPrefab);
         tilemap[gridPos].Add(go);
+        Guid id = Guid.NewGuid();
+        go.GetComponent<ObjectData>().guid = id;
+        guidmap[id] = go;
         return go;
     }
 
@@ -214,6 +221,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             if (collider.transform.parent != transform)
                 continue;
             tilemap.Remove(gridPos);
+            Guid id = collider.GetComponent<ObjectData>().guid;
+            guidmap.Remove(id);
             Destroy(collider.gameObject);
         }
     }
@@ -245,7 +254,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             else if (choice.type < data.type)
                 choice = data;
         }
-        return choice ? choice.gameObject: null;
+        return choice ? choice.gameObject : null;
     }
 
     void UIEditSelectedGameObject()
@@ -275,12 +284,11 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     void OnGUI()
     {
-        if (EventSystem.current.IsPointerOverGameObject())
-            return;
-
         switch (mode)
         {
             case EditMode.Create:
+                if (EventSystem.current.IsPointerOverGameObject())
+                    return;
                 // Draw currently selected grid square
                 Vector3 gridPos = ConvertPositionToGrid(Input.mousePosition);
                 gridPos.y = Screen.height - gridPos.y;
@@ -296,7 +304,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                     Rect texCoords = new Rect(sprite.rect.x / sprite.texture.width, sprite.rect.y / sprite.texture.height, sprite.rect.width / sprite.texture.width, sprite.rect.height / sprite.texture.height);
                     GUI.DrawTextureWithTexCoords(new Rect(pos - sprite.rect.size / 2, sprite.rect.size), sprite.texture, texCoords);
                 }
-                
+
                 break;
 
             case EditMode.Circuit:
@@ -312,12 +320,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 {
                     Circuit circuit = child.GetComponent<Circuit>();
                     if (circuit)
-                    {
                         foreach (Circuit output in circuit.outputs)
-                        {
                             line.DrawArrow(circuit.transform.position, output.transform.position, Color.red);
-                        }
-                    }
                 }
                 break;
         }
@@ -325,43 +329,40 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     public void SaveToDisk()
     {
-        Debug.Log(Application.persistentDataPath);
         string filename = Path.Combine(Application.persistentDataPath, levelName);
-        FileStream fstream = File.Create(filename);
-        using (BinaryWriter bw = new BinaryWriter(fstream))
-            Serialize(bw);
-    }
-
-    public void LoadFromDisk()
-    {
-        FileStream fstream = File.OpenRead(Path.Combine(Application.persistentDataPath, levelName));
-        foreach (Transform child in transform)
-        {
-            Destroy(child.gameObject);
-        }
-        tilemap.Clear();
-        using (BinaryReader br = new BinaryReader(fstream))
-            Deserialize(br);
+        SaveToStream(File.Create(filename));
     }
 
     public void SaveToTemp()
     {
         tempFilename = Path.GetTempFileName();
-        FileStream fstream = File.Create(tempFilename);
-        using (BinaryWriter bw = new BinaryWriter(fstream))
+        SaveToStream(File.Create(tempFilename));
+    }
+
+    public void SaveToStream(Stream s)
+    {
+        using (BinaryWriter bw = new BinaryWriter(s))
             Serialize(bw);
+    }
+
+    public void LoadFromDisk()
+    {
+        LoadFromStream(File.OpenRead(Path.Combine(Application.persistentDataPath, levelName)));
+    }
+
+    public void LoadFromStream(Stream s)
+    {
+        foreach (Transform child in transform)
+            Destroy(child.gameObject);
+        tilemap.Clear();
+        guidmap.Clear();
+        using (BinaryReader br = new BinaryReader(s))
+            Deserialize(br);
     }
 
     public void LoadFromTemp()
     {
-        FileStream fstream = File.OpenRead(tempFilename);
-        foreach (Transform child in transform)
-        {
-            Destroy(child.gameObject);
-        }
-        tilemap.Clear();
-        using (BinaryReader br = new BinaryReader(fstream))
-            Deserialize(br);
+        LoadFromStream(File.OpenRead(tempFilename));
     }
 
     Vector3 ConvertPositionToGrid(Vector3 pos)
@@ -382,14 +383,21 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             bw.Write(pair.Value.Count);
             foreach (GameObject go in pair.Value)
             {
-                SerializeObject(go, bw);
+                bw.Write(go.name);
+                Guid id = go.GetComponent<ObjectData>().guid;
+                bw.Write(id);
             }
+        }
+        bw.Write(guidmap.Count);
+        foreach (KeyValuePair<Guid, GameObject> pair in guidmap)
+        {
+            bw.Write(pair.Key);
+            SerializeComponents(pair.Value, bw);
         }
     }
 
-    void SerializeObject(GameObject go, BinaryWriter bw)
+    void SerializeComponents(GameObject go, BinaryWriter bw)
     {
-        bw.Write(go.name);
         var components = go.GetComponents<ICustomSerializable>();
         bw.Write(components.Length);
         foreach (ICustomSerializable s in components)
@@ -415,27 +423,35 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             {
                 // TODO: Should separate deserialization with instantiating game objects so levels can easily be reset
                 string goName = br.ReadString();
+                Guid id = br.ReadGuid();
                 GameObject prefab = Array.Find(prefabOptions, (o) => { return o.name == goName; });
                 if (prefab == null)
                 {
                     throw new Exception("Could not find prefab in level named " + goName);
                 }
                 GameObject go = CreateObjectAtGrid(pos, prefab);
+                go.GetComponent<ObjectData>().guid = id;
                 goList.Add(go);
-                DeserializeObject(go, br);
+                guidmap[id] = go;
             }
         }
+        int guidCount = br.ReadInt32();
+        for (int i = 0; i < guidCount; i++)
+        {
+            Guid id = br.ReadGuid();
+            GameObject go = guidmap[id];
+            DeserializeComponents(go, br);
+        }
+
     }
 
-
-    void DeserializeObject(GameObject go, BinaryReader br)
+    void DeserializeComponents(GameObject go, BinaryReader br)
     {
-        // Skip reading the game object name because it's what gets instantiated
         var count = br.ReadInt32();
         for (int i = 0; i < count; i++)
         {
-            var type = br.ReadString();
-            var s = (ICustomSerializable)go.GetComponent(type);
+            String typeName = br.ReadString();
+            var s = (ICustomSerializable)(go.GetComponent(typeName) ?? go.AddComponent(Type.GetType(typeName)));
             s.Deserialize(br);
         }
     }

@@ -12,12 +12,16 @@ public class Gravity : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        touching.Add(other);
+        ObjectData data = other.GetComponent<ObjectData>();
+        if (data && data.type == ObjectType.Floor)
+            touching.Add(other);
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
-        touching.Remove(other);
+        ObjectData data = other.GetComponent<ObjectData>();
+        if (data && data.type == ObjectType.Floor)
+            touching.Remove(other);
         CheckForDeath();
     }
 

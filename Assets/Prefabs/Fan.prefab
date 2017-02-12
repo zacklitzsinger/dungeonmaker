@@ -146,6 +146,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   force: 120
   active: 1
+  size: 5
 --- !u!114 &114545682609648388
 MonoBehaviour:
   m_ObjectHideFlags: 1

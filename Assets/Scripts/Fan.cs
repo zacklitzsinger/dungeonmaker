@@ -45,11 +45,11 @@ public class Fan : MonoBehaviour, ICustomSerializable
 
     public void Serialize(BinaryWriter bw)
     {
-        bw.Write(distance);
+        ObjectSerializer.Serialize(bw, this);
     }
 
     public void Deserialize(BinaryReader br)
     {
-        distance = br.ReadInt32();
+        ObjectSerializer.Deserialize(br, this);
     }
 }

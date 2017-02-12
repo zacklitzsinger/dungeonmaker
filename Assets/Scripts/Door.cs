@@ -33,11 +33,11 @@ public class Door : MonoBehaviour, ICustomSerializable {
 
     public void Serialize(BinaryWriter bw)
     {
-        bw.Write(invert);
+        ObjectSerializer.Serialize(bw, this);
     }
 
     public void Deserialize(BinaryReader br)
     {
-        invert = br.ReadBoolean();
+        ObjectSerializer.Deserialize(br, this);
     }
 }

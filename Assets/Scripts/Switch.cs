@@ -57,11 +57,11 @@ public class Switch : MonoBehaviour, ICustomSerializable
 
     public void Serialize(BinaryWriter bw)
     {
-        bw.Write(permanent);
+        ObjectSerializer.Serialize(bw, this);
     }
 
     public void Deserialize(BinaryReader br)
     {
-        permanent = br.ReadBoolean();
+        ObjectSerializer.Deserialize(br, this);
     }
 }

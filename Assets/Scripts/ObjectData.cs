@@ -15,19 +15,19 @@ public enum ObjectType
 
 public class ObjectData : MonoBehaviour, ICustomSerializable
 {
-    readonly int GUID_LENGTH = Guid.Empty.ToByteArray().Length;
-
-    public Guid guid;
+    public Guid guid; // Set outside of this behavior...
     public ObjectType type;
 
     public void Deserialize(BinaryReader br)
     {
         type = (ObjectType)br.ReadInt32();
+        transform.Rotate(Vector3.forward * br.ReadSingle());
     }
 
     public void Serialize(BinaryWriter bw)
     {
         bw.Write((int)type);
+        bw.Write(transform.rotation.eulerAngles.z);
     }
 }
 

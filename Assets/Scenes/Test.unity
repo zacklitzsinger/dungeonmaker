@@ -1482,6 +1482,8 @@ MonoBehaviour:
   - {fileID: 1002282342740670, guid: 0feedde9e50597d4e902f9bfa90a9c59, type: 2}
   - {fileID: 1147360471527010, guid: ab07e018232fda244b3bbfb7d0e9d885, type: 2}
   - {fileID: 1002282342740670, guid: 9853dd019d516bd44beb88e1c069dc11, type: 2}
+  - {fileID: 1002282342740670, guid: 15e2fd0170a5ab54286b729c24f87c7c, type: 2}
+  rotation: 0
   gridX: 32
   gridY: 32
   sidebar: {fileID: 851146842}

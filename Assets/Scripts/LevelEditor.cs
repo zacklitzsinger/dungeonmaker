@@ -24,6 +24,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public GameObject selectedPrefab;
     public GameObject selectedGameObject;
     public GameObject[] prefabOptions;
+    public float rotation;
     public int gridX = 32, gridY = 32;
 
     // UI
@@ -35,6 +36,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public Texture selectionBox;
     public Toggle prefabToggle;
 
+    // Level information
     public string levelName;
     public Dictionary<Vector2, List<GameObject>> tilemap = new Dictionary<Vector2, List<GameObject>>();
     public Dictionary<Guid, GameObject> guidmap = new Dictionary<Guid, GameObject>();
@@ -66,6 +68,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             textComponent.text = option.gameObject.name;
             button.GetComponent<Button>().onClick.AddListener(() =>
             {
+                rotation = 0f;
                 selectedPrefab = option;
             });
         }
@@ -97,21 +100,17 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     void Update()
     {
         if (Input.GetButtonDown("Create Mode"))
-        {
             ChangeMode(EditMode.Create);
-        }
         else if (Input.GetButtonDown("Edit Mode"))
-        {
             ChangeMode(EditMode.Edit);
-        }
         else if (Input.GetButtonDown("Circuit Mode"))
-        {
             ChangeMode(EditMode.Circuit);
-        }
         else if (Input.GetButtonDown("Test Mode"))
-        {
             ChangeMode(EditMode.Test);
-        }
+        if (Input.GetButtonDown("Rotate CW"))
+            rotation = (rotation + 90f) % 360;
+        else if (Input.GetButtonDown("Rotate CCW"))
+            rotation = (rotation + 270f) % 360;
 
         // Pause time while editing
         Time.timeScale = (mode >= EditMode.Create ? 0 : 1);
@@ -132,7 +131,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 if (Input.GetMouseButton(0) && selectedPrefab != null)
                 {
                     Vector2 pos = GetGridMousePosition();
-                    CreateSelectedPrefabAtGridPosition(pos);
+                    CreateSelectedPrefabAtGridPosition(pos, rotation);
                 }
 
                 // Allow removal of objects by right clicking
@@ -189,7 +188,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         }
     }
 
-    GameObject CreateSelectedPrefabAtGridPosition(Vector2 gridPos)
+    GameObject CreateSelectedPrefabAtGridPosition(Vector2 gridPos, float rotation = 0f)
     {
         ObjectData data = selectedPrefab.GetComponent<ObjectData>();
         if (data == null)
@@ -210,6 +209,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         Guid id = Guid.NewGuid();
         go.GetComponent<ObjectData>().guid = id;
         guidmap[id] = go;
+        go.transform.Rotate(Vector3.back * rotation);
         return go;
     }
 
@@ -302,7 +302,10 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                     pos.y = Screen.height - pos.y;
                     // Tex coords are in % of the full texture rather than being a direct source rectangle
                     Rect texCoords = new Rect(sprite.rect.x / sprite.texture.width, sprite.rect.y / sprite.texture.height, sprite.rect.width / sprite.texture.width, sprite.rect.height / sprite.texture.height);
+                    Matrix4x4 matrixTemp = GUI.matrix;
+                    GUIUtility.RotateAroundPivot(rotation, pos);
                     GUI.DrawTextureWithTexCoords(new Rect(pos - sprite.rect.size / 2, sprite.rect.size), sprite.texture, texCoords);
+                    GUI.matrix = matrixTemp;
                 }
 
                 break;

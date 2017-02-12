@@ -35,6 +35,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public GameObject sidebarContent;
     public Texture selectionBox;
     public Toggle prefabToggle;
+    public GameObject prefabIntSlider;
 
     // Level information
     public string levelName;
@@ -131,7 +132,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 // Allow placing of objects by left clicking
                 if (Input.GetMouseButton(0) && selectedPrefab != null)
                 {
-                    foreach(Vector2 point in GetGridPointsAlongLine(lastMousePosition, Input.mousePosition))
+                    foreach (Vector2 point in GetGridPointsAlongLine(lastMousePosition, Input.mousePosition))
                         CreateSelectedPrefabAtGridPosition(point, rotation);
                 }
 
@@ -201,7 +202,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             list.Add(from + (to - from).normalized * i * pxFreq);
         list.Add(to);
         List<Vector2> gridPoints = new List<Vector2>();
-        foreach(Vector2 item in list)
+        foreach (Vector2 item in list)
         {
             Vector2 point = Camera.main.ScreenToWorldPoint(ConvertPositionToGrid(item));
             if (!gridPoints.Contains(point))
@@ -279,26 +280,46 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         return choice ? choice.gameObject : null;
     }
 
+    /// <summary>
+    /// Creates the UI for editing a game object. Monobehaviors that implement ICustomSerializable 
+    /// and have fields that are marked [PlayerEditable] will be given UI elements for the player to edit.
+    /// </summary>
     void UIEditSelectedGameObject()
     {
         // Create UI for editable game object
         foreach (ICustomSerializable component in selectedGameObject.GetComponents<ICustomSerializable>())
         {
-            foreach (FieldInfo fieldInfo in component.GetType().GetFields())
+            foreach (FieldInfo field in component.GetType().GetFields())
             {
-                foreach (PlayerEditableAttribute attr in fieldInfo.GetCustomAttributes(typeof(PlayerEditableAttribute), true))
+                foreach (PlayerEditableAttribute attr in field.GetCustomAttributes(typeof(PlayerEditableAttribute), true))
                 {
-                    if (fieldInfo.FieldType == typeof(bool))
+                    if (field.FieldType == typeof(bool))
                     {
                         Toggle toggle = Instantiate(prefabToggle, sidebarContent.transform);
-                        toggle.isOn = (bool)fieldInfo.GetValue(component);
+                        toggle.isOn = (bool)field.GetValue(component);
                         toggle.GetComponentInChildren<Text>().text = attr.Name;
                         toggle.onValueChanged.AddListener((val) =>
                         {
-                            fieldInfo.SetValue(component, val);
+                            field.SetValue(component, (bool)val);
                         });
+                    } else if (field.FieldType == typeof(int))
+                    {
+                        var rangeAttr = attr as PlayerEditableRangeAttribute;
+                        GameObject range = Instantiate(prefabIntSlider, sidebarContent.transform);
+                        Slider slider = range.GetComponentInChildren<Slider>();
+                        slider.wholeNumbers = true;
+                        slider.minValue = rangeAttr.Min;
+                        slider.maxValue = rangeAttr.Max;
+                        slider.value = (int)field.GetValue(component);
+                        Text text = range.GetComponentInChildren<Text>();
+                        text.text = rangeAttr.Name + ": " + slider.value;
+                        slider.onValueChanged.AddListener((val) =>
+                        {
+                            field.SetValue(component, (int)val);
+                            text.text = rangeAttr.Name + ": " + val;
+                        });
+                        
                     }
-
                 }
             }
         }

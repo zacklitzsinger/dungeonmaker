@@ -1,11 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
-public class Fan : MonoBehaviour
+public class Fan : MonoBehaviour, ICustomSerializable
 {
 
     public bool active;
+    [PlayerEditableRange("Range", 1, 10)]
     public int distance;
     public float force;
 
@@ -38,5 +41,15 @@ public class Fan : MonoBehaviour
                     return true;
         }
         return false;
+    }
+
+    public void Serialize(BinaryWriter bw)
+    {
+        bw.Write(distance);
+    }
+
+    public void Deserialize(BinaryReader br)
+    {
+        distance = br.ReadInt32();
     }
 }

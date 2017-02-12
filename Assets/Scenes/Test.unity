@@ -1912,6 +1912,8 @@ MonoBehaviour:
   selectionBox: {fileID: 2800000, guid: 83ee710fd52365649b1765ba77062267, type: 3}
   prefabToggle: {fileID: 114039721876114322, guid: 7944beb9cf6db6548a58b16f48e85934,
     type: 2}
+  prefabIntSlider: {fileID: 1120791588321864, guid: 45816976d412d3d4fad42df12d32cc1c,
+    type: 2}
   levelName: 
 --- !u!1 &1077726367
 GameObject:

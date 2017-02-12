@@ -365,6 +365,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     public void SaveToDisk()
     {
+        if (levelName.Length == 0)
+            return;
         string filename = Path.Combine(Application.persistentDataPath, levelName);
         SaveToStream(File.Create(filename));
     }
@@ -381,9 +383,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             Serialize(bw);
     }
 
-    public void LoadFromDisk()
+    public void LoadFromDisk(string filename)
     {
-        LoadFromStream(File.OpenRead(Path.Combine(Application.persistentDataPath, levelName)));
+        LoadFromStream(File.OpenRead(filename));
     }
 
     public void LoadFromStream(Stream s)

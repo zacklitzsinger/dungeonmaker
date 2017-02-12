@@ -25,7 +25,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public GameObject selectedGameObject;
     public GameObject[] prefabOptions;
     public float rotation;
-    public int gridX = 32, gridY = 32;
+    public const int GRID_SIZE = 32;
 
     // UI
     public GameObject sidebar;
@@ -43,6 +43,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     // When testing, save to a temporary file beforehand so we can reload the level after finishing
     private string tempFilename;
+    Vector2 lastMousePosition;
 
     void Start()
     {
@@ -130,15 +131,15 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 // Allow placing of objects by left clicking
                 if (Input.GetMouseButton(0) && selectedPrefab != null)
                 {
-                    Vector2 pos = GetGridMousePosition();
-                    CreateSelectedPrefabAtGridPosition(pos, rotation);
+                    foreach(Vector2 point in GetGridPointsAlongLine(lastMousePosition, Input.mousePosition))
+                        CreateSelectedPrefabAtGridPosition(point, rotation);
                 }
 
                 // Allow removal of objects by right clicking
                 if (Input.GetMouseButton(1))
                 {
-                    Vector2 mouseGridPos = GetGridMousePosition();
-                    DestroyGameObjectsAtGridPosition(mouseGridPos);
+                    foreach (Vector2 point in GetGridPointsAlongLine(lastMousePosition, Input.mousePosition))
+                        DestroyGameObjectsAtGridPosition(point);
                 }
                 break;
 
@@ -186,6 +187,27 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 }
                 break;
         }
+        lastMousePosition = Input.mousePosition;
+    }
+
+    // Directly for use with mouse, not sure if this function makes sense w.r.t other things.
+    // Gets points in the grid along a line.
+    List<Vector2> GetGridPointsAlongLine(Vector2 from, Vector2 to, int pxFreq = 8)
+    {
+        List<Vector2> list = new List<Vector2>();
+        list.Add(from);
+        int count = (int)Math.Floor((to - from).magnitude / pxFreq);
+        for (int i = 1; i <= count; i++)
+            list.Add(from + (to - from).normalized * i * pxFreq);
+        list.Add(to);
+        List<Vector2> gridPoints = new List<Vector2>();
+        foreach(Vector2 item in list)
+        {
+            Vector2 point = Camera.main.ScreenToWorldPoint(ConvertPositionToGrid(item));
+            if (!gridPoints.Contains(point))
+                gridPoints.Add(point);
+        }
+        return gridPoints;
     }
 
     GameObject CreateSelectedPrefabAtGridPosition(Vector2 gridPos, float rotation = 0f)
@@ -292,9 +314,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 // Draw currently selected grid square
                 Vector3 gridPos = ConvertPositionToGrid(Input.mousePosition);
                 gridPos.y = Screen.height - gridPos.y;
-                gridPos.x -= gridX / 2;
-                gridPos.y -= gridY / 2;
-                GUI.DrawTexture(new Rect(gridPos, new Vector2(gridX, gridY)), selectionBox);
+                gridPos.x -= GRID_SIZE / 2;
+                gridPos.y -= GRID_SIZE / 2;
+                GUI.DrawTexture(new Rect(gridPos, new Vector2(GRID_SIZE, GRID_SIZE)), selectionBox);
                 if (selectedPrefab)
                 {
                     Sprite sprite = selectedPrefab.GetComponent<SpriteRenderer>().sprite;
@@ -302,10 +324,21 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                     pos.y = Screen.height - pos.y;
                     // Tex coords are in % of the full texture rather than being a direct source rectangle
                     Rect texCoords = new Rect(sprite.rect.x / sprite.texture.width, sprite.rect.y / sprite.texture.height, sprite.rect.width / sprite.texture.width, sprite.rect.height / sprite.texture.height);
+                    // Rotate texture
                     Matrix4x4 matrixTemp = GUI.matrix;
                     GUIUtility.RotateAroundPivot(rotation, pos);
                     GUI.DrawTextureWithTexCoords(new Rect(pos - sprite.rect.size / 2, sprite.rect.size), sprite.texture, texCoords);
                     GUI.matrix = matrixTemp;
+                }
+
+                break;
+
+            case EditMode.Edit:
+                if (selectedGameObject)
+                {
+                    Vector2 rectPoint = Camera.main.WorldToScreenPoint((Vector2)selectedGameObject.transform.position);
+                    rectPoint.y = Screen.height - rectPoint.y;
+                    GUI.DrawTexture(new Rect(rectPoint - Vector2.one * GRID_SIZE, new Vector2(GRID_SIZE, GRID_SIZE)), selectionBox);
                 }
 
                 break;
@@ -370,8 +403,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     Vector3 ConvertPositionToGrid(Vector3 pos)
     {
-        pos.x = pos.x + gridX / 2 - pos.x % gridX;
-        pos.y = pos.y + gridY / 2 - pos.y % gridY;
+        pos.x = pos.x + GRID_SIZE / 2 - pos.x % GRID_SIZE;
+        pos.y = pos.y + GRID_SIZE / 2 - pos.y % GRID_SIZE;
         return pos;
     }
 

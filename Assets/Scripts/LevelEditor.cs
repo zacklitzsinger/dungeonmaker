@@ -338,7 +338,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 {
                     Vector2 rectPoint = Camera.main.WorldToScreenPoint((Vector2)selectedGameObject.transform.position);
                     rectPoint.y = Screen.height - rectPoint.y;
-                    GUI.DrawTexture(new Rect(rectPoint - Vector2.one * GRID_SIZE, new Vector2(GRID_SIZE, GRID_SIZE)), selectionBox);
+                    GUI.DrawTexture(new Rect(rectPoint - Vector2.one * GRID_SIZE / 2, new Vector2(GRID_SIZE, GRID_SIZE)), selectionBox);
                 }
 
                 break;
@@ -403,11 +403,16 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         LoadFromStream(File.OpenRead(tempFilename));
     }
 
-    Vector3 ConvertPositionToGrid(Vector3 pos)
+    public Vector3 ConvertPositionToGrid(Vector3 pos)
     {
         pos.x = pos.x + GRID_SIZE / 2 - pos.x % GRID_SIZE;
         pos.y = pos.y + GRID_SIZE / 2 - pos.y % GRID_SIZE;
         return pos;
+    }
+
+    public Vector3 ConvertWorldPositionToGrid(Vector3 pos)
+    {
+        return Camera.main.ScreenToWorldPoint(ConvertPositionToGrid(Camera.main.WorldToScreenPoint(pos)));
     }
 
     public void Serialize(BinaryWriter bw)

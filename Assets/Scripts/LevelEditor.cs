@@ -192,6 +192,19 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                         selectedGameObject = null;
                     }
                 }
+
+                if (Input.GetMouseButtonDown(1))
+                {
+                    GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                    if (go)
+                    {
+                        Circuit circuit = go.GetComponent<Circuit>();
+                        if (circuit)
+                        {
+                            circuit.Disconnect();
+                        }
+                    }
+                }
                 break;
         }
         lastMousePosition = Input.mousePosition;
@@ -427,6 +440,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public void LoadFromTemp()
     {
         LoadFromStream(File.OpenRead(tempFilename));
+        File.Delete(tempFilename);
     }
 
     public Vector3 ConvertPositionToGrid(Vector3 pos)
@@ -476,6 +490,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public void Deserialize(BinaryReader br)
     {
         levelName = br.ReadString();
+        levelNameInput.text = levelName;
         int tileCount = br.ReadInt32();
         for (int i = 0; i < tileCount; i++)
         {

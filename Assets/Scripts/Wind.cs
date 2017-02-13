@@ -21,7 +21,7 @@ public class Wind : MonoBehaviour {
 
     void Update()
     {
-        GetComponent<BoxCollider2D>().size = new Vector2(1, size);
+        GetComponent<BoxCollider2D>().size = new Vector2(0.5f, size);
         ParticleSystem ps = GetComponentInChildren<ParticleSystem>();
         ParticleSystem.ShapeModule shape = ps.shape;
         shape.box = new Vector3(1, 0, size > 1 ? size -1 : size / 2);

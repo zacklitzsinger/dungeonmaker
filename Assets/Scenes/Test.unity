@@ -226,7 +226,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  allowedDistanceFromBorder: 100
+  allowedDistanceFromBorder: 300
 --- !u!1 &160178127
 GameObject:
   m_ObjectHideFlags: 0

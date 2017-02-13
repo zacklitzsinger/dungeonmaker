@@ -38,6 +38,21 @@ public class Circuit : MonoBehaviour, ICustomSerializable
             other.inputs.Add(this);
     }
 
+    void OnDestroy()
+    {
+        Disconnect();
+    }
+
+    public void Disconnect()
+    {
+        foreach (Circuit input in inputs)
+            input.outputs.Remove(this);
+        inputs.Clear();
+        foreach (Circuit output in outputs)
+            output.inputs.Remove(this);
+        outputs.Clear();
+    }
+
     bool TestConditions()
     {
         foreach(Func<bool> condition in conditions)

@@ -7,7 +7,6 @@ public class Wind : MonoBehaviour {
     public float force;
     [ReadOnly]
     public bool active = true;
-    [ReadOnly]
     public float size = 5;
 
     void OnTriggerEnter2D(Collider2D other)
@@ -23,7 +22,6 @@ public class Wind : MonoBehaviour {
     void Update()
     {
         GetComponent<BoxCollider2D>().size = new Vector2(1, size);
-        transform.localPosition = new Vector2(0, (size + 1) / 2);
         ParticleSystem ps = GetComponentInChildren<ParticleSystem>();
         ParticleSystem.ShapeModule shape = ps.shape;
         shape.box = new Vector3(1, 0, size/2);

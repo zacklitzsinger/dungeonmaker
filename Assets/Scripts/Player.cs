@@ -62,7 +62,7 @@ public class Player : MonoBehaviour {
         {
             Vector2 targetDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
             targetDirection.Normalize();
-            Sword s = Instantiate<Sword>(sword, (Vector2)transform.position + targetDirection, Quaternion.LookRotation(Vector3.forward, targetDirection), transform);
+            Sword s = Instantiate(sword, (Vector2)transform.position + targetDirection, Quaternion.LookRotation(Vector3.forward, targetDirection), transform);
             remStateFrames = s.remainingFrames;
         }
     }

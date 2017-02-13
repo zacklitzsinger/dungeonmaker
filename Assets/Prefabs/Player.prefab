@@ -58,7 +58,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 25
+  m_LinearDrag: 15
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -104,9 +104,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sword: {fileID: 114238712412134878, guid: 440d7f478f067ab44b2b58da49e7d917, type: 2}
-  acceleration: 150
+  acceleration: 100
   rollFrames: 22
-  rollForce: 1500
+  rollForce: 1200
   remStateFrames: 0
   keys: 0
   state: 0

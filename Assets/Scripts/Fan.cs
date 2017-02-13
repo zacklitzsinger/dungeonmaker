@@ -17,12 +17,16 @@ public class Fan : MonoBehaviour, ICustomSerializable
         Circuit circuit = GetComponent<Circuit>();
         if (circuit)
             active = circuit.Powered;
-        GetComponentInChildren<Wind>().active = active;
-        GetComponentInChildren<Wind>().size = FindDistance();
+        Wind wind = GetComponentInChildren<Wind>();
+        wind.active = active;
+        wind.size = FindDistance();
+        wind.transform.localPosition = new Vector2(0, (wind.size + 1) / 2);
     }
 
     int FindDistance()
     {
+        if (!active)
+            return 0;
         for (int i = 1; i <= distance; i++)
         {
             Vector2 pos = transform.position + transform.up * i;

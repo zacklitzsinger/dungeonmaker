@@ -21,11 +21,10 @@ GameObject:
   - component: {fileID: 4238989630657178}
   - component: {fileID: 212390731372897270}
   - component: {fileID: 114744713971349162}
-  - component: {fileID: 58396333897813108}
-  - component: {fileID: 114765024785866122}
-  - component: {fileID: 50931310620074446}
+  - component: {fileID: 61334987829417686}
+  - component: {fileID: 114073071677959366}
   m_Layer: 0
-  m_Name: Spinner
+  m_Name: TreasureChest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,40 +43,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!50 &50931310620074446
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1002282342740670}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 2
-  m_LinearDrag: 0
-  m_AngularDrag: 0.25
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 3
---- !u!58 &58396333897813108
-CircleCollider2D:
+--- !u!61 &61334987829417686
+BoxCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1002282342740670}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: bc9f1f72ce5eaa34b987f7d06f8c3cfd, type: 2}
-  m_IsTrigger: 0
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Size: {x: 1, y: 1}
+--- !u!114 &114073071677959366
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1002282342740670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd1a466c5ee0ae84895b4395b21f662e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  item: {fileID: 0}
 --- !u!114 &114744713971349162
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -89,23 +80,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ee4e40eca2f1241b95124f3997a91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 2
---- !u!114 &114765024785866122
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1002282342740670}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3bb57976dab1334ca629b9deeb0e9ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  invert: 0
-  active: 0
-  activationSpeed: 200
-  counter: 0
-  rotationForce: -1
+  type: 4
 --- !u!212 &212390731372897270
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -135,9 +110,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -623405777
+  m_SortingLayerID: -983159143
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: bee47e57a7ee35748aced937a642a58a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e883e1d7b5beeac4785c40f63a1a7908, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

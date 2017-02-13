@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GustItem : MonoBehaviour {
+public class GustItem : MonoBehaviour, IItem {
 
     public GameObject prefabGust;
     public int cooldownFrames = 90;
@@ -10,9 +10,9 @@ public class GustItem : MonoBehaviour {
     public int remFrames = 0;
     public float force = 1200f;
 
-    void Start()
+    public float CheckCooldown()
     {
-        prefabGust = Resources.Load<GameObject>("Gust");
+        return (float)remFrames / cooldownFrames;
     }
 
 	// Update is called once per frame
@@ -22,18 +22,16 @@ public class GustItem : MonoBehaviour {
             remFrames--;
             return;
         }
-        if (Input.GetButtonDown("Use item"))
-            Activate(gameObject);
 	}
 
-    void Activate(GameObject gameObject)
+    public void Activate(Player player)
     {
         if (remFrames > 0)
             return;
         remFrames = cooldownFrames;
-        Vector2 direction = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - gameObject.transform.position).normalized;
+        Vector2 direction = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - player.transform.position).normalized;
         GameObject gust = Instantiate(prefabGust, (Vector2)transform.position + direction * 2, Quaternion.LookRotation(Vector3.forward, direction));
         gust.GetComponent<Rigidbody2D>().AddForce(direction * force);
-        gameObject.GetComponent<Rigidbody2D>().AddForce(-direction * force);
+        player.GetComponent<Rigidbody2D>().AddForce(-direction * force);
     }
 }

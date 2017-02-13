@@ -54,7 +54,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1002282342740670}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 31.663177, y: -6.3832426, z: 0}
+  m_LocalPosition: {x: 4.032894, y: 1.206512, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4562195543096624}
@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28d885a00183da544b53198f09e1a3ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  force: 180
+  force: 240
   active: 1
   size: 1
 --- !u!198 &198891274136073290
@@ -189,12 +189,12 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -102584978
+  randomSeed: 2055923577
   InitialModule:
     serializedVersion: 3
     enabled: 1
     startLifetime:
-      scalar: 0.4
+      scalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -212,7 +212,7 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 2
           time: 0
-          value: 0.5
+          value: 0.7
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -221,7 +221,7 @@ ParticleSystem:
         m_RotationOrder: 0
       minMaxState: 3
     startSpeed:
-      scalar: 3
+      scalar: 2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -239,7 +239,7 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 2
           time: 0
-          value: 0.6666667
+          value: 0.75
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -252,10 +252,10 @@ ParticleSystem:
       maxGradient:
         key0:
           serializedVersion: 2
-          rgba: 1807274151
+          rgba: 631946652
         key1:
           serializedVersion: 2
-          rgba: 1189995919
+          rgba: 415620051
         key2:
           serializedVersion: 2
           rgba: 0
@@ -282,7 +282,7 @@ ParticleSystem:
         ctime5: 0
         ctime6: 0
         ctime7: 0
-        atime0: 0
+        atime0: 193
         atime1: 65535
         atime2: 0
         atime3: 0
@@ -359,7 +359,7 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 2
           time: 0
-          value: 0.19999999
+          value: 0.5
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -608,7 +608,7 @@ ParticleSystem:
     enabled: 1
     serializedVersion: 3
     rateOverTime:
-      scalar: 300
+      scalar: 150
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -2744,7 +2744,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0
   m_MaxParticleSize: 0.5

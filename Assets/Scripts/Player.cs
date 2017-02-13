@@ -9,7 +9,8 @@ public enum PlayerState
     Attacking
 }
 
-public class Player : MonoBehaviour {
+public class Player : MonoBehaviour
+{
 
     Rigidbody2D rb2d;
     public Sword sword;
@@ -18,18 +19,20 @@ public class Player : MonoBehaviour {
     public int rollFrames; // Number of frames it takes to roll
     public float rollForce; // Force with which to roll
 
-    [ReadOnly] public int remStateFrames; // Remaining frames to continue current state; 0 when in idle
+    [ReadOnly]
+    public int remStateFrames; // Remaining frames to continue current state; 0 when in idle
 
     public int keys = 0;
+    public IItem[] Items { get { return GetComponentsInChildren<IItem>(); } }
 
     public PlayerState state = PlayerState.Idle;
 
-    void Awake ()
+    void Awake()
     {
         rb2d = GetComponent<Rigidbody2D>();
     }
 
-	void FixedUpdate ()
+    void FixedUpdate()
     {
         float xMotion = Input.GetAxis("Horizontal");
         float yMotion = Input.GetAxis("Vertical");
@@ -64,6 +67,11 @@ public class Player : MonoBehaviour {
             targetDirection.Normalize();
             Sword s = Instantiate(sword, (Vector2)transform.position + targetDirection, Quaternion.LookRotation(Vector3.forward, targetDirection), transform);
             remStateFrames = s.remainingFrames;
+        }
+
+        if (Input.GetButtonDown("Use item") && Items.Length >= 1)
+        {
+            Items[0].Activate(this);
         }
     }
 }

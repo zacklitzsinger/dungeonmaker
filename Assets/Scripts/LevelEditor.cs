@@ -93,9 +93,15 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         if (mode == EditMode.Create)
             SidebarCreateButtons();
         if (mode == EditMode.Test)
+        {
+            Camera.main.GetComponent<CameraFollow>().target = GetComponentInChildren<Player>().transform;
             SaveToTemp();
+        }
         if (prevMode == EditMode.Test)
+        {
+            Camera.main.GetComponent<CameraFollow>().target = null;
             LoadFromTemp();
+        }
     }
 
     // Update is called once per frame

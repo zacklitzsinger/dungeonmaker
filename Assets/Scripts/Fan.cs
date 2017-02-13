@@ -34,7 +34,7 @@ public class Fan : MonoBehaviour, ICustomSerializable
         for (int i = 1; i <= distance; i++)
         {
             Vector2 pos = transform.position + transform.up * i;
-            if (CheckForCollisions(LevelEditor.main.ConvertWorldPositionToGrid(pos)))
+            if (CheckForCollisions(LevelEditor.main.ConvertPositionToGrid(pos)))
                 return i-1;
         }
         return distance;

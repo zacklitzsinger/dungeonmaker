@@ -210,7 +210,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         List<Vector2> gridPoints = new List<Vector2>();
         foreach (Vector2 item in list)
         {
-            Vector2 point = Camera.main.ScreenToWorldPoint(ConvertPositionToGrid(item));
+            Vector2 point = ConvertPositionToGrid(Camera.main.ScreenToWorldPoint(item));
             if (!gridPoints.Contains(point))
                 gridPoints.Add(point);
         }
@@ -339,10 +339,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 if (EventSystem.current.IsPointerOverGameObject())
                     return;
                 // Draw currently selected grid square
-                Vector3 gridPos = ConvertPositionToGrid(Input.mousePosition);
+                Vector2 gridPos = Camera.main.WorldToScreenPoint(ConvertPositionToGrid(Camera.main.ScreenToWorldPoint(Input.mousePosition)));
                 gridPos.y = Screen.height - gridPos.y;
-                gridPos.x -= GRID_SIZE / 2;
-                gridPos.y -= GRID_SIZE / 2;
+                gridPos -= Vector2.one * GRID_SIZE / 2;
                 GUI.DrawTexture(new Rect(gridPos, new Vector2(GRID_SIZE, GRID_SIZE)), selectionBox);
                 if (selectedPrefab)
                 {
@@ -432,14 +431,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     public Vector3 ConvertPositionToGrid(Vector3 pos)
     {
-        pos.x = pos.x + GRID_SIZE / 2 - pos.x % GRID_SIZE;
-        pos.y = pos.y + GRID_SIZE / 2 - pos.y % GRID_SIZE;
+        pos.x = Mathf.Round(pos.x);
+        pos.y = Mathf.Round(pos.y);
         return pos;
-    }
-
-    public Vector3 ConvertWorldPositionToGrid(Vector3 pos)
-    {
-        return Camera.main.ScreenToWorldPoint(ConvertPositionToGrid(Camera.main.WorldToScreenPoint(pos)));
     }
 
     public void Serialize(BinaryWriter bw)

@@ -18,6 +18,14 @@ public class ObjectData : MonoBehaviour, ICustomSerializable
     public Guid guid; // Set outside of this behavior...
     public ObjectType type;
 
+    public bool Navigable
+    {
+        get
+        {
+            return type != ObjectType.Wall;
+        }
+    }
+
     public void Deserialize(BinaryReader br)
     {
         type = (ObjectType)br.ReadInt32();

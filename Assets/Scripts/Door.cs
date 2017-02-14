@@ -18,6 +18,18 @@ public class Door : MonoBehaviour, ICustomSerializable {
         animator = GetComponent<Animator>();
     }
 
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "Player" && GetComponent<Circuit>() == null)
+            open = true;
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.tag == "Player" && GetComponent<Circuit>() == null)
+            open = false;
+    }
+
     void Update()
     {
         animator.SetBool("open", open);

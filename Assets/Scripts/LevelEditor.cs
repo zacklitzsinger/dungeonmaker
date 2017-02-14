@@ -46,6 +46,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public string levelName;
     public Dictionary<Vector2, List<GameObject>> tilemap = new Dictionary<Vector2, List<GameObject>>();
     public Dictionary<Guid, GameObject> guidmap = new Dictionary<Guid, GameObject>();
+    public NavMap navmap = new NavMap();
+    NavigationCalculator<MapNode> navcalc;
+    public List<MapNode> currentRoom = new List<MapNode>();
 
     // When testing, save to a temporary file beforehand so we can reload the level after finishing
     private string tempFilename;
@@ -54,6 +57,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     void Start()
     {
         main = this;
+        navcalc = new NavigationCalculator<MapNode>(navmap);
 
         SidebarCreateButtons();
 
@@ -63,6 +67,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         });
     }
 
+    /// <summary>
+    /// Creates the prefab selection buttons in the sidebar
+    /// </summary>
     void SidebarCreateButtons()
     {
         foreach (GameObject option in prefabOptions)
@@ -81,12 +88,18 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         }
     }
 
+    /// <summary>
+    /// Removes all items from the sidebar
+    /// </summary>
     void ClearSidebar()
     {
         foreach (Transform child in sidebarContent.transform)
             Destroy(child.gameObject);
     }
 
+    /// <summary>
+    /// Change current level edit mode from one mode to another
+    /// </summary>
     void ChangeMode(EditMode newMode)
     {
         if (mode == newMode)
@@ -100,13 +113,14 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         if (mode == EditMode.Test)
         {
             Player player = GetComponentInChildren<Player>();
-            if (player)
-                Camera.main.GetComponent<CameraFollow>().target = player.transform;
+            //if (player)
+            //    Camera.main.GetComponent<CameraFollow>().target = player.transform;
             SaveToTemp();
         }
         if (prevMode == EditMode.Test)
         {
             Camera.main.GetComponent<CameraFollow>().target = null;
+            currentRoom.Clear();
             LoadFromTemp();
         }
     }
@@ -114,6 +128,15 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     // Update is called once per frame
     void Update()
     {
+        if (currentRoom.Count > 0)
+        {
+            Vector2 avg = Vector2.zero;
+            foreach (MapNode node in currentRoom)
+                avg += new Vector2(node.x, node.y);
+            avg /= currentRoom.Count;
+            Camera.main.GetComponent<CameraFollow>().target = avg;
+        }
+
         if (Input.GetButtonDown("Create Mode"))
             ChangeMode(EditMode.Create);
         else if (Input.GetButtonDown("Edit Mode"))
@@ -126,6 +149,12 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             rotation = (rotation + 90f) % 360;
         else if (Input.GetButtonDown("Rotate CCW"))
             rotation = (rotation + 270f) % 360;
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            Debug.Log(GetGridMousePosition());
+            Debug.Log(navcalc.GetConnectedNodes(new MapNode(GetGridMousePosition())).Count);
+        }
 
         // Pause time while editing
         Time.timeScale = (mode >= EditMode.Create ? 0 : 1);
@@ -153,7 +182,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 if (Input.GetMouseButton(1))
                 {
                     foreach (Vector2 point in GetGridPointsAlongLine(lastMousePosition, Input.mousePosition))
-                        DestroyGameObjectsAtGridPosition(point);
+                        DestroyAllGameObjectsAtGridPosition(point);
                 }
                 break;
 
@@ -175,15 +204,15 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             case EditMode.Circuit:
                 if (Input.GetMouseButtonDown(0))
                 {
+                    GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
                     if (!selectedGameObject)
                     {
                         // Start creating a connection
-                        selectedGameObject = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                        selectedGameObject = go;
                     }
                     else
                     {
                         // Finish placing a connection
-                        GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
                         // Picked same object twice...
                         if (go == selectedGameObject)
                             break;
@@ -192,7 +221,10 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                             Circuit circuit = go.GetComponent<Circuit>() ?? go.AddComponent<Circuit>();
                             Circuit otherCircuit = selectedGameObject.GetComponent<Circuit>() ?? selectedGameObject.AddComponent<Circuit>();
                             if (circuit)
+                            {
                                 otherCircuit.Connect(circuit);
+                                selectedGameObject = null;
+                            }
                         }
                     }
                 }
@@ -217,8 +249,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         lastMousePosition = Input.mousePosition;
     }
 
-    // Directly for use with mouse, not sure if this function makes sense w.r.t other things.
-    // Gets points in the grid along a line.
+    /// <summary>
+    /// Gets points in the grid along a line.
+    /// </summary>
     List<Vector2> GetGridPointsAlongLine(Vector2 from, Vector2 to, int pxFreq = 8)
     {
         List<Vector2> list = new List<Vector2>();
@@ -237,6 +270,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         return gridPoints;
     }
 
+    /// <summary>
+    /// Instantiates a copy of the currently selected prefab at the given grid position with the given rotation.
+    /// </summary>
     GameObject CreateSelectedPrefabAtGridPosition(Vector2 gridPos, float rotation = 0f)
     {
         ObjectData data = selectedPrefab.GetComponent<ObjectData>();
@@ -250,11 +286,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             // Don't replace if it's the same exact type of object
             if (sameGroupGameObject.name == selectedPrefab.name)
                 return null;
-            tilemap[gridPos].Remove(sameGroupGameObject);
-            Destroy(sameGroupGameObject);
+            DestroyGameObjectAtGridPosition(gridPos, sameGroupGameObject);
         }
         GameObject go = CreateObjectAtGrid(gridPos, selectedPrefab);
-        tilemap[gridPos].Add(go);
         Guid id = Guid.NewGuid();
         go.GetComponent<ObjectData>().guid = id;
         guidmap[id] = go;
@@ -262,32 +296,64 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         return go;
     }
 
-    void DestroyGameObjectsAtGridPosition(Vector2 gridPos)
+    /// <summary>
+    /// Destroy all game objects at the grid position in the tilemap.
+    /// </summary>
+    /// <param name="gridPos"></param>
+    void DestroyAllGameObjectsAtGridPosition(Vector2 gridPos)
     {
         if (!tilemap.ContainsKey(gridPos))
             return;
         List<GameObject> goList = tilemap[gridPos];
-        foreach (GameObject go in goList)
-        {
-            Guid id = go.GetComponent<ObjectData>().guid;
-            guidmap.Remove(id);
-            Destroy(go);
-        }
-        tilemap.Remove(gridPos);
+        while (goList.Count > 0)
+            DestroyGameObjectAtGridPosition(gridPos, goList[0]);
     }
 
+    /// <summary>
+    /// Destroy a single game object at the grid position in the tilemap.
+    /// </summary>
+    void DestroyGameObjectAtGridPosition(Vector2 gridPos, GameObject go)
+    {
+        if (!tilemap.ContainsKey(gridPos))
+            return;
+        ObjectData data = go.GetComponent<ObjectData>();
+        List<GameObject> goList = tilemap[gridPos];
+        goList.Remove(go);
+        if (goList.Count == 0)
+            tilemap.Remove(gridPos);
+        Guid id = data.guid;
+        guidmap.Remove(id);
+        UpdateNavPoint(gridPos);
+        Destroy(go);
+    }
+
+    /// <summary>
+    /// Returns the grid position under the mouse.
+    /// </summary>
+    /// <returns></returns>
     Vector2 GetGridMousePosition()
     {
-        return Camera.main.ScreenToWorldPoint(ConvertPositionToGrid(Input.mousePosition));
+        return ConvertPositionToGrid(Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 
+    /// <summary>
+    /// Instantiates given prefab at the point on the grid
+    /// </summary>
     GameObject CreateObjectAtGrid(Vector2 point, GameObject obj)
     {
         GameObject newObj = Instantiate(obj, point, Quaternion.identity, transform);
+        ObjectData data = newObj.GetComponent<ObjectData>();
         newObj.name = obj.name;
+        if (!tilemap.ContainsKey(point))
+            tilemap[point] = new List<GameObject>();
+        tilemap[point].Add(newObj);
+        UpdateNavPoint(point);
         return newObj;
     }
 
+    /// <summary>
+    /// Get the topmost tile at the grid point.
+    /// </summary>
     GameObject GetGameObjectAtPoint(Vector2 point)
     {
         point = ConvertPositionToGrid(point);
@@ -305,6 +371,67 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 choice = go.GetComponent<ObjectData>();
         }
         return choice ? choice.gameObject : null;
+    }
+
+    /// <summary>
+    /// Updates the NavMap based on the current tile data
+    /// </summary>
+    void UpdateNavPoint(Vector2 gridPos)
+    {
+        if (!tilemap.ContainsKey(gridPos) || tilemap[gridPos].Count == 0)
+        {
+            navmap.Remove(gridPos);
+            return;
+        }
+        foreach (GameObject go in tilemap[gridPos])
+        {
+            ObjectData data = go.GetComponent<ObjectData>();
+            if (!data.Navigable)
+            {
+                navmap.Remove(gridPos);
+                return;
+            }
+        }
+        navmap.Add(gridPos);
+    }
+
+    /// <summary>
+    /// Set the currently active room. Uses NavMap to determine what is contained in the current room.
+    /// </summary>
+    public void SetCurrentRoom(Vector2 gridPos)
+    {
+        gridPos = ConvertPositionToGrid(gridPos);
+        MapNode currentNode = new MapNode(gridPos);
+        if (currentRoom.Contains(currentNode))
+            return;
+        currentRoom = navcalc.GetConnectedNodes(currentNode);
+        // Iterate only through the original list.
+        int nodeCount = currentRoom.Count;
+        for (int i = 0; i < nodeCount; i++)
+        {
+            foreach (MapNode node in navmap.GetPotentialNeighbors(currentRoom[i]))
+                if (!currentRoom.Contains(node))
+                    currentRoom.Add(node);
+        }
+        foreach(KeyValuePair<Vector2, List<GameObject>> pair in tilemap)
+        {
+            bool active = currentRoom.Contains(new MapNode(pair.Key));
+            foreach (GameObject go in pair.Value)
+                if (go != null)
+                    SetTileActive(go, go.tag == "Player" || active);
+        }
+    }
+
+    /// <summary>
+    /// Shows or hides a given tile (based on whether it is in the current room).
+    /// </summary>
+    void SetTileActive(GameObject go, bool active)
+    {
+        if (go == null)
+            return;
+        go.GetComponent<SpriteRenderer>().enabled = active;
+        foreach (ParticleSystem ps in go.GetComponentsInChildren<ParticleSystem>())
+            ps.gameObject.SetActive(active);
     }
 
     /// <summary>
@@ -400,8 +527,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 }
 
                 // Draw circuits - technically draws each line twice, but shouldn't matter
-                Circuit[] circuits = GetComponentsInChildren<Circuit>();
-                foreach (Circuit circuit in circuits)
+                foreach (Circuit circuit in GetComponentsInChildren<Circuit>())
                 {
                     Color c = circuitColor;
                     if (circuit.gameObject == selectedGameObject)
@@ -458,6 +584,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         File.Delete(tempFilename);
     }
 
+    /// <summary>
+    /// Rounds the given position to the grid. Assumes world position.
+    /// </summary>
     public Vector3 ConvertPositionToGrid(Vector3 pos)
     {
         pos.x = Mathf.Round(pos.x);
@@ -489,6 +618,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         }
     }
 
+    /// <summary>
+    /// Serialize the components on a given game object
+    /// </summary>
     void SerializeComponents(GameObject go, BinaryWriter bw)
     {
         var components = go.GetComponents<ICustomSerializable>();
@@ -512,7 +644,6 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             Vector2 pos = new Vector2(br.ReadSingle(), br.ReadSingle());
             int goCount = br.ReadInt32();
             List<GameObject> goList = new List<GameObject>();
-            tilemap[pos] = goList;
             for (int j = 0; j < goCount; j++)
             {
                 // TODO: Should separate deserialization with instantiating game objects so levels can easily be reset
@@ -539,6 +670,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     }
 
+    /// <summary>
+    /// Deserialize the components on a given game object.
+    /// </summary>
     void DeserializeComponents(GameObject go, BinaryReader br)
     {
         var count = br.ReadInt32();

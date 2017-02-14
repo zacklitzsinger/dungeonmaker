@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 public class CameraFollow : MonoBehaviour
 {
 
-    public Transform target;
+    public Vector2? target;
 
     // Update is called once per frame
     void Update()
@@ -17,8 +17,7 @@ public class CameraFollow : MonoBehaviour
             Vector2 topLeft = Camera.main.ScreenToWorldPoint(Vector2.one * allowedDistanceFromBorder);
             Vector2 bottomRight = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height) - Vector2.one * allowedDistanceFromBorder);
             Rect r = new Rect(topLeft, bottomRight - topLeft);
-            if (!r.Contains(target.position))
-                MoveTowardsTarget(target.position);
+            MoveTowardsTarget((Vector2)target);
         }
         else if (!EventSystem.current.IsPointerOverGameObject())
         {
@@ -28,7 +27,7 @@ public class CameraFollow : MonoBehaviour
         }
     }
 
-    void MoveTowardsTarget(Vector2 pos, float lerp = 0.005f)
+    void MoveTowardsTarget(Vector2 pos, float lerp = 0.075f)
     {
         Vector3 newPosition = Vector2.Lerp(Camera.main.transform.position, pos, lerp);
         newPosition.z = transform.position.z;

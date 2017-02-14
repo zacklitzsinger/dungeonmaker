@@ -23,6 +23,8 @@ public class Wind : MonoBehaviour {
     {
         GetComponent<BoxCollider2D>().size = new Vector2(0.5f, size);
         ParticleSystem ps = GetComponentInChildren<ParticleSystem>();
+        if (ps == null)
+            return;
         ParticleSystem.ShapeModule shape = ps.shape;
         shape.box = new Vector3(1, 0, size > 1 ? size -1 : size / 2);
         if (active && size > 0)

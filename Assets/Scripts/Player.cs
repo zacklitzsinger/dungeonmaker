@@ -34,6 +34,8 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
+        LevelEditor.main.SetCurrentRoom(transform.position);
+
         float xMotion = Input.GetAxis("Horizontal");
         float yMotion = Input.GetAxis("Vertical");
         Vector2 targetMotion = Vector2.right * xMotion + Vector2.up * yMotion;

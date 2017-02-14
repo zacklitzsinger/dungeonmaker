@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -429,9 +430,25 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     {
         if (go == null)
             return;
-        go.GetComponent<SpriteRenderer>().enabled = active;
+        StartCoroutine(ControlAlpha(go.GetComponent<SpriteRenderer>(), active ? 1f : 0f));
+        //go.GetComponent<SpriteRenderer>().enabled = active;
         foreach (ParticleSystem ps in go.GetComponentsInChildren<ParticleSystem>())
             ps.gameObject.SetActive(active);
+    }
+
+    IEnumerator ControlAlpha(SpriteRenderer r, float targetAlpha)
+    {
+        float alpha = r.color.a;
+        while (alpha != targetAlpha)
+        {
+            yield return new WaitForFixedUpdate();
+            alpha = Mathf.Lerp(alpha, targetAlpha, 0.15f);
+            if (Math.Abs(alpha - targetAlpha) < 0.05f)
+                alpha = targetAlpha;
+            Color c = r.color;
+            c.a = alpha;
+            r.color = c;
+        }
     }
 
     /// <summary>

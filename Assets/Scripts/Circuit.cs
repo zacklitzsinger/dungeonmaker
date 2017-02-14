@@ -32,6 +32,8 @@ public class Circuit : MonoBehaviour, ICustomSerializable
     /// <param name="other"></param>
     public void Connect(Circuit other)
     {
+        if (other == this)
+            return;
         if (!outputs.Contains(other))
             outputs.Add(other);
         if (!other.inputs.Contains(this))

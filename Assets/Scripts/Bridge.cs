@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Bridge : MonoBehaviour {
 
-    public bool active = false;
+    public bool active = true;
 
     [PlayerEditable("Invert")]
     public bool invert = false;

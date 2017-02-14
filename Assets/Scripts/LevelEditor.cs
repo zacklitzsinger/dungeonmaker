@@ -94,7 +94,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             SidebarCreateButtons();
         if (mode == EditMode.Test)
         {
-            Camera.main.GetComponent<CameraFollow>().target = GetComponentInChildren<Player>().transform;
+            Player player = GetComponentInChildren<Player>();
+            if (player)
+                Camera.main.GetComponent<CameraFollow>().target = player.transform;
             SaveToTemp();
         }
         if (prevMode == EditMode.Test)
@@ -177,6 +179,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 if (Input.GetMouseButtonUp(0) && selectedGameObject)
                 {
                     GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                    // Picked same object twice...
+                    if (go == selectedGameObject)
+                        break;
                     if (go)
                     {
                         Circuit circuit = go.GetComponent<Circuit>() ?? go.AddComponent<Circuit>();

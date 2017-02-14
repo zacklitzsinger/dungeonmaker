@@ -226,7 +226,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  allowedDistanceFromBorder: 300
 --- !u!1 &160178127
 GameObject:
   m_ObjectHideFlags: 0
@@ -1918,6 +1917,7 @@ MonoBehaviour:
   - {fileID: 1002282342740670, guid: 433a3505907197848b3e7aa9cc527f08, type: 2}
   - {fileID: 1002282342740670, guid: 233a4ae5caad9d94386bdb161614fe8b, type: 2}
   - {fileID: 1002282342740670, guid: 02ab67e00c5a6c0469f9d9c19e68d7f4, type: 2}
+  - {fileID: 1002282342740670, guid: 378cf9aaa66fbc041817495c3941f7c0, type: 2}
   rotation: 0
   sidebar: {fileID: 851146842}
   levelNameInput: {fileID: 455753647}
@@ -1930,6 +1930,10 @@ MonoBehaviour:
     type: 2}
   prefabIntSlider: {fileID: 1120791588321864, guid: 45816976d412d3d4fad42df12d32cc1c,
     type: 2}
+  circuitColor: {r: 0.86764705, g: 0.12759517, b: 0.12759517, a: 1}
+  selectedCircuitInputColor: {r: 0.48417848, g: 0.9117647, b: 0, a: 1}
+  selectedCircuitOutputColor: {r: 0.9852941, g: 0.40490997, b: 0.028979266, a: 1}
+  selectedConnectionColor: {r: 0.9632353, g: 0.12748703, b: 0.4214399, a: 1}
   levelName: 
 --- !u!1 &1077726367
 GameObject:

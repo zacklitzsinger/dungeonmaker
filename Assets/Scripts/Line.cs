@@ -41,8 +41,8 @@ public class Line : MonoBehaviour {
 
     public void DrawArrow(Vector2 from, Vector2 to, Color c)
     {
-        Vector2 arrow1 = (Quaternion.AngleAxis(30, Vector3.forward) * (from - to)).normalized * 0.5f;
-        Vector2 arrow2 = (Quaternion.AngleAxis(-30, Vector3.forward) * (from - to)).normalized * 0.5f;
+        Vector2 arrow1 = (Quaternion.AngleAxis(30, Vector3.forward) * (from - to)).normalized * 0.3f;
+        Vector2 arrow2 = (Quaternion.AngleAxis(-30, Vector3.forward) * (from - to)).normalized * 0.3f;
         lines.Add(new LineInfo() { points = new Vector2[] { from, to }, color = c });
         lines.Add(new LineInfo() { points = new Vector2[] { to, to + arrow1 }, color = c });
         lines.Add(new LineInfo() { points = new Vector2[] { to, to + arrow2 }, color = c });

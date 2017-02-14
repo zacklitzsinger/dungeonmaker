@@ -37,6 +37,11 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public Toggle prefabToggle;
     public GameObject prefabIntSlider;
 
+    public Color circuitColor;
+    public Color selectedCircuitInputColor;
+    public Color selectedCircuitOutputColor;
+    public Color selectedConnectionColor;
+
     // Level information
     public string levelName;
     public Dictionary<Vector2, List<GameObject>> tilemap = new Dictionary<Vector2, List<GameObject>>();
@@ -168,45 +173,42 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 break;
 
             case EditMode.Circuit:
-
-                // Start creating a connection
                 if (Input.GetMouseButtonDown(0))
                 {
-                    selectedGameObject = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                }
-
-                // Finish placing a connection
-                if (Input.GetMouseButtonUp(0) && selectedGameObject)
-                {
-                    GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                    // Picked same object twice...
-                    if (go == selectedGameObject)
-                        break;
-                    if (go)
+                    if (!selectedGameObject)
                     {
-                        Circuit circuit = go.GetComponent<Circuit>() ?? go.AddComponent<Circuit>();
-                        Circuit otherCircuit = selectedGameObject.GetComponent<Circuit>() ?? selectedGameObject.AddComponent<Circuit>();
-                        if (circuit)
-                        {
-                            otherCircuit.Connect(circuit);
-                            selectedGameObject = null;
-                        }
+                        // Start creating a connection
+                        selectedGameObject = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
                     }
                     else
                     {
-                        selectedGameObject = null;
+                        // Finish placing a connection
+                        GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                        // Picked same object twice...
+                        if (go == selectedGameObject)
+                            break;
+                        if (go)
+                        {
+                            Circuit circuit = go.GetComponent<Circuit>() ?? go.AddComponent<Circuit>();
+                            Circuit otherCircuit = selectedGameObject.GetComponent<Circuit>() ?? selectedGameObject.AddComponent<Circuit>();
+                            if (circuit)
+                                otherCircuit.Connect(circuit);
+                        }
                     }
                 }
 
                 if (Input.GetMouseButtonDown(1))
                 {
-                    GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                    if (go)
+                    if (selectedGameObject)
+                        selectedGameObject = null;
+                    else
                     {
-                        Circuit circuit = go.GetComponent<Circuit>();
-                        if (circuit)
+                        GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                        if (go)
                         {
-                            circuit.Disconnect();
+                            Circuit circuit = go.GetComponent<Circuit>();
+                            if (circuit)
+                                circuit.Disconnect();
                         }
                     }
                 }
@@ -288,18 +290,19 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     GameObject GetGameObjectAtPoint(Vector2 point)
     {
-        Collider2D[] colliders = Physics2D.OverlapPointAll(point);
+        point = ConvertPositionToGrid(point);
+        if (!tilemap.ContainsKey(point))
+            return null;
         ObjectData choice = null;
-        foreach (Collider2D collider in colliders)
+        foreach (GameObject go in tilemap[point])
         {
-            ObjectData data = collider.GetComponent<ObjectData>();
             // Must be an object the level editor knows about
-            if (collider.transform.parent != transform || data == null)
+            if (go.transform.parent != transform)
                 continue;
             if (choice == null)
-                choice = data;
-            else if (choice.type < data.type)
-                choice = data;
+                choice = go.GetComponent<ObjectData>();
+            else if (choice.type < go.GetComponent<ObjectData>().type)
+                choice = go.GetComponent<ObjectData>();
         }
         return choice ? choice.gameObject : null;
     }
@@ -326,7 +329,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                         {
                             field.SetValue(component, (bool)val);
                         });
-                    } else if (field.FieldType == typeof(int))
+                    }
+                    else if (field.FieldType == typeof(int))
                     {
                         var rangeAttr = attr as PlayerEditableRangeAttribute;
                         GameObject range = Instantiate(prefabIntSlider, sidebarContent.transform);
@@ -342,7 +346,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                             field.SetValue(component, (int)val);
                             text.text = rangeAttr.Name + ": " + val;
                         });
-                        
+
                     }
                 }
             }
@@ -392,16 +396,22 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 // Draw line from selected object to mouse if we are placing a circuit
                 if (selectedGameObject)
                 {
-                    line.DrawArrow(selectedGameObject.transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition), Color.red);
+                    line.DrawArrow(selectedGameObject.transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition), selectedConnectionColor);
                 }
 
                 // Draw circuits - technically draws each line twice, but shouldn't matter
-                foreach (Transform child in transform)
+                Circuit[] circuits = GetComponentsInChildren<Circuit>();
+                foreach (Circuit circuit in circuits)
                 {
-                    Circuit circuit = child.GetComponent<Circuit>();
-                    if (circuit)
-                        foreach (Circuit output in circuit.outputs)
-                            line.DrawArrow(circuit.transform.position, output.transform.position, Color.red);
+                    Color c = circuitColor;
+                    if (circuit.gameObject == selectedGameObject)
+                        c = selectedCircuitOutputColor;
+                    foreach (Circuit output in circuit.outputs)
+                    {
+                        if (output.gameObject == selectedGameObject)
+                            c = selectedCircuitInputColor;
+                        line.DrawArrow(circuit.transform.position, output.transform.position, c);
+                    }
                 }
                 break;
         }

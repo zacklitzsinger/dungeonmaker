@@ -47,9 +47,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public string levelName;
     public Dictionary<Vector2, List<GameObject>> tilemap = new Dictionary<Vector2, List<GameObject>>();
     public Dictionary<Guid, GameObject> guidmap = new Dictionary<Guid, GameObject>();
-    public NavMap navmap = new NavMap();
+    NavMap navmap;
     NavigationCalculator<MapNode> navcalc;
-    public List<MapNode> currentRoom = new List<MapNode>();
+    List<MapNode> currentRoom = new List<MapNode>();
 
     // When testing, save to a temporary file beforehand so we can reload the level after finishing
     private string tempFilename;
@@ -58,6 +58,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     void Start()
     {
         main = this;
+        navmap = new NavMap(tilemap);
         navcalc = new NavigationCalculator<MapNode>(navmap);
 
         SidebarCreateButtons();
@@ -120,7 +121,6 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         }
         if (prevMode == EditMode.Test)
         {
-            Camera.main.GetComponent<CameraFollow>().target = null;
             currentRoom.Clear();
             LoadFromTemp();
         }
@@ -129,14 +129,6 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     // Update is called once per frame
     void Update()
     {
-        if (currentRoom.Count > 0)
-        {
-            Vector2 avg = Vector2.zero;
-            foreach (MapNode node in currentRoom)
-                avg += new Vector2(node.x, node.y);
-            avg /= currentRoom.Count;
-            Camera.main.GetComponent<CameraFollow>().target = avg;
-        }
 
         if (Input.GetButtonDown("Create Mode"))
             ChangeMode(EditMode.Create);
@@ -324,7 +316,6 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             tilemap.Remove(gridPos);
         Guid id = data.guid;
         guidmap.Remove(id);
-        UpdateNavPoint(gridPos);
         Destroy(go);
     }
 
@@ -348,7 +339,6 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         if (!tilemap.ContainsKey(point))
             tilemap[point] = new List<GameObject>();
         tilemap[point].Add(newObj);
-        UpdateNavPoint(point);
         return newObj;
     }
 
@@ -375,28 +365,6 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     }
 
     /// <summary>
-    /// Updates the NavMap based on the current tile data
-    /// </summary>
-    void UpdateNavPoint(Vector2 gridPos)
-    {
-        if (!tilemap.ContainsKey(gridPos) || tilemap[gridPos].Count == 0)
-        {
-            navmap.Remove(gridPos);
-            return;
-        }
-        foreach (GameObject go in tilemap[gridPos])
-        {
-            ObjectData data = go.GetComponent<ObjectData>();
-            if (!data.Navigable)
-            {
-                navmap.Remove(gridPos);
-                return;
-            }
-        }
-        navmap.Add(gridPos);
-    }
-
-    /// <summary>
     /// Set the currently active room. Uses NavMap to determine what is contained in the current room.
     /// </summary>
     public void SetCurrentRoom(Vector2 gridPos)
@@ -414,6 +382,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 if (!currentRoom.Contains(node))
                     currentRoom.Add(node);
         }
+
+        // Update visibility
         foreach(KeyValuePair<Vector2, List<GameObject>> pair in tilemap)
         {
             bool active = currentRoom.Contains(new MapNode(pair.Key));
@@ -421,6 +391,13 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 if (go != null)
                     SetTileActive(go, go.tag == "Player" || active);
         }
+
+        // Update camera
+        Vector2 avg = Vector2.zero;
+        foreach (MapNode node in currentRoom)
+            avg += new Vector2(node.x, node.y);
+        avg /= currentRoom.Count;
+        Camera.main.GetComponent<CameraFollow>().SetTarget(avg);
     }
 
     /// <summary>
@@ -431,7 +408,6 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         if (go == null)
             return;
         StartCoroutine(ControlAlpha(go.GetComponent<SpriteRenderer>(), active ? 1f : 0f));
-        //go.GetComponent<SpriteRenderer>().enabled = active;
         foreach (ParticleSystem ps in go.GetComponentsInChildren<ParticleSystem>())
             ps.gameObject.SetActive(active);
     }

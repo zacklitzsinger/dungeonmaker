@@ -31,45 +31,31 @@ public class MapNode : NavNode<MapNode>
         hash += 11 * y.GetHashCode();
         return hash;
     }
+
+    public Vector2 ToVector2()
+    {
+        return new Vector2(x, y);
+    }
 }
 
 public class NavMap : INavMap<MapNode>
 {
-    public Dictionary<MapNode, bool> map = new Dictionary<MapNode, bool>();
-    int xMin, xMax, yMin, yMax;
+    Dictionary<Vector2, List<GameObject>> map;
 
-    public void Add(Vector2 point)
+    public NavMap(Dictionary<Vector2, List<GameObject>> map)
     {
-        MapNode node = new MapNode(point);
-        if (map.ContainsKey(node))
-            return;
-        map[node] = true;
-        ExtendBorders(node);
+        this.map = map;
     }
 
-    public void Remove(Vector2 point)
+    public bool Blocking(MapNode node)
     {
-        if (map.Remove(new MapNode(point)))
-            RecalculateBorders();
-    }
-
-    void RecalculateBorders()
-    {
-        xMin = xMax = yMin = yMax = 0;
-        foreach(MapNode node in map.Keys)
-            ExtendBorders(node);
-    }
-
-    void ExtendBorders(MapNode node)
-    {
-        if (node.x < xMin)
-            xMin = node.x;
-        else if (node.x > xMax)
-            xMax = node.x;
-        if (node.y < yMin)
-            yMin = node.y;
-        else if (node.y > yMax)
-            yMax = node.y;
+        if (!map.ContainsKey(node.ToVector2()))
+            return false;
+        List<GameObject> goList = map[node.ToVector2()];
+        foreach (GameObject g in goList)
+            if (g.GetComponent<ObjectData>().type == ObjectType.Wall)
+                return true;
+        return false;
     }
 
     public float DistanceBetween(MapNode one, MapNode two)
@@ -80,21 +66,21 @@ public class NavMap : INavMap<MapNode>
     public List<MapNode> GetPotentialNeighbors(MapNode current)
     {
         List<MapNode> ret = new List<MapNode>();
-        for (int x = current.x - 1; x < current.x + 2; x++)
-        {
-            for (int y = current.y - 1; y < current.y + 2; y++)
+        for (int x = current.x - 1; x <= current.x + 1; x++)
+            for (int y = current.y - 1; y <= current.y + 1; y++)
             {
                 if (x == current.x && y == current.y)
                     continue;
                 MapNode node = new MapNode(x, y);
                 ret.Add(node);
             }
-        }
         return ret;
     }
 
     public List<MapNode> GetNeighbors(MapNode current)
     {
-        return GetPotentialNeighbors(current).FindAll((n) => { return map.ContainsKey(n); });
+        return GetPotentialNeighbors(current).FindAll((n) => {
+            return !Blocking(n);
+        });
     }
 }

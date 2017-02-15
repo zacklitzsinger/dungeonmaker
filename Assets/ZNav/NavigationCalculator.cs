@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
-/**
- * This class does modify the given NavNodes and does direct comparisons between them.
- * Do not construct more than one NavNode per actual node on the map.
- */
+/// <summary>
+/// This class does modify the given NavNodes and does direct comparisons between them.
+/// Do not construct more than one NavNode per actual node on the map.
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public class NavigationCalculator<T> where T : NavNode<T> {
 
     private INavMap<T> map_;
@@ -15,9 +14,9 @@ public class NavigationCalculator<T> where T : NavNode<T> {
         map_ = map;
     }
 
-    /**
-     * Returns an ordered list of INavNodes from start to end.
-     */
+    /// <summary>
+    /// Returns an ordered list of INavNodes from start to end.
+    /// </summary>
     public List<T> CalculatePath(T start, T end)
     {
         List<T> neighbors;
@@ -61,9 +60,9 @@ public class NavigationCalculator<T> where T : NavNode<T> {
         return null;
     }
 
-    /**
-     * Inserts into a sorted list. Removes first if the element is already there.
-     */
+    /// <summary>
+    /// Inserts into a sorted list. Removes first if the element is already there.
+    /// </summary>
     private void InsertIntoOpen(List<T> openNodes, T node)
     {
         if (openNodes.Contains(node))
@@ -82,10 +81,9 @@ public class NavigationCalculator<T> where T : NavNode<T> {
         openNodes.Insert(openNodes.Count, node);
     }
 
-    /**
-     * Takes the final node and builds the path backwards from that node to the start.
-     * Then, it reverses the resulting list to give a forward path.
-     */
+    /// <summary>
+    /// Takes the final node and builds the path backwards from that node to the start. Then, it reverses the resulting list to give a forward path.
+    /// </summary>
     private List<T> GetPath(T end)
     {
         T current = end;
@@ -100,9 +98,9 @@ public class NavigationCalculator<T> where T : NavNode<T> {
         return path;
     }
 
-    /**
- * Returns all nodes connected to the given node.
- */
+    /// <summary>
+    /// Returns all nodes connected to the given node.
+    /// </summary>
     public List<T> GetConnectedNodes(T start)
     {
         List<T> neighbors;

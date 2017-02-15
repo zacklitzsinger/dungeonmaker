@@ -225,7 +225,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbecb62353b7de6488d6d8b822c2d89e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultLerp: 0.05
 --- !u!1 &160178127
 GameObject:
   m_ObjectHideFlags: 0
@@ -1903,7 +1902,7 @@ MonoBehaviour:
   selectedGameObject: {fileID: 0}
   prefabOptions:
   - {fileID: 1002282342740670, guid: ac88180429c6666468c88098a74e78cb, type: 2}
-  - {fileID: 1002282342740670, guid: eaf6303de2de0584dafbf4efee8676c5, type: 2}
+  - {fileID: 1002282342740670, guid: 2af54bf0c98f2ec48a86c5a09d919f75, type: 2}
   - {fileID: 1906677971985918, guid: 3b78b21213f71984f9872364f17a2bc9, type: 2}
   - {fileID: 1002282342740670, guid: de31007a10894f14e91c7c3a9392f6fd, type: 2}
   - {fileID: 1002282342740670, guid: afb46e845b606854d85c30913fbcb574, type: 2}

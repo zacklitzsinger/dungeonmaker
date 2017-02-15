@@ -1,19 +1,33 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class LockedDoor : MonoBehaviour {
 
-    void OnCollisionEnter2D(Collision2D collision)
+    public bool locked = true;
+    Animator animator;
+    Door door;
+
+    void Start()
     {
-        if (collision.gameObject.tag == "Player")
+        animator = GetComponent<Animator>();
+        door = GetComponent<Door>();
+    }
+
+    void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (locked && collider.tag == "Player")
         {
-            var player = collision.gameObject.GetComponent<Player>();
+            var player = collider.GetComponent<Player>();
             if (player.keys > 0)
             {
                 player.keys--;
-                Destroy(gameObject);
+                locked = false;
             }
         }
+    }
+
+    void Update()
+    {
+        door.enabled = !locked;
+        animator.SetBool("locked", locked);
     }
 }

@@ -52,8 +52,8 @@ public class NavMap : INavMap<MapNode>
         if (!map.ContainsKey(node.ToVector2()))
             return false;
         List<GameObject> goList = map[node.ToVector2()];
-        foreach (GameObject g in goList)
-            if (g.GetComponent<ObjectData>().type == ObjectType.Wall)
+        foreach (GameObject g in goList) 
+            if (g != null && g.GetComponent<ObjectData>().type == ObjectType.Wall)
                 return true;
         return false;
     }

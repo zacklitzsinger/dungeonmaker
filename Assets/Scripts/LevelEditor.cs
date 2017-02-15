@@ -47,8 +47,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public string levelName;
     public Dictionary<Vector2, List<GameObject>> tilemap = new Dictionary<Vector2, List<GameObject>>();
     public Dictionary<Guid, GameObject> guidmap = new Dictionary<Guid, GameObject>();
-    NavMap navmap;
-    NavigationCalculator<MapNode> navcalc;
+    public NavMap navmap;
+    public NavigationCalculator<MapNode> navcalc;
     List<MapNode> currentRoom = new List<MapNode>();
 
     // When testing, save to a temporary file beforehand so we can reload the level after finishing

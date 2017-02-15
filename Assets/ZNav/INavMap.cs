@@ -17,4 +17,6 @@ public interface INavMap<T> where T : NavNode<T> {
      * Returns the distance between two NavNodes
      */
     float DistanceBetween(T one, T two);
+
+    void RecalculateBounds();
 }

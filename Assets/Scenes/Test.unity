@@ -154,7 +154,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 11.296875
+  orthographic size: 11.281251
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -368,7 +368,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 10
   m_Viewport: {fileID: 585780007}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 1274111160}
@@ -1917,6 +1917,7 @@ MonoBehaviour:
   - {fileID: 1002282342740670, guid: 233a4ae5caad9d94386bdb161614fe8b, type: 2}
   - {fileID: 1002282342740670, guid: 02ab67e00c5a6c0469f9d9c19e68d7f4, type: 2}
   - {fileID: 1002282342740670, guid: 378cf9aaa66fbc041817495c3941f7c0, type: 2}
+  - {fileID: 1147360471527010, guid: 90d4d477cb75b004192f7cadd6d2490e, type: 2}
   rotation: 0
   sidebar: {fileID: 851146842}
   levelNameInput: {fileID: 455753647}

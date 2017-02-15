@@ -19,6 +19,7 @@ public class NavigationCalculator<T> where T : NavNode<T> {
     /// </summary>
     public List<T> CalculatePath(T start, T end)
     {
+        map_.RecalculateBounds();
         List<T> neighbors;
         List<T> closedNodes = new List<T>();
         // openNodes will always be sorted. Inserts should only be done via InsertIntoOpen.
@@ -103,6 +104,7 @@ public class NavigationCalculator<T> where T : NavNode<T> {
     /// </summary>
     public List<T> GetConnectedNodes(T start)
     {
+        map_.RecalculateBounds();
         List<T> neighbors;
         // Our eventual list of connected nodes.
         List<T> closedNodes = new List<T>();

@@ -14,6 +14,8 @@ public class Player : MonoBehaviour
 
     Rigidbody2D rb2d;
     public Sword sword;
+    public Texture2D healthTexture;
+    Health health;
 
     public float acceleration;
     public int rollFrames; // Number of frames it takes to roll
@@ -30,6 +32,7 @@ public class Player : MonoBehaviour
     void Awake()
     {
         rb2d = GetComponent<Rigidbody2D>();
+        health = GetComponent<Health>();
     }
 
     void FixedUpdate()
@@ -75,5 +78,12 @@ public class Player : MonoBehaviour
         {
             Items[0].Activate(this);
         }
+    }
+
+    void OnGUI()
+    {
+        if (LevelEditor.main.mode == EditMode.Test)
+            for (int i = 1; i <= health.health; i++)
+                GUI.DrawTexture(new Rect(new Vector2(Screen.width - 20 - i * healthTexture.width/2, 20), new Vector2(healthTexture.width/2, healthTexture.height/2)), healthTexture);
     }
 }

@@ -114,9 +114,6 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             SidebarCreateButtons();
         if (mode == EditMode.Test)
         {
-            Player player = GetComponentInChildren<Player>();
-            //if (player)
-            //    Camera.main.GetComponent<CameraFollow>().target = player.transform;
             SaveToTemp();
         }
         if (prevMode == EditMode.Test)
@@ -334,7 +331,6 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     GameObject CreateObjectAtGrid(Vector2 point, GameObject obj)
     {
         GameObject newObj = Instantiate(obj, point, Quaternion.identity, transform);
-        ObjectData data = newObj.GetComponent<ObjectData>();
         newObj.name = obj.name;
         if (!tilemap.ContainsKey(point))
             tilemap[point] = new List<GameObject>();
@@ -415,7 +411,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     IEnumerator ControlAlpha(SpriteRenderer r, float targetAlpha)
     {
         float alpha = r.color.a;
-        while (alpha != targetAlpha)
+        while (alpha != targetAlpha && r != null)
         {
             yield return new WaitForFixedUpdate();
             alpha = Mathf.Lerp(alpha, targetAlpha, 0.15f);

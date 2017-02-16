@@ -68,13 +68,13 @@ public class NavMap : INavMap<MapNode>
         foreach (Vector2 point in map.Keys)
         {
             if (point.x < bounds.xMin)
-                bounds.xMin = point.x - 1;
+                bounds.xMin = point.x - 2;
             else if (point.x > bounds.xMax)
-                bounds.xMax = point.x + 1;
+                bounds.xMax = point.x + 2;
             if (point.y < bounds.yMin)
-                bounds.yMin = point.y - 1;
+                bounds.yMin = point.y - 2;
             else if (point.y > bounds.yMax)
-                bounds.yMax = point.y + 1;
+                bounds.yMax = point.y + 2;
         }
     }
 

@@ -50,3 +50,6 @@ TagManager:
   - name: Interactive
     uniqueID: 3311808153
     locked: 0
+  - name: Effects
+    uniqueID: 3997788971
+    locked: 0

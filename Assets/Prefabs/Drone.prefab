@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 114388379784414160}
   - component: {fileID: 61603716421069490}
   - component: {fileID: 114789258443482190}
+  - component: {fileID: 114145409856737922}
   m_Layer: 0
   m_Name: Drone
   m_TagString: Untagged
@@ -73,12 +74,23 @@ BoxCollider2D:
   m_GameObject: {fileID: 1147360471527010}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: bc9f1f72ce5eaa34b987f7d06f8c3cfd, type: 2}
+  m_Material: {fileID: 6200000, guid: 952289ca829067a46a08985de041b5af, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Size: {x: 0.5, y: 0.5}
+  m_Size: {x: 0.6, y: 0.6}
+--- !u!114 &114145409856737922
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147360471527010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1665ce6b25b595c45a9cf6e0bd06c741, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114388379784414160
 MonoBehaviour:
   m_ObjectHideFlags: 1

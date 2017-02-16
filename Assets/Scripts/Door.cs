@@ -12,6 +12,7 @@ public class Door : MonoBehaviour, ICustomSerializable {
     public bool invert = false;
 
     Animator animator;
+    public GameObject child;
 
     void Awake()
     {
@@ -40,7 +41,7 @@ public class Door : MonoBehaviour, ICustomSerializable {
         Circuit circuit = GetComponent<Circuit>();
         if (circuit)
             open = circuit.Powered ^ invert;
-        GetComponent<Collider2D>().enabled = !open;
+        child.layer = open ? LayerMask.NameToLayer("IgnorePlayer") : LayerMask.NameToLayer("Default");
     }
 
     public void Serialize(BinaryWriter bw)

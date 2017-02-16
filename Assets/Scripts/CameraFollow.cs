@@ -11,6 +11,7 @@ public class CameraFollow : MonoBehaviour
     {
         if (LevelEditor.main.mode != EditMode.Test && !EventSystem.current.IsPointerOverGameObject())
         {
+            StopAllCoroutines();
             Vector3 motion = Input.GetAxisRaw("Horizontal") * Vector2.right + Input.GetAxisRaw("Vertical") * Vector2.up;
             motion /= 2;
             transform.position += motion;

@@ -15,8 +15,8 @@ TagManager:
   - 
   - CollisionDisabled
   - Wind
-  - 
-  - 
+  - Player
+  - IgnorePlayer
   - 
   - 
   - 

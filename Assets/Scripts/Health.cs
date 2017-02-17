@@ -3,17 +3,26 @@ using UnityEngine;
 
 public class Health : MonoBehaviour {
 
-    public int health;
+    public int maxHealth;
     public int invulnFrames;
+    [ReadOnly]
+    public int currentHealth;
     [ReadOnly] public int remInvulnFrames;
+    public Checkpoint respawnPoint;
+
+    Rigidbody2D rb2d;
+
+    void Start()
+    {
+        currentHealth = maxHealth;
+        rb2d = GetComponent<Rigidbody2D>();
+    }
 
     public int Damage(int dmg)
     {
         if (remInvulnFrames > 0)
             dmg = 0;
-        health -= dmg;
-        if (health <= 0)
-            Destroy(gameObject);
+        currentHealth -= dmg;
         if (dmg > 0)
         {
             remInvulnFrames = invulnFrames;
@@ -23,10 +32,32 @@ public class Health : MonoBehaviour {
         return dmg;
     }
 
+    void Respawn()
+    {
+        transform.position = respawnPoint.transform.position;
+        currentHealth = maxHealth;
+        rb2d.velocity = Vector2.zero;
+    }
+
+    public void SetRespawnPoint(Checkpoint checkpoint)
+    {
+        if (respawnPoint != null)
+            respawnPoint.active = false;
+        respawnPoint = checkpoint;
+    }
+
     void FixedUpdate()
     {
         if (remInvulnFrames > 0)
             remInvulnFrames--;
+
+        if (currentHealth <= 0)
+        {
+            if (respawnPoint != null)
+                Respawn();
+            else
+                Destroy(gameObject);
+        }
     }
 
 

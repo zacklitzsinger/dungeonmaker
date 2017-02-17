@@ -1,5 +1,5 @@
 # Custom ignores
-/Levels/
+/Builds/
 
 # Windows image file caches
 Thumbs.db

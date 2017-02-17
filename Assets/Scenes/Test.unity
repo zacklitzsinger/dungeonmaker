@@ -1918,6 +1918,7 @@ MonoBehaviour:
   - {fileID: 1002282342740670, guid: 02ab67e00c5a6c0469f9d9c19e68d7f4, type: 2}
   - {fileID: 1002282342740670, guid: 378cf9aaa66fbc041817495c3941f7c0, type: 2}
   - {fileID: 1147360471527010, guid: 90d4d477cb75b004192f7cadd6d2490e, type: 2}
+  - {fileID: 1002282342740670, guid: 81a52de42b0f6f54099721e783883e14, type: 2}
   rotation: 0
   sidebar: {fileID: 851146842}
   levelNameInput: {fileID: 455753647}

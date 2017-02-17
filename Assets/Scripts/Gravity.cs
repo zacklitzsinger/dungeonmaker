@@ -9,6 +9,13 @@ public class Gravity : MonoBehaviour {
 
     [ReadOnly]
     public List<Collider2D> touching = new List<Collider2D>();
+    Health health;
+
+    void Start()
+    {
+        // Currently assumes the object will have health - not necessarily a valid assumption
+        health = GetComponent<Health>();
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -28,6 +35,8 @@ public class Gravity : MonoBehaviour {
     void CheckForDeath()
     {
         if (touching.Count <= 0)
-            Destroy(gameObject);
+        {
+            health.Damage(health.currentHealth);
+        }
     }
 }

@@ -16,6 +16,13 @@ public enum EditMode
     Circuit
 }
 
+[Serializable]
+public class PrefabGroup
+{
+    public string name;
+    public GameObject[] prefabs;
+}
+
 public class LevelEditor : MonoBehaviour, ICustomSerializable
 {
     public static LevelEditor main;
@@ -23,8 +30,11 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public EditMode mode = EditMode.Create;
     [ReadOnly]
     public GameObject selectedPrefab;
+    [ReadOnly]
     public GameObject selectedGameObject;
-    public GameObject[] prefabOptions;
+    public PrefabGroup[] prefabGroups;
+    private GameObject[] allPrefabOptions;
+    [ReadOnly]
     public float rotation;
     public const int GRID_SIZE = 32;
 
@@ -37,6 +47,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public Texture selectionBox;
     public Toggle prefabToggle;
     public GameObject prefabIntSlider;
+    public ToggleGroup tabPanel;
+    public Toggle prefabToggleButton;
 
     public Color circuitColor;
     public Color selectedCircuitInputColor;
@@ -61,6 +73,11 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         navmap = new NavMap(tilemap);
         navcalc = new NavigationCalculator<MapNode>(navmap);
 
+        List<GameObject> prefabs = new List<GameObject>();
+        foreach (PrefabGroup group in prefabGroups)
+            prefabs.AddRange(group.prefabs);
+        allPrefabOptions = prefabs.ToArray();
+
         SidebarCreateButtons();
 
         levelNameInput.onValueChanged.AddListener((string str) =>
@@ -74,19 +91,48 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     /// </summary>
     void SidebarCreateButtons()
     {
-        foreach (GameObject option in prefabOptions)
+        foreach (PrefabGroup group in prefabGroups)
         {
-            GameObject button = Instantiate(prefabButton, sidebarContent.transform);
-            RectTransform rectTransform = button.GetComponent<RectTransform>();
-            rectTransform.offsetMin = Vector2.zero;
-            rectTransform.offsetMax = Vector2.zero;
-            var textComponent = button.GetComponentInChildren<Text>();
-            textComponent.text = option.gameObject.name;
-            button.GetComponent<Button>().onClick.AddListener(() =>
+            Toggle toggleButton = Instantiate(prefabToggleButton, tabPanel.transform);
+            toggleButton.name = group.name;
+            toggleButton.isOn = (group == prefabGroups[0]);
+            toggleButton.group = tabPanel;
+            toggleButton.GetComponentInChildren<Text>().text = group.name;
+            toggleButton.onValueChanged.AddListener((bool val) =>
             {
-                rotation = 0f;
-                selectedPrefab = option;
+                if (val)
+                    SidebarSelectGroup(group.name);
             });
+
+            foreach (GameObject option in group.prefabs)
+            {
+                GameObject button = Instantiate(prefabButton, sidebarContent.transform);
+                button.name = option.name;
+                RectTransform rectTransform = button.GetComponent<RectTransform>();
+                rectTransform.offsetMin = Vector2.zero;
+                rectTransform.offsetMax = Vector2.zero;
+                var textComponent = button.GetComponentInChildren<Text>();
+                textComponent.text = option.gameObject.name;
+                button.GetComponent<Button>().onClick.AddListener(() =>
+                {
+                    rotation = 0f;
+                    selectedPrefab = option;
+                });
+            }
+        }
+
+        SidebarSelectGroup(prefabGroups[0].name);
+    }
+
+    void SidebarSelectGroup(string groupName)
+    {
+        foreach (Transform child in sidebarContent.transform)
+        {
+            PrefabGroup childGroup = Array.Find(prefabGroups, (group) =>
+            {
+                return Array.Find(group.prefabs, (i) => { return i.name == child.name; });
+            });
+            child.gameObject.SetActive(childGroup != null && childGroup.name == groupName);
         }
     }
 
@@ -95,6 +141,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     /// </summary>
     void ClearSidebar()
     {
+        foreach (Transform child in tabPanel.transform)
+            Destroy(child.gameObject);
         foreach (Transform child in sidebarContent.transform)
             Destroy(child.gameObject);
     }
@@ -380,7 +428,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         }
 
         // Update visibility
-        foreach(KeyValuePair<Vector2, List<GameObject>> pair in tilemap)
+        foreach (KeyValuePair<Vector2, List<GameObject>> pair in tilemap)
         {
             bool active = currentRoom.Contains(new MapNode(pair.Key));
             foreach (GameObject go in pair.Value)
@@ -413,13 +461,13 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         float alpha = r.color.a;
         while (alpha != targetAlpha && r != null)
         {
-            yield return new WaitForFixedUpdate();
             alpha = Mathf.Lerp(alpha, targetAlpha, 0.15f);
             if (Math.Abs(alpha - targetAlpha) < 0.05f)
                 alpha = targetAlpha;
             Color c = r.color;
             c.a = alpha;
             r.color = c;
+            yield return new WaitForFixedUpdate();
         }
     }
 
@@ -638,7 +686,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 // TODO: Should separate deserialization with instantiating game objects so levels can easily be reset
                 string goName = br.ReadString();
                 Guid id = br.ReadGuid();
-                GameObject prefab = Array.Find(prefabOptions, (o) => { return o.name == goName; });
+                GameObject prefab = Array.Find(allPrefabOptions, (o) => { return o.name == goName; });
                 if (prefab == null)
                 {
                     throw new Exception("Could not find prefab in level named " + goName);

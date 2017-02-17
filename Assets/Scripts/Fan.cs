@@ -35,7 +35,7 @@ public class Fan : MonoBehaviour, ICustomSerializable
         {
             Vector2 pos = transform.position + transform.up * i;
             if (CheckForCollisions(LevelEditor.main.ConvertPositionToGrid(pos)))
-                return i-1;
+                return i - 1;
         }
         return distance;
     }
@@ -45,7 +45,7 @@ public class Fan : MonoBehaviour, ICustomSerializable
         if (LevelEditor.main.tilemap.ContainsKey(pos))
         {
             foreach (GameObject go in LevelEditor.main.tilemap[pos])
-                if (go.GetComponent<ObjectData>().type == ObjectType.Wall && go.GetComponent<Collider2D>().enabled)
+                if (go != null && go.GetComponent<ObjectData>().type == ObjectType.Wall && go.GetComponent<Collider2D>().enabled)
                     return true;
         }
         return false;

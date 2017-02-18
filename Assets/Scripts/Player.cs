@@ -32,7 +32,7 @@ public class Player : MonoBehaviour
     void Awake()
     {
         rb2d = GetComponent<Rigidbody2D>();
-        health = GetComponent<Health>();
+        health = GetComponentInChildren<Health>();
     }
 
     void FixedUpdate()

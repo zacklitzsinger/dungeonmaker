@@ -65,30 +65,51 @@ public class Circuit : MonoBehaviour, ICustomSerializable
 
     void FixedUpdate()
     {
+        // A circuit with no inputs powers itself.
         if (inputs.Count == 0)
             powerAmount = 1;
+        else if (powerAmount > inputs.Count)
+        {
+            Debug.LogWarning("Too much power! " + gameObject.name);
+        } else if (powerAmount < 0)
+        {
+            Debug.LogWarning("Negative power! " + gameObject.name);
+        }
 
-        bool test = TestConditions();
-        if (test && !lastTest)
-            TransmitPower(powerAmount);
-        if (!test && lastTest)
-            TransmitPower(-powerAmount);
-        lastTest = test;
+        DeterminePower();
     }
 
-    public void AdjustPower(int power, List<Circuit> visitedNodes = null)
+    /// <summary>
+    /// Determines how much power needs to be transmitted. Can be checked in FixedUpdate() or when power is received from an input.
+    /// </summary>
+    /// <param name="power"></param>
+    void DeterminePower(int power = 0, List<Circuit> visitedNodes = null)
     {
-        if (visitedNodes == null)
-            visitedNodes = new List<Circuit>();
-        visitedNodes.Add(this);
+        int powerDelta = 0;
+        // Keep track of the amount of power before we changed it in case we need to transmit that.
+        int prevPowerAmount = powerAmount;
         powerAmount += power;
-        if (!TestConditions())
-            return;
-        TransmitPower(power, visitedNodes);
+        bool test = TestConditions();
+        if (outputs.Count > 0)
+        {
+            // If the gate is true, new incoming power should always go to output
+            if (test)
+                powerDelta += power;
+            // In the case of a change of the gate, we should send power based on how much power we had 
+            // BEFORE we modified it (since that was the part that has already been sent or needs to be sent).
+            if (!test && lastTest)
+                powerDelta -= prevPowerAmount;
+            else if (test && !lastTest)
+                powerDelta += prevPowerAmount;
+        }
+        lastTest = test;
+        TransmitPower(powerDelta, visitedNodes);
     }
 
     void TransmitPower(int power, List<Circuit> visitedNodes = null)
     {
+        if (power == 0)
+            return;
         if (visitedNodes == null)
             visitedNodes = new List<Circuit>();
         visitedNodes.Add(this);
@@ -96,7 +117,7 @@ public class Circuit : MonoBehaviour, ICustomSerializable
         {
             if (visitedNodes.Contains(output))
                 continue;
-            output.AdjustPower(power, visitedNodes);
+            output.DeterminePower(power, visitedNodes);
         }
     }
 

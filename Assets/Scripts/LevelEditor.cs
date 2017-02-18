@@ -243,14 +243,15 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 if (Input.GetMouseButtonDown(0))
                 {
                     GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                    Debug.Log("Selected game object: " + go.name);
                     if (!selectedGameObject)
                     {
                         // Start creating a connection
                         selectedGameObject = go;
                     }
+                    // Finish placing a connection
                     else
                     {
-                        // Finish placing a connection
                         // Picked same object twice...
                         if (go == selectedGameObject)
                             break;

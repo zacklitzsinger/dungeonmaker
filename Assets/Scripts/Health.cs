@@ -15,7 +15,7 @@ public class Health : MonoBehaviour {
     void Start()
     {
         currentHealth = maxHealth;
-        rb2d = GetComponent<Rigidbody2D>();
+        rb2d = GetComponentInParent<Rigidbody2D>();
     }
 
     public int Damage(int dmg)
@@ -27,14 +27,14 @@ public class Health : MonoBehaviour {
         {
             remInvulnFrames = invulnFrames;
             if (invulnFrames > 0)
-                StartCoroutine(Flash(GetComponent<SpriteRenderer>(), invulnFrames));
+                StartCoroutine(Flash(GetComponentInParent<SpriteRenderer>(), invulnFrames));
         }
         return dmg;
     }
 
     void Respawn()
     {
-        transform.position = respawnPoint.transform.position;
+        transform.parent.position = respawnPoint.transform.position;
         currentHealth = maxHealth;
         rb2d.velocity = Vector2.zero;
     }

@@ -78,15 +78,15 @@ public class NavMap : INavMap<MapNode>
         }
     }
 
-    public bool Blocking(MapNode node)
+    public bool Passable(MapNode node)
     {
         if (!map.ContainsKey(node.ToVector2()))
             return false;
         List<GameObject> goList = map[node.ToVector2()];
         foreach (GameObject g in goList) 
             if (g != null && g.GetComponent<ObjectData>().type == ObjectType.Wall)
-                return true;
-        return false;
+                return false;
+        return true;
     }
 
     public float DistanceBetween(MapNode one, MapNode two)
@@ -107,10 +107,10 @@ public class NavMap : INavMap<MapNode>
         return ret;
     }
 
-    public List<MapNode> GetNeighbors(MapNode current)
+    public List<MapNode> GetNeighbors(MapNode current, bool includeEmpty = true)
     {
         return GetPotentialNeighbors(current).FindAll((n) => {
-            return !Blocking(n);
+            return (includeEmpty && map.ContainsKey(n.ToVector2()) ||  Passable(n));
         });
     }
 }

@@ -51,6 +51,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public ToggleGroup tabPanel;
     public Toggle prefabToggleButton;
 
+    // Circuits
     public Color circuitColor;
     public Color selectedCircuitInputColor;
     public Color selectedCircuitOutputColor;
@@ -64,9 +65,15 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public NavigationCalculator<MapNode> navcalc;
     List<MapNode> currentRoom = new List<MapNode>();
 
-    // When testing, save to a temporary file beforehand so we can reload the level after finishing
+    /// <summary>
+    /// When testing, save to a temporary file beforehand so we can reload the level after finishing
+    /// </summary>
     private string tempFilename;
     Vector2 lastMousePosition;
+    /// <summary>
+    /// Was the app focused last frame? If false, app just became focused, so we should ignore many UI inputs.
+    /// </summary>
+    bool lastAppFocused = true;
 
     void Start()
     {
@@ -86,6 +93,12 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             {
                 levelName = str;
             });
+    }
+
+    void OnApplicationFocus(bool focus)
+    {
+        if (focus)
+            lastAppFocused = false;
     }
 
     /// <summary>
@@ -208,87 +221,91 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         if (EventSystem.current.IsPointerOverGameObject() || mode == EditMode.Test)
             return;
 
-        switch (mode)
+        if (lastAppFocused)
         {
-            case EditMode.Create:
+            switch (mode)
+            {
+                case EditMode.Create:
 
-                // Allow placing of objects by left clicking
-                if (Input.GetMouseButton(0) && selectedPrefab != null)
-                {
-                    foreach (Vector2 point in GetGridPointsAlongLine(lastMousePosition, Input.mousePosition))
-                        CreateSelectedPrefabAtGridPosition(point, rotation);
-                }
-
-                // Allow removal of objects by right clicking
-                if (Input.GetMouseButton(1))
-                {
-                    foreach (Vector2 point in GetGridPointsAlongLine(lastMousePosition, Input.mousePosition))
-                        DestroyAllGameObjectsAtGridPosition(point);
-                }
-                break;
-
-            case EditMode.Edit:
-
-                // Start by selecting an object
-                if (Input.GetMouseButtonDown(0))
-                {
-                    selectedGameObject = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                    if (selectedGameObject)
+                    // Allow placing of objects by left clicking
+                    if (Input.GetMouseButton(0) && selectedPrefab != null)
                     {
-                        ClearSidebar();
-                        UIEditSelectedGameObject();
+                        foreach (Vector2 point in GetGridPointsAlongLine(lastMousePosition, Input.mousePosition))
+                            CreateSelectedPrefabAtGridPosition(point, rotation);
                     }
-                }
 
-                break;
-
-            case EditMode.Circuit:
-                if (Input.GetMouseButtonDown(0))
-                {
-                    GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                    Debug.Log("Selected game object: " + go.name);
-                    if (!selectedGameObject)
+                    // Allow removal of objects by right clicking
+                    if (Input.GetMouseButton(1))
                     {
-                        // Start creating a connection
-                        selectedGameObject = go;
+                        foreach (Vector2 point in GetGridPointsAlongLine(lastMousePosition, Input.mousePosition))
+                            DestroyAllGameObjectsAtGridPosition(point);
                     }
-                    // Finish placing a connection
-                    else
+                    break;
+
+                case EditMode.Edit:
+
+                    // Start by selecting an object
+                    if (Input.GetMouseButtonDown(0))
                     {
-                        // Picked same object twice...
-                        if (go == selectedGameObject)
-                            break;
-                        if (go)
+                        selectedGameObject = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                        if (selectedGameObject)
                         {
-                            Circuit circuit = go.GetComponent<Circuit>() ?? go.AddComponent<Circuit>();
-                            Circuit otherCircuit = selectedGameObject.GetComponent<Circuit>() ?? selectedGameObject.AddComponent<Circuit>();
-                            if (circuit)
+                            ClearSidebar();
+                            UIEditSelectedGameObject();
+                        }
+                    }
+
+                    break;
+
+                case EditMode.Circuit:
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                        Debug.Log("Selected game object: " + go.name);
+                        if (!selectedGameObject)
+                        {
+                            // Start creating a connection
+                            selectedGameObject = go;
+                        }
+                        // Finish placing a connection
+                        else
+                        {
+                            // Picked same object twice...
+                            if (go == selectedGameObject)
+                                break;
+                            if (go)
                             {
-                                otherCircuit.Connect(circuit);
-                                selectedGameObject = null;
+                                Circuit circuit = go.GetComponent<Circuit>() ?? go.AddComponent<Circuit>();
+                                Circuit otherCircuit = selectedGameObject.GetComponent<Circuit>() ?? selectedGameObject.AddComponent<Circuit>();
+                                if (circuit)
+                                {
+                                    otherCircuit.Connect(circuit);
+                                    selectedGameObject = null;
+                                }
                             }
                         }
                     }
-                }
 
-                if (Input.GetMouseButtonDown(1))
-                {
-                    if (selectedGameObject)
-                        selectedGameObject = null;
-                    else
+                    if (Input.GetMouseButtonDown(1))
                     {
-                        GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                        if (go)
+                        if (selectedGameObject)
+                            selectedGameObject = null;
+                        else
                         {
-                            Circuit circuit = go.GetComponent<Circuit>();
-                            if (circuit)
-                                circuit.Disconnect();
+                            GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                            if (go)
+                            {
+                                Circuit circuit = go.GetComponent<Circuit>();
+                                if (circuit)
+                                    circuit.Disconnect();
+                            }
                         }
                     }
-                }
-                break;
+                    break;
+            }
         }
         lastMousePosition = Input.mousePosition;
+        lastAppFocused = true;
     }
 
     /// <summary>
@@ -421,7 +438,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         MapNode currentNode = new MapNode(gridPos);
         if (currentRoom.Contains(currentNode))
             return;
-        currentRoom = navcalc.GetConnectedNodes(currentNode);
+        currentRoom = navcalc.GetConnectedNodes(currentNode, true);
         // Iterate only through the original list.
         int nodeCount = currentRoom.Count;
         for (int i = 0; i < nodeCount; i++)

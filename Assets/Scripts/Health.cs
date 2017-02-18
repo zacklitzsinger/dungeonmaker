@@ -32,6 +32,11 @@ public class Health : MonoBehaviour {
         return dmg;
     }
 
+    public void Knockback(Vector2 motion)
+    {
+        rb2d.AddForce(motion);
+    }
+
     void Respawn()
     {
         transform.parent.position = respawnPoint.transform.position;
@@ -56,7 +61,7 @@ public class Health : MonoBehaviour {
             if (respawnPoint != null)
                 Respawn();
             else
-                Destroy(gameObject);
+                Destroy(rb2d.gameObject);
         }
     }
 

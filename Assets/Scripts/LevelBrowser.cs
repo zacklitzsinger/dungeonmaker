@@ -13,13 +13,16 @@ public class LevelBrowser : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        if (LevelEditor.main == null)
-            StartCoroutine(LoadLevelList());
+        
         DontDestroyOnLoad(gameObject);
 	}
 	
+    public void LoadLevelList()
+    {
+        StartCoroutine(FetchLevelInfo());
+    }
 
-    IEnumerator LoadLevelList() {
+    IEnumerator FetchLevelInfo() {
         WWW www = new WWW("localhost:3000/levels");
         yield return www;
         JSONNode json = JSON.Parse(www.text);

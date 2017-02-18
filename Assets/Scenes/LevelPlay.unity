@@ -450,6 +450,7 @@ MonoBehaviour:
   - name: Enemies
     prefabs:
     - {fileID: 1147360471527010, guid: 90d4d477cb75b004192f7cadd6d2490e, type: 2}
+    - {fileID: 1147360471527010, guid: 5ebc96384c2dc314bbcbde1c9cd6b088, type: 2}
   rotation: 0
   sidebar: {fileID: 0}
   levelNameInput: {fileID: 0}

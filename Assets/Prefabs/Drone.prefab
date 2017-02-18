@@ -131,6 +131,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   acceleration: 3
+  updateDirection: 0
+  flying: 1
 --- !u!212 &212973353828650820
 SpriteRenderer:
   m_ObjectHideFlags: 1

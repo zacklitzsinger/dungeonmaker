@@ -15,7 +15,7 @@ public class Sword : MonoBehaviour
         if (!health)
             return;
         health.Damage(1);
-        other.GetComponent<Rigidbody2D>().AddForce((other.transform.position - transform.position).normalized * 300f);
+        health.Knockback((other.transform.position - transform.position).normalized * 300f);
     }
 
     void Update()

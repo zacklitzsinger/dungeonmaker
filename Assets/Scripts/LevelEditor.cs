@@ -10,6 +10,7 @@ using UnityEngine.UI;
 
 public enum EditMode
 {
+    Inactive,
     Test,
     Create,
     Edit,
@@ -80,10 +81,11 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
         SidebarCreateButtons();
 
-        levelNameInput.onValueChanged.AddListener((string str) =>
-        {
-            levelName = str;
-        });
+        if (levelNameInput != null)
+            levelNameInput.onValueChanged.AddListener((string str) =>
+            {
+                levelName = str;
+            });
     }
 
     /// <summary>
@@ -91,6 +93,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     /// </summary>
     void SidebarCreateButtons()
     {
+        if (sidebarContent == null)
+            return;
         foreach (PrefabGroup group in prefabGroups)
         {
             Toggle toggleButton = Instantiate(prefabToggleButton, tabPanel.transform);
@@ -141,16 +145,18 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     /// </summary>
     void ClearSidebar()
     {
-        foreach (Transform child in tabPanel.transform)
-            Destroy(child.gameObject);
-        foreach (Transform child in sidebarContent.transform)
-            Destroy(child.gameObject);
+        if (tabPanel != null)
+            foreach (Transform child in tabPanel.transform)
+                Destroy(child.gameObject);
+        if (sidebarContent != null)
+            foreach (Transform child in sidebarContent.transform)
+                Destroy(child.gameObject);
     }
 
     /// <summary>
     /// Change current level edit mode from one mode to another
     /// </summary>
-    void ChangeMode(EditMode newMode)
+    public void ChangeMode(EditMode newMode)
     {
         if (mode == newMode)
             return;
@@ -174,7 +180,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     // Update is called once per frame
     void Update()
     {
-
+        if (mode == EditMode.Inactive)
+            return;
         if (Input.GetButtonDown("Create Mode"))
             ChangeMode(EditMode.Create);
         else if (Input.GetButtonDown("Edit Mode"))
@@ -188,19 +195,15 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         else if (Input.GetButtonDown("Rotate CCW"))
             rotation = (rotation + 270f) % 360;
 
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            Debug.Log(GetGridMousePosition());
-            Debug.Log(navcalc.GetConnectedNodes(new MapNode(GetGridMousePosition())).Count);
-        }
-
         // Pause time while editing
         Time.timeScale = (mode >= EditMode.Create ? 0 : 1);
 
-        editModeLabel.text = mode.ToString();
+        if (editModeLabel != null)
+            editModeLabel.text = mode.ToString();
 
         // Hide editing sidebar while editing
-        sidebar.SetActive(mode >= EditMode.Create);
+        if (sidebar != null)
+            sidebar.SetActive(mode >= EditMode.Create);
 
         if (EventSystem.current.IsPointerOverGameObject() || mode == EditMode.Test)
             return;
@@ -589,16 +592,36 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         SaveToStream(File.Create(filename));
     }
 
-    public void SaveToTemp()
+    public string SaveToTemp()
     {
         tempFilename = Path.GetTempFileName();
         SaveToStream(File.Create(tempFilename));
+        return tempFilename;
     }
 
     public void SaveToStream(Stream s)
     {
         using (BinaryWriter bw = new BinaryWriter(s))
             Serialize(bw);
+    }
+
+    public void UploadLevel()
+    {
+        SaveToTemp();
+        StartCoroutine(UploadFile(tempFilename));
+    }
+
+    public IEnumerator UploadFile(string filename)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("levelName", levelName);
+        form.AddBinaryData("level", File.ReadAllBytes(filename));
+        WWW www = new WWW("localhost:3000/levels", form);
+        yield return www;
+        if (www.error != null)
+            Debug.Log(www.error);
+        else
+            Debug.Log("Finished uploading level");
     }
 
     public void LoadFromDisk(string filename)
@@ -620,6 +643,12 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     {
         LoadFromStream(File.OpenRead(tempFilename));
         File.Delete(tempFilename);
+    }
+
+    public void LoadFromBytes(byte[] bytes)
+    {
+        using (Stream stream = new MemoryStream(bytes))
+            LoadFromStream(stream);
     }
 
     /// <summary>
@@ -675,7 +704,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public void Deserialize(BinaryReader br)
     {
         levelName = br.ReadString();
-        levelNameInput.text = levelName;
+        if (levelNameInput != null)
+            levelNameInput.text = levelName;
         int tileCount = br.ReadInt32();
         for (int i = 0; i < tileCount; i++)
         {

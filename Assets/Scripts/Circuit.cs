@@ -68,13 +68,13 @@ public class Circuit : MonoBehaviour, ICustomSerializable
         // A circuit with no inputs powers itself.
         if (inputs.Count == 0)
             powerAmount = 1;
-        else if (powerAmount > inputs.Count)
-        {
-            Debug.LogWarning("Too much power! " + gameObject.name);
-        } else if (powerAmount < 0)
-        {
-            Debug.LogWarning("Negative power! " + gameObject.name);
-        }
+        //else if (powerAmount > inputs.Count)
+        //{
+        //    Debug.LogWarning("Too much power! " + gameObject.name);
+        //} else if (powerAmount < 0)
+        //{
+        //    Debug.LogWarning("Negative power! " + gameObject.name);
+        //}
 
         DeterminePower();
     }

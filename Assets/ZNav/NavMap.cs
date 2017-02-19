@@ -110,7 +110,7 @@ public class NavMap : INavMap<MapNode>
     public List<MapNode> GetNeighbors(MapNode current, bool includeEmpty = true)
     {
         return GetPotentialNeighbors(current).FindAll((n) => {
-            return (includeEmpty && map.ContainsKey(n.ToVector2()) ||  Passable(n));
+            return (includeEmpty && !map.ContainsKey(n.ToVector2()) ||  Passable(n));
         });
     }
 }

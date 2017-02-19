@@ -16,7 +16,7 @@ public class LockedDoor : MonoBehaviour {
     {
         if (locked && collider.tag == "Player")
         {
-            var player = collider.GetComponent<Player>();
+            var player = collider.GetComponentInParent<Player>();
             if (player.keys > 0)
             {
                 player.keys--;

@@ -261,7 +261,6 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                     if (Input.GetMouseButtonDown(0))
                     {
                         GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                        Debug.Log("Selected game object: " + go.name);
                         if (!selectedGameObject)
                         {
                             // Start creating a connection

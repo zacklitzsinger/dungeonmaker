@@ -8,12 +8,18 @@ public class Flamethrower : MonoBehaviour, ICustomSerializable
     [PlayerEditableRange("Range", 1, 10)]
     public int distance;
 
+    Fire fire;
+
+    void Start()
+    {
+        fire = GetComponentInChildren<Fire>();
+    }
+
     void FixedUpdate()
     {
         Circuit circuit = GetComponent<Circuit>();
         if (circuit)
             active = circuit.Powered;
-        Fire fire = GetComponentInChildren<Fire>();
         fire.active = active;
         int distance = FindDistance();
         if (distance <= fire.size)

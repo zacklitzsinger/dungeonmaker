@@ -492,11 +492,10 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     {
         if (go == null)
             return;
-        StartCoroutine(ControlAlpha(go.GetComponent<SpriteRenderer>(), active ? 1f : 0f));
+        StartCoroutine(ControlAlpha(go.GetComponentInChildren<SpriteRenderer>(), active ? 1f : 0f));
+        // Enable/disable particle systems (including inactive ones).
         foreach (ParticleSystem ps in go.GetComponentsInChildren<ParticleSystem>(true))
-        {
             ps.gameObject.SetActive(active);
-        }
     }
 
     IEnumerator ControlAlpha(SpriteRenderer r, float targetAlpha)
@@ -571,10 +570,10 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 Vector2 gridPos = Camera.main.WorldToScreenPoint(ConvertPositionToGrid(Camera.main.ScreenToWorldPoint(Input.mousePosition)));
                 gridPos.y = Screen.height - gridPos.y;
                 gridPos -= Vector2.one * GRID_SIZE / 2;
-                GUI.DrawTexture(new Rect(gridPos, new Vector2(GRID_SIZE, GRID_SIZE)), selectionBox);
+                GUI.DrawTexture(new Rect(gridPos, Vector2.one * GRID_SIZE), selectionBox);
                 if (selectedPrefab)
                 {
-                    Sprite sprite = selectedPrefab.GetComponent<SpriteRenderer>().sprite;
+                    Sprite sprite = selectedPrefab.GetComponentInChildren<SpriteRenderer>().sprite;
                     Vector2 pos = Input.mousePosition;
                     pos.y = Screen.height - pos.y;
                     // Tex coords are in % of the full texture rather than being a direct source rectangle

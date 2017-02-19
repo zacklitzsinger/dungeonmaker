@@ -21,7 +21,7 @@ public class ObjectData : MonoBehaviour, ICustomSerializable
 
     void Start()
     {
-        sprite = GetComponent<SpriteRenderer>();
+        sprite = GetComponentInChildren<SpriteRenderer>();
         UpdateSortOrder();
     }
 

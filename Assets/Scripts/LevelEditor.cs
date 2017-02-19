@@ -493,8 +493,10 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         if (go == null)
             return;
         StartCoroutine(ControlAlpha(go.GetComponent<SpriteRenderer>(), active ? 1f : 0f));
-        foreach (ParticleSystem ps in go.GetComponentsInChildren<ParticleSystem>())
+        foreach (ParticleSystem ps in go.GetComponentsInChildren<ParticleSystem>(true))
+        {
             ps.gameObject.SetActive(active);
+        }
     }
 
     IEnumerator ControlAlpha(SpriteRenderer r, float targetAlpha)

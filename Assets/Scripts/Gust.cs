@@ -8,7 +8,7 @@ public class Gust : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.GetComponent<ObjectData>().type == ObjectType.Wall)
+        if (collider.GetComponentInParent<ObjectData>().type == ObjectType.Wall)
             GetComponent<Wind>().size = 0;
     }
 	

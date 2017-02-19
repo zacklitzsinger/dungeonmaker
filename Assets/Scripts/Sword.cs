@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Sword : MonoBehaviour
 {
-
     public int remainingFrames;
 
     void OnTriggerEnter2D(Collider2D other)
@@ -23,6 +22,6 @@ public class Sword : MonoBehaviour
         if (remainingFrames > 0)
             remainingFrames--;
         else
-            Destroy(gameObject);
+            Destroy(transform.parent.gameObject);
     }
 }

@@ -1,12 +1,12 @@
 fileFormatVersion: 2
-guid: b2f6bc1bf436c3c4fa415d718e66a640
-timeCreated: 1486613637
+guid: 1ec1e1cecc16cee46a89f28b6f349aa6
+timeCreated: 1487479623
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: Door_0
-    21300002: Door_1
-    21300004: Door_2
+    21300000: Door2_0
+    21300002: Door2_1
+    21300004: Door2_2
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -73,41 +73,41 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Door_0
+      name: Door2_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        height: 64
+      alignment: 9
+      pivot: {x: 0.5, y: 0.25}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Door_1
+      name: Door2_1
       rect:
         serializedVersion: 2
         x: 32
         y: 0
         width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        height: 64
+      alignment: 9
+      pivot: {x: 0.5, y: 0.25}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Door_2
+      name: Door2_2
       rect:
         serializedVersion: 2
         x: 64
         y: 0
         width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        height: 64
+      alignment: 9
+      pivot: {x: 0.5, y: 0.25}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0

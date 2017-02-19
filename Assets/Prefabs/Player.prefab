@@ -120,11 +120,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e259a2142481a24fb4e514b505fb1bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sword: {fileID: 114238712412134878, guid: 440d7f478f067ab44b2b58da49e7d917, type: 2}
+  sword: {fileID: 1002282342740670, guid: 440d7f478f067ab44b2b58da49e7d917, type: 2}
   healthTexture: {fileID: 2800000, guid: 77ec5aa28ccc7864fbf35c3dbd9b2237, type: 3}
   acceleration: 100
   rollFrames: 22
   rollForce: 1200
+  attackWindup: 7
+  attackFrames: 0
   remStateFrames: 0
   keys: 0
   state: 0

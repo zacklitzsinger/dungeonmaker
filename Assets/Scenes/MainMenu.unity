@@ -662,7 +662,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainMenu: {fileID: 1214643937}
-  levelBrowser: {fileID: 2055162257}
+  levelBrowser: {fileID: 0}
 --- !u!1 &981818804
 GameObject:
   m_ObjectHideFlags: 0

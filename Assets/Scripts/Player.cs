@@ -13,13 +13,16 @@ public class Player : MonoBehaviour
 {
 
     Rigidbody2D rb2d;
-    public Sword sword;
+    public GameObject sword;
     public Texture2D healthTexture;
     Health health;
 
     public float acceleration;
     public int rollFrames; // Number of frames it takes to roll
     public float rollForce; // Force with which to roll
+    public int attackWindup; //Number of frames to actually start attacking
+    [ReadOnly]
+    public int attackFrames; // Number of frames to attack.
 
     [ReadOnly]
     public int remStateFrames; // Remaining frames to continue current state; 0 when in idle
@@ -33,6 +36,7 @@ public class Player : MonoBehaviour
     {
         rb2d = GetComponent<Rigidbody2D>();
         health = GetComponentInChildren<Health>();
+        attackFrames = sword.GetComponentInChildren<Sword>().remainingFrames;
     }
 
     void FixedUpdate()
@@ -48,6 +52,12 @@ public class Player : MonoBehaviour
             remStateFrames--;
             if (state == PlayerState.Rolling)
                 rb2d.AddForce(targetMotion.normalized * rollForce / (rollFrames - remStateFrames + 1));
+            if (state == PlayerState.Attacking && remStateFrames == attackFrames)
+            {
+                Vector2 targetDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+                targetDirection.Normalize();
+                Instantiate(sword, transform.position, Quaternion.LookRotation(Vector3.forward, targetDirection), transform);
+            }
             return;
         }
         else
@@ -66,12 +76,13 @@ public class Player : MonoBehaviour
             rb2d.AddForce((targetMotion.magnitude > 1 ? targetMotion.normalized : targetMotion) * acceleration);
         }
 
-        if (Input.GetButtonDown("Attack"))
+        if (Input.GetButtonDown("Attack") && state == PlayerState.Idle)
         {
+            remStateFrames = sword.GetComponentInChildren<Sword>().remainingFrames + attackWindup;
+            state = PlayerState.Attacking;
             Vector2 targetDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
             targetDirection.Normalize();
-            Sword s = Instantiate(sword, (Vector2)transform.position + targetDirection, Quaternion.LookRotation(Vector3.forward, targetDirection), transform);
-            remStateFrames = s.remainingFrames;
+            rb2d.AddForce(targetDirection * 500);
         }
 
         if (Input.GetButtonDown("Use item") && Items.Length >= 1)

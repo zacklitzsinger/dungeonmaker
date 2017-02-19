@@ -291,10 +291,10 @@ ParticleSystem:
       maxGradient:
         key0:
           serializedVersion: 2
-          rgba: 1269480860
+          rgba: 1895430649
         key1:
           serializedVersion: 2
-          rgba: 1271258067
+          rgba: 2378548677
         key2:
           serializedVersion: 2
           rgba: 0
@@ -647,7 +647,7 @@ ParticleSystem:
     enabled: 1
     serializedVersion: 3
     rateOverTime:
-      scalar: 150
+      scalar: 50
       maxCurve:
         serializedVersion: 2
         m_Curve:

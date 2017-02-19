@@ -5,12 +5,12 @@ For now, this is just a collection of random thoughts.
 - [x] Puzzle mechanics
   - [x] Locked doors and keys
 - [x] Saving/loading levels
-- [ ] Central server to store/browse levels
-- [ ] Combat
-  - [ ]Damage
+- [x] Central server to store/browse levels
+- [x] Combat
+  - [x]Damage
   - [ ] Maneuvers
   - [ ] Items
-  - [ ] Enemies
+  - [x] Enemies
 - [ ] Level layouting (connecting various rooms together)
 - [ ] World layouting (connecting various dungeons together as a 'campaign')
 - [ ] Multiplayer?
@@ -30,7 +30,6 @@ This is a list of potential game objects to include.
 - Water (swimming)
 - Lights (torches, overhead lighting, lanterns, etc.)
 - Mine carts with track (follow a specific track)
-- Placeable respawn points for individual rooms
 
 ## Item ideas
 List of items to find in chests. Items should always have multiple puzzle/combat applications.

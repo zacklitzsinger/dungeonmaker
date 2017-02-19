@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class Bridge : MonoBehaviour {
+public class Bridge : MonoBehaviour, ICustomSerializable {
 
     public bool active = true;
 

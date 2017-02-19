@@ -237,8 +237,21 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                     // Allow removal of objects by right clicking
                     if (Input.GetMouseButton(1))
                     {
-                        foreach (Vector2 point in GetGridPointsAlongLine(lastMousePosition, Input.mousePosition))
-                            DestroyAllGameObjectsAtGridPosition(point);
+                        // If the mouse hasn't moved, the player only wants to delete the top most item, so trigger only on mouse press.
+                        if (GetGridMousePosition() == GetScreenGridPosition(lastMousePosition))
+                        {
+                            if (Input.GetMouseButtonDown(1))
+                            {
+                                Vector2 gridPos = GetGridMousePosition();
+                                GameObject go = GetGameObjectAtPoint(gridPos);
+                                DestroyGameObjectAtGridPosition(gridPos, go);
+                            }
+                        }
+                        // When dragging the mouse, destroy all objects along the path
+                        // TODO: Maybe shouldn't count the initial point on the line
+                        else
+                            foreach (Vector2 point in GetGridPointsAlongLine(lastMousePosition, Input.mousePosition))
+                                DestroyAllGameObjectsAtGridPosition(point);
                     }
                     break;
 
@@ -390,7 +403,15 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     /// <returns></returns>
     Vector2 GetGridMousePosition()
     {
-        return ConvertPositionToGrid(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+        return GetScreenGridPosition(Input.mousePosition);
+    }
+
+    /// <summary>
+    /// Returns the grid position under the given screen coordinates.
+    /// </summary>
+    Vector2 GetScreenGridPosition(Vector2 pos)
+    {
+        return ConvertPositionToGrid(Camera.main.ScreenToWorldPoint(pos));
     }
 
     /// <summary>

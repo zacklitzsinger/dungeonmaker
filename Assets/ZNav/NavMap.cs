@@ -83,8 +83,19 @@ public class NavMap : INavMap<MapNode>
         if (!map.ContainsKey(node.ToVector2()))
             return false;
         List<GameObject> goList = map[node.ToVector2()];
-        foreach (GameObject g in goList) 
+        foreach (GameObject g in goList)
             if (g != null && g.GetComponent<ObjectData>().type == ObjectType.Wall)
+                return false;
+        return true;
+    }
+
+    public bool SeeThrough(MapNode node)
+    {
+        if (!map.ContainsKey(node.ToVector2()))
+            return true;
+        List<GameObject> goList = map[node.ToVector2()];
+        foreach (GameObject g in goList)
+            if (g != null && !g.GetComponent<ObjectData>().seeThrough)
                 return false;
         return true;
     }
@@ -107,10 +118,10 @@ public class NavMap : INavMap<MapNode>
         return ret;
     }
 
-    public List<MapNode> GetNeighbors(MapNode current, bool includeEmpty = true)
+    public List<MapNode> GetNeighbors(MapNode current, bool includeEmpty = true, bool ignoreSeeThrough = false)
     {
         return GetPotentialNeighbors(current).FindAll((n) => {
-            return (includeEmpty && !map.ContainsKey(n.ToVector2()) ||  Passable(n));
+            return (includeEmpty && !map.ContainsKey(n.ToVector2()) || (ignoreSeeThrough && SeeThrough(n)) ||  Passable(n));
         });
     }
 }

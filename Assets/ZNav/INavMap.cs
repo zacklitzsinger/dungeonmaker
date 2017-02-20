@@ -11,7 +11,7 @@ public interface INavMap<T> where T : NavNode<T> {
     /**
      * Given the origin node, return a list of neighbors
      */
-    List<T> GetNeighbors(T origin, bool includeEmpty);
+    List<T> GetNeighbors(T origin, bool includeEmpty, bool ignoreSeeThrough);
 
     /**
      * Returns the distance between two NavNodes

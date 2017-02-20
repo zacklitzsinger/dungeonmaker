@@ -7,6 +7,8 @@ public class Flamethrower : MonoBehaviour, ICustomSerializable
     public bool active;
     [PlayerEditableRange("Range", 1, 10)]
     public int distance;
+    [PlayerEditable("Invert")]
+    public bool invert;
 
     Fire fire;
 
@@ -19,7 +21,7 @@ public class Flamethrower : MonoBehaviour, ICustomSerializable
     {
         Circuit circuit = GetComponent<Circuit>();
         if (circuit)
-            active = circuit.Powered;
+            active = circuit.Powered ^ invert;
         fire.active = active;
         int distance = FindDistance();
         if (distance <= fire.size)

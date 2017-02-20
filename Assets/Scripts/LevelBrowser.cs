@@ -47,7 +47,7 @@ public class LevelBrowser : MonoBehaviour {
         yield return www;
         if (www.error != null)
             Debug.LogError(www.error);
-        LevelEditor.main.LoadFromBytes(www.bytes);
         LevelEditor.main.ChangeMode(EditMode.Play);
+        LevelEditor.main.LoadFromBytes(www.bytes);
     }
 }

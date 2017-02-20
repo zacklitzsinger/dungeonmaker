@@ -17,7 +17,7 @@ public class NavigationCalculator<T> where T : NavNode<T> {
     /// <summary>
     /// Returns an ordered list of INavNodes from start to end.
     /// </summary>
-    public List<T> CalculatePath(T start, T end, bool includeEmpty = false)
+    public List<T> CalculatePath(T start, T end, bool includeEmpty = false, bool ignoreSeeThrough = false)
     {
         map_.RecalculateBounds();
         List<T> neighbors;
@@ -40,7 +40,7 @@ public class NavigationCalculator<T> where T : NavNode<T> {
             }
             openNodes.Remove(current);
             closedNodes.Add(current);
-            neighbors = map_.GetNeighbors(current, includeEmpty);
+            neighbors = map_.GetNeighbors(current, includeEmpty, ignoreSeeThrough);
             foreach (T n in neighbors) {
                 // Already been here
                 if (closedNodes.Contains(n))
@@ -102,7 +102,7 @@ public class NavigationCalculator<T> where T : NavNode<T> {
     /// <summary>
     /// Returns all nodes connected to the given node.
     /// </summary>
-    public List<T> GetConnectedNodes(T start, bool includeEmpty = false)
+    public List<T> GetConnectedNodes(T start, bool includeEmpty = false, bool ignoreSeeThrough = false)
     {
         map_.RecalculateBounds();
         List<T> neighbors;
@@ -116,7 +116,7 @@ public class NavigationCalculator<T> where T : NavNode<T> {
             current = openNodes[0];
             openNodes.Remove(current);
             closedNodes.Add(current);
-            neighbors = map_.GetNeighbors(current, includeEmpty);
+            neighbors = map_.GetNeighbors(current, includeEmpty, ignoreSeeThrough);
             foreach (T n in neighbors)
             {
                 // Already been here

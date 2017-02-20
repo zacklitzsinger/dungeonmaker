@@ -49,7 +49,7 @@ public class Switch : MonoBehaviour, ICustomSerializable
 
     void SetupCircuit()
     {
-        circuit.conditions.Add(() => { return active ^ invert; });
+        circuit.gateConditions.Add(() => { return active ^ invert; });
     }
 
     public void Serialize(BinaryWriter bw)

@@ -28,7 +28,7 @@ public class Timer : MonoBehaviour, ICustomSerializable {
 
     void SetupCircuit()
     {
-        circuit.conditions.Add(() => { return on; });
+        circuit.gateConditions.Add(() => { return on; });
     }
 
     void FixedUpdate()

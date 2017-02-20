@@ -16,15 +16,33 @@ public class Circuit : MonoBehaviour, ICustomSerializable
         }
     }
     // Test conditions last frame
-    public bool lastTest = false;
+    public bool lastGateTest = false;
+    public bool lastPowerTest = false;
 
 
     [ReadOnly]
     public List<Circuit> inputs = new List<Circuit>();
+    /// <summary>
+    /// List of functions that any of which being true will cause this node to produce power.
+    /// </summary>
     [ReadOnly]
-    public List<Func<bool>> conditions = new List<Func<bool>>();
+    public List<Func<bool>> powerConditions = new List<Func<bool>>();
+    /// <summary>
+    /// List of functions that must all return true in order for power to pass through the gate.
+    /// </summary>
+    [ReadOnly]
+    public List<Func<bool>> gateConditions = new List<Func<bool>>();
     [ReadOnly]
     public List<Circuit> outputs = new List<Circuit>();
+
+    void Start()
+    {
+        powerConditions.Add(() =>
+        {
+            // A circuit with no inputs powers itself.
+            return (inputs.Count == 0);
+        });
+    }
 
     /// <summary>
     /// Connects a circuit to another circuit one way.
@@ -55,28 +73,34 @@ public class Circuit : MonoBehaviour, ICustomSerializable
         outputs.Clear();
     }
 
-    bool TestConditions()
+    bool TestGateConditions()
     {
-        foreach(Func<bool> condition in conditions)
+        foreach (Func<bool> condition in gateConditions)
             if (!condition())
                 return false;
         return true;
     }
 
+    bool TestPowerConditions()
+    {
+        foreach (Func<bool> condition in powerConditions)
+            if (condition())
+                return true;
+        return false;
+    }
+
     void FixedUpdate()
     {
+        bool powerTest = TestPowerConditions();
+        int powerDelta = 0;
         // A circuit with no inputs powers itself.
-        if (inputs.Count == 0)
-            powerAmount = 1;
-        //else if (powerAmount > inputs.Count)
-        //{
-        //    Debug.LogWarning("Too much power! " + gameObject.name);
-        //} else if (powerAmount < 0)
-        //{
-        //    Debug.LogWarning("Negative power! " + gameObject.name);
-        //}
+        if (powerTest && !lastPowerTest)
+            powerDelta++;
+        else if (!powerTest && lastPowerTest)
+            powerDelta--;
+        lastPowerTest = powerTest;
 
-        DeterminePower();
+        DeterminePower(powerDelta);
     }
 
     /// <summary>
@@ -89,7 +113,7 @@ public class Circuit : MonoBehaviour, ICustomSerializable
         // Keep track of the amount of power before we changed it in case we need to transmit that.
         int prevPowerAmount = powerAmount;
         powerAmount += power;
-        bool test = TestConditions();
+        bool test = TestGateConditions();
         if (outputs.Count > 0)
         {
             // If the gate is true, new incoming power should always go to output
@@ -97,12 +121,12 @@ public class Circuit : MonoBehaviour, ICustomSerializable
                 powerDelta += power;
             // In the case of a change of the gate, we should send power based on how much power we had 
             // BEFORE we modified it (since that was the part that has already been sent or needs to be sent).
-            if (!test && lastTest)
+            if (!test && lastGateTest)
                 powerDelta -= prevPowerAmount;
-            else if (test && !lastTest)
+            else if (test && !lastGateTest)
                 powerDelta += prevPowerAmount;
         }
-        lastTest = test;
+        lastGateTest = test;
         TransmitPower(powerDelta, visitedNodes);
     }
 

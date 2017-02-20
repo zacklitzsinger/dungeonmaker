@@ -7,6 +7,8 @@ public class Fan : MonoBehaviour, ICustomSerializable
     public bool active;
     [PlayerEditableRange("Range", 1, 10)]
     public int distance;
+    [PlayerEditableRange("Activation Speed", 1, 5)]
+    public int activationSpeed = 2;
     public float force;
 
     void FixedUpdate()
@@ -21,7 +23,7 @@ public class Fan : MonoBehaviour, ICustomSerializable
         if (distance <= wind.size)
             wind.size = distance;
         else
-            wind.size = Mathf.Min(wind.size + 0.032f, distance); // ~ 2 tiles per second
+            wind.size = Mathf.Min(wind.size + 0.016f * activationSpeed, distance); // ~ 2 tiles per second by default
     }
 
     int FindDistance()

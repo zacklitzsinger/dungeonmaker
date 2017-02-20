@@ -22,9 +22,9 @@ GameObject:
   - component: {fileID: 212390731372897270}
   - component: {fileID: 114744713971349162}
   - component: {fileID: 61084879577082304}
-  - component: {fileID: 114567960151183086}
+  - component: {fileID: 114744697006081990}
   m_Layer: 0
-  m_Name: Xor
+  m_Name: AndGate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -57,7 +57,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
---- !u!114 &114567960151183086
+--- !u!114 &114744697006081990
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1002282342740670}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3442f6966451ffd47b18f15d44e35724, type: 3}
+  m_Script: {fileID: 11500000, guid: f44d441bade1ca740960e900d133356a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114744713971349162
@@ -111,7 +111,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: fa0c919d95f921649a9a8a6d448cd70d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 461b443968fbc4344a9a1c1cbb9e9fc8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

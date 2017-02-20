@@ -144,6 +144,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 3
+  seeThrough: 0
 --- !u!114 &114765350761504142
 MonoBehaviour:
   m_ObjectHideFlags: 1

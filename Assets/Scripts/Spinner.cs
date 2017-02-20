@@ -17,7 +17,7 @@ public class Spinner : MonoBehaviour {
 
     void Start()
     {
-        rb2d = GetComponent<Rigidbody2D>();
+        rb2d = GetComponentInChildren<Rigidbody2D>();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -63,7 +63,7 @@ public class Spinner : MonoBehaviour {
 
     void SetupCircuit()
     {
-        circuit.conditions.Add(() => { return (Mathf.Abs(rb2d.angularVelocity) > activationSpeed) ^ invert; });
+        circuit.gateConditions.Add(() => { return (Mathf.Abs(rb2d.angularVelocity) > activationSpeed) ^ invert; });
     }
 
     void FixedUpdate()

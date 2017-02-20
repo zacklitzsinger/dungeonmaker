@@ -212,7 +212,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         if (mode == EditMode.Play)
         {
             playFrames = 0;
-            SaveToTemp();
+            if (canEdit)
+                SaveToTemp();
         }
         if ((prevMode == EditMode.Play || prevMode == EditMode.Victory) && mode >= EditMode.Create)
         {
@@ -224,6 +225,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            SceneManager.LoadScene("MainMenu");
+
         if (canEdit)
         {
             if (Input.GetButtonDown("Create Mode"))
@@ -327,7 +331,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                                 if (circuit)
                                 {
                                     otherCircuit.Connect(circuit);
-                                    selectedGameObject = null;
+                                    if (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
+                                        selectedGameObject = null;
                                 }
                             }
                         }
@@ -499,7 +504,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         MapNode currentNode = new MapNode(gridPos);
         if (currentRoom.Contains(currentNode))
             return;
-        currentRoom = navcalc.GetConnectedNodes(currentNode, true);
+        currentRoom = navcalc.GetConnectedNodes(currentNode, true, true);
         // Iterate only through the original list.
         int nodeCount = currentRoom.Count;
         for (int i = 0; i < nodeCount; i++)
@@ -533,7 +538,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     {
         if (go == null)
             return;
-        StartCoroutine(ControlAlpha(go.GetComponentInChildren<SpriteRenderer>(), active ? 1f : 0f));
+        foreach(SpriteRenderer renderer in go.GetComponentsInChildren<SpriteRenderer>())
+            StartCoroutine(ControlAlpha(renderer, active ? 1f : 0f));
         // Enable/disable particle systems (including inactive ones).
         foreach (ParticleSystem ps in go.GetComponentsInChildren<ParticleSystem>(true))
             ps.gameObject.SetActive(active);
@@ -814,7 +820,6 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             GameObject go = guidmap[id];
             DeserializeComponents(go, br);
         }
-
     }
 
     /// <summary>

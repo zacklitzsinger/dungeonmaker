@@ -20,4 +20,19 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("LevelEditor");
     }
 
+    public void Quit()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Quit();
+    }
+
 }

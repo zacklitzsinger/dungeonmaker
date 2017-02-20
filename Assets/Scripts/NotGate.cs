@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Xor : MonoBehaviour {
+public class NotGate : MonoBehaviour {
 
     Circuit circuit;
 
@@ -18,6 +18,7 @@ public class Xor : MonoBehaviour {
 
     void SetupCircuit()
     {
-        circuit.conditions.Add(() => { return circuit.powerAmount == 1; });
+        circuit.gateConditions.Add(() => { return circuit.powerAmount == 1; });
+        circuit.powerConditions.Add(() => { return true; });
     }
 }

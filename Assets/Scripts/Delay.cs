@@ -38,7 +38,7 @@ public class Delay : MonoBehaviour, ICustomSerializable
 
     void SetupCircuit()
     {
-        circuit.conditions.Add(() => { return delay == 0 || history.Count >= delay && history.Peek(); });
+        circuit.gateConditions.Add(() => { return delay == 0 || history.Count >= delay && history.Peek(); });
     }
 
     public void Serialize(BinaryWriter bw)

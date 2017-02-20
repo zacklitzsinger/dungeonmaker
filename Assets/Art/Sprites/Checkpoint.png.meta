@@ -1,12 +1,12 @@
 fileFormatVersion: 2
-guid: a098d21b90aacda4d8cb138fb1881cdb
-timeCreated: 1487314551
+guid: f952f80c0ab359c4997992df5fffe4be
+timeCreated: 1487479103
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: Checkpoint_0
-    21300002: Checkpoint_1
-    21300004: Checkpoint_2
+    21300000: Checkpoint2_0
+    21300002: Checkpoint2_1
+    21300004: Checkpoint2_2
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -73,41 +73,41 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Checkpoint_0
+      name: Checkpoint2_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        height: 64
+      alignment: 9
+      pivot: {x: 0.5, y: 0.25}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Checkpoint_1
+      name: Checkpoint2_1
       rect:
         serializedVersion: 2
         x: 32
         y: 0
         width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        height: 64
+      alignment: 9
+      pivot: {x: 0.5, y: 0.25}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Checkpoint_2
+      name: Checkpoint2_2
       rect:
         serializedVersion: 2
         x: 64
         y: 0
         width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        height: 64
+      alignment: 9
+      pivot: {x: 0.5, y: 0.25}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0

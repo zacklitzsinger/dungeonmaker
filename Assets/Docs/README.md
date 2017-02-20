@@ -26,7 +26,6 @@ This is a list of potential game objects to include.
 - Switches should be able to stay on for periods of time
 - Secret switches in walls
 - Moving platforms
-- Flamethrowers
 - Water (swimming)
 - Lights (torches, overhead lighting, lanterns, etc.)
 - Mine carts with track (follow a specific track)

@@ -16,12 +16,12 @@ public class Fan : MonoBehaviour, ICustomSerializable
             active = circuit.Powered;
         Wind wind = GetComponentInChildren<Wind>();
         wind.active = active;
+        wind.force = force;
         int distance = FindDistance();
         if (distance <= wind.size)
             wind.size = distance;
         else
             wind.size = Mathf.Min(wind.size + 0.032f, distance); // ~ 2 tiles per second
-        wind.transform.localPosition = new Vector2(0, (wind.size + 1) / 2);
     }
 
     int FindDistance()

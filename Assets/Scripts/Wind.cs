@@ -21,12 +21,16 @@ public class Wind : MonoBehaviour {
 
     void Update()
     {
-        GetComponent<BoxCollider2D>().size = new Vector2(0.5f, size);
+        BoxCollider2D collider = GetComponent<BoxCollider2D>();
+        collider.size = new Vector2(0.5f, size);
+        collider.offset = new Vector2(0, (size + 1) / 2);
         ParticleSystem ps = GetComponentInChildren<ParticleSystem>();
         if (ps == null)
             return;
-        ParticleSystem.ShapeModule shape = ps.shape;
-        shape.box = new Vector3(1, 0, size > 1 ? size -1 : size / 2);
+        ParticleSystem.EmissionModule emission = ps.emission;
+        emission.rateOverTimeMultiplier = (size + 1) * 40;
+        ParticleSystem.MainModule main = ps.main;
+        main.startSpeedMultiplier = (size + 1) * 1.25f;
         if (active && size > 0)
             ps.Play();
         else
@@ -35,7 +39,7 @@ public class Wind : MonoBehaviour {
 
     void Push(Collider2D other)
     {
-        Rigidbody2D rb2d = other.GetComponent<Rigidbody2D>();
+        Rigidbody2D rb2d = other.GetComponentInParent<Rigidbody2D>();
         if (!rb2d || !active)
             return;
         rb2d.AddForce(transform.up * force);

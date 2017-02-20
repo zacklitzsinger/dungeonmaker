@@ -25,6 +25,8 @@ public class LevelBrowser : MonoBehaviour {
     IEnumerator FetchLevelInfo() {
         WWW www = new WWW("localhost:3000/levels");
         yield return www;
+        if (www.error != null)
+            Debug.LogError(www.error);
         JSONNode json = JSON.Parse(www.text);
         foreach(JSONNode info in json.Children)
         {
@@ -46,6 +48,6 @@ public class LevelBrowser : MonoBehaviour {
         if (www.error != null)
             Debug.LogError(www.error);
         LevelEditor.main.LoadFromBytes(www.bytes);
-        LevelEditor.main.ChangeMode(EditMode.Test);
+        LevelEditor.main.ChangeMode(EditMode.Play);
     }
 }

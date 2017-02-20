@@ -6,12 +6,15 @@ using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public enum EditMode
 {
-    Inactive,
-    Test,
+    None,
+    Play,
+    Victory,
+    // Modes below here cause timescale to be set to zero
     Create,
     Edit,
     Circuit
@@ -29,6 +32,10 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public static LevelEditor main;
 
     public EditMode mode = EditMode.Create;
+    /// <summary>
+    /// Can we edit the level and change modes to level editing modes?
+    /// </summary>
+    public bool canEdit = false;
     [ReadOnly]
     public GameObject selectedPrefab;
     [ReadOnly]
@@ -38,6 +45,11 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     [ReadOnly]
     public float rotation;
     public const int GRID_SIZE = 32;
+    [ReadOnly]
+    /// <summary>
+    /// Number of frames since play started.
+    /// </summary>
+    public int playFrames;
 
     // UI
     public GameObject sidebar;
@@ -50,6 +62,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public GameObject prefabIntSlider;
     public ToggleGroup tabPanel;
     public Toggle prefabToggleButton;
+    public GameObject victoryPanel;
+    public Text victoryTimeText;
 
     // Circuits
     public Color circuitColor;
@@ -93,6 +107,17 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             {
                 levelName = str;
             });
+
+        if (victoryPanel != null)
+        {
+            Button button = victoryPanel.GetComponentInChildren<Button>();
+            button.onClick.AddListener(() => {
+                if (canEdit)
+                    ChangeMode(EditMode.Create);
+                else
+                    SceneManager.LoadScene("MainMenu");
+            });
+        }
     }
 
     void OnApplicationFocus(bool focus)
@@ -179,11 +204,17 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         ClearSidebar();
         if (mode == EditMode.Create)
             SidebarCreateButtons();
-        if (mode == EditMode.Test)
+        if (mode == EditMode.Victory)
         {
+            TimeSpan time = TimeSpan.FromMilliseconds(playFrames * 1000f / 60f);
+            victoryTimeText.text = string.Format("{0}:{1:00}:{2:00}", time.Hours, time.Minutes, time.Seconds);
+        }
+        if (mode == EditMode.Play)
+        {
+            playFrames = 0;
             SaveToTemp();
         }
-        if (prevMode == EditMode.Test)
+        if ((prevMode == EditMode.Play || prevMode == EditMode.Victory) && mode >= EditMode.Create)
         {
             currentRoom.Clear();
             LoadFromTemp();
@@ -193,20 +224,21 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     // Update is called once per frame
     void Update()
     {
-        if (mode == EditMode.Inactive)
-            return;
-        if (Input.GetButtonDown("Create Mode"))
-            ChangeMode(EditMode.Create);
-        else if (Input.GetButtonDown("Edit Mode"))
-            ChangeMode(EditMode.Edit);
-        else if (Input.GetButtonDown("Circuit Mode"))
-            ChangeMode(EditMode.Circuit);
-        else if (Input.GetButtonDown("Test Mode"))
-            ChangeMode(EditMode.Test);
-        if (Input.GetButtonDown("Rotate CW"))
-            rotation = (rotation + 90f) % 360;
-        else if (Input.GetButtonDown("Rotate CCW"))
-            rotation = (rotation + 270f) % 360;
+        if (canEdit)
+        {
+            if (Input.GetButtonDown("Create Mode"))
+                ChangeMode(EditMode.Create);
+            else if (Input.GetButtonDown("Edit Mode"))
+                ChangeMode(EditMode.Edit);
+            else if (Input.GetButtonDown("Circuit Mode"))
+                ChangeMode(EditMode.Circuit);
+            else if (Input.GetButtonDown("Test Mode"))
+                ChangeMode(EditMode.Play);
+            if (Input.GetButtonDown("Rotate CW"))
+                rotation = (rotation + 90f) % 360;
+            else if (Input.GetButtonDown("Rotate CCW"))
+                rotation = (rotation + 270f) % 360;
+        }
 
         // Pause time while editing
         Time.timeScale = (mode >= EditMode.Create ? 0 : 1);
@@ -218,7 +250,10 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         if (sidebar != null)
             sidebar.SetActive(mode >= EditMode.Create);
 
-        if (EventSystem.current.IsPointerOverGameObject() || mode == EditMode.Test)
+        if (victoryPanel != null)
+            victoryPanel.SetActive(mode == EditMode.Victory);
+
+        if (EventSystem.current.IsPointerOverGameObject() || mode == EditMode.Play)
             return;
 
         if (lastAppFocused)
@@ -318,6 +353,12 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         }
         lastMousePosition = Input.mousePosition;
         lastAppFocused = true;
+    }
+
+    void FixedUpdate()
+    {
+        if (mode == EditMode.Play)
+            playFrames++;
     }
 
     /// <summary>

@@ -6,7 +6,8 @@ public enum PlayerState
 {
     Idle,
     Rolling,
-    Attacking
+    Attacking,
+    Victory
 }
 
 public class Player : MonoBehaviour
@@ -41,6 +42,9 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (state == PlayerState.Victory)
+            return;
+
         LevelEditor.main.SetCurrentRoom(transform.position);
 
         float xMotion = Input.GetAxis("Horizontal");
@@ -93,7 +97,7 @@ public class Player : MonoBehaviour
 
     void OnGUI()
     {
-        if (LevelEditor.main.mode == EditMode.Test)
+        if (LevelEditor.main.mode == EditMode.Play)
             for (int i = 1; i <= health.currentHealth; i++)
                 GUI.DrawTexture(new Rect(new Vector2(Screen.width - 20 - i * healthTexture.width/2, 20), new Vector2(healthTexture.width/2, healthTexture.height/2)), healthTexture);
     }

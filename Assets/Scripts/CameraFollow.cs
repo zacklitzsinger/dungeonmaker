@@ -9,7 +9,7 @@ public class CameraFollow : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (LevelEditor.main.mode != EditMode.Test && !EventSystem.current.IsPointerOverGameObject())
+        if (LevelEditor.main.mode >= EditMode.Create && !EventSystem.current.IsPointerOverGameObject())
         {
             StopAllCoroutines();
             Vector3 motion = Input.GetAxisRaw("Horizontal") * Vector2.right + Input.GetAxisRaw("Vertical") * Vector2.up;

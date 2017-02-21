@@ -11,10 +11,17 @@ public class Flamethrower : MonoBehaviour, ICustomSerializable
     public bool invert;
 
     Fire fire;
+    Animator animator;
 
     void Start()
     {
         fire = GetComponentInChildren<Fire>();
+        animator = GetComponentInChildren<Animator>();
+    }
+
+    void Update()
+    {
+        animator.SetBool("active", active);
     }
 
     void FixedUpdate()

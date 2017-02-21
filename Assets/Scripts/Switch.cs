@@ -23,12 +23,16 @@ public class Switch : MonoBehaviour, ICustomSerializable
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (other.GetComponent<ObjectData>() == null)
+            return;
         active = true;
         count++;
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
+        if (other.GetComponent<ObjectData>() == null)
+            return;
         if (permanent)
             return;
         count--;

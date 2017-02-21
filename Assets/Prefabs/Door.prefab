@@ -146,6 +146,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 3
   seeThrough: 0
+  ground: 1
 --- !u!212 &212390731372897270
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -18,6 +18,10 @@ public class ObjectData : MonoBehaviour, ICustomSerializable
     public Guid guid; // Set outside of this behavior...
     public ObjectType type;
     public bool seeThrough = true;
+    /// <summary>
+    /// Counts as ground for the purposes of falling even though its not a floor tile.
+    /// </summary>
+    public bool ground = false;
     SpriteRenderer sprite;
 
     void Start()

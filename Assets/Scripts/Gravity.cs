@@ -27,7 +27,7 @@ public class Gravity : MonoBehaviour {
     void OnTriggerExit2D(Collider2D other)
     {
         ObjectData data = other.GetComponent<ObjectData>();
-        if (data && data.type == ObjectType.Floor)
+        if (data && (data.type == ObjectType.Floor || data.ground))
             touching.Remove(other);
         CheckForDeath();
     }

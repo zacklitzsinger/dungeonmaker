@@ -17,7 +17,10 @@ public class Checkpoint : MonoBehaviour {
     {
         if (other.tag != "Player")
             return;
-        other.GetComponent<Health>().SetRespawnPoint(this);
+        Health health = other.GetComponent<Health>();
+        if (health == null)
+            return;
+        health.SetRespawnPoint(this);
         active = true;
     }
 

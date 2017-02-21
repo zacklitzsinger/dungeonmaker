@@ -2242,6 +2242,11 @@ MonoBehaviour:
   selectedCircuitOutputColor: {r: 0.9852941, g: 0.40490997, b: 0.028979266, a: 1}
   selectedConnectionColor: {r: 0.9632353, g: 0.12748703, b: 0.4214399, a: 1}
   levelName: 
+  onRoomChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!1 &1077726367
 GameObject:
   m_ObjectHideFlags: 0

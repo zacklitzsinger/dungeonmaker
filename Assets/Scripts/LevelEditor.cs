@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -77,7 +78,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public Dictionary<Guid, GameObject> guidmap = new Dictionary<Guid, GameObject>();
     public NavMap navmap;
     public NavigationCalculator<MapNode> navcalc;
-    List<MapNode> currentRoom = new List<MapNode>();
+    public List<MapNode> currentRoom = new List<MapNode>();
+    public UnityEvent onRoomChanged;
 
     /// <summary>
     /// When testing, save to a temporary file beforehand so we can reload the level after finishing
@@ -533,6 +535,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         foreach (MapNode node in currentRoom)
             avg += new Vector2(node.x, node.y);
         avg /= currentRoom.Count;
+        onRoomChanged.Invoke();
         Camera.main.GetComponent<CameraFollow>().SetTarget(avg);
     }
 

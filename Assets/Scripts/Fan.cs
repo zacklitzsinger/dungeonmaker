@@ -11,6 +11,18 @@ public class Fan : MonoBehaviour, ICustomSerializable
     public int activationSpeed = 2;
     public float force;
 
+    Animator animator;
+
+    void Start()
+    {
+        animator = GetComponentInChildren<Animator>();
+    }
+
+    void Update()
+    {
+        animator.SetBool("active", active);
+    }
+
     void FixedUpdate()
     {
         Circuit circuit = GetComponent<Circuit>();

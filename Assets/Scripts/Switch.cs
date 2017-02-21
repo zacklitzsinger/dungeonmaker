@@ -23,7 +23,7 @@ public class Switch : MonoBehaviour, ICustomSerializable
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.GetComponent<ObjectData>() == null)
+        if (other.GetComponentInParent<ObjectData>() == null)
             return;
         active = true;
         count++;
@@ -31,7 +31,7 @@ public class Switch : MonoBehaviour, ICustomSerializable
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.GetComponent<ObjectData>() == null)
+        if (other.GetComponentInParent<ObjectData>() == null)
             return;
         if (permanent)
             return;

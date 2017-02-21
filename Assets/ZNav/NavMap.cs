@@ -49,6 +49,8 @@ public class NavMap : INavMap<MapNode>
     Dictionary<Vector2, MapNode> hackNodeMap = new Dictionary<Vector2, MapNode>();
     Rect bounds = new Rect();
 
+    public Rect Bounds { get { return bounds; } }
+
     public NavMap(Dictionary<Vector2, List<GameObject>> map)
     {
         this.map = map;

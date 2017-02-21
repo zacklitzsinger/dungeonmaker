@@ -271,6 +271,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                     {
                         foreach (Vector2 point in GetGridPointsAlongLine(lastMousePosition, Input.mousePosition))
                             CreateSelectedPrefabAtGridPosition(point, rotation);
+                        navmap.RecalculateBounds();
                     }
 
                     // Allow removal of objects by right clicking
@@ -291,6 +292,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                         else
                             foreach (Vector2 point in GetGridPointsAlongLine(lastMousePosition, Input.mousePosition))
                                 DestroyAllGameObjectsAtGridPosition(point);
+                        navmap.RecalculateBounds();
                     }
                     break;
 
@@ -820,6 +822,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             GameObject go = guidmap[id];
             DeserializeComponents(go, br);
         }
+        navmap.RecalculateBounds();
     }
 
     /// <summary>

@@ -13,8 +13,20 @@ public class CameraFollow : MonoBehaviour
         {
             StopAllCoroutines();
             Vector3 motion = Input.GetAxisRaw("Horizontal") * Vector2.right + Input.GetAxisRaw("Vertical") * Vector2.up;
-            motion /= 2;
-            transform.position += motion;
+            motion /= Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? 2 : 6;
+            Rect bounds = LevelEditor.main.navmap.Bounds;
+            bounds.position -= Vector2.one * 10;
+            bounds.size += Vector2.one * 20;
+            Vector3 pos = transform.position + motion;
+            if (pos.x < bounds.xMin)
+                pos.x = bounds.xMin;
+            else if (pos.x > bounds.xMax)
+                pos.x = bounds.xMax;
+            if (pos.y < bounds.yMin)
+                pos.y = bounds.yMin;
+            else if (pos.y > bounds.yMax)
+                pos.y = bounds.yMax;
+            transform.position = pos;
         }
     }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Line : MonoBehaviour {
 
-    Material lineMat;
+    public Material lineMat;
 
     List<LineInfo> lines = new List<LineInfo>();
 
@@ -14,15 +14,11 @@ public class Line : MonoBehaviour {
         public Color color;
     }
 
-    void Awake()
-    {
-        lineMat = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
-    }
-
     void OnPostRender()
     {
-        GL.Begin(GL.LINES);
+        GL.PushMatrix();
         lineMat.SetPass(0);
+        GL.Begin(GL.LINES);
         
         foreach(LineInfo info in lines)
         {
@@ -31,6 +27,7 @@ public class Line : MonoBehaviour {
                 GL.Vertex(point);
         }
         GL.End();
+        GL.PopMatrix();
         lines.Clear();
     }
 

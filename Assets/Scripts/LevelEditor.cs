@@ -539,12 +539,24 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     /// <summary>
     /// Shows or hides a given tile (based on whether it is in the current room).
     /// </summary>
-    void SetTileActive(GameObject go, bool active)
+    void SetTileActive(GameObject go, bool active, bool immediate = false)
     {
         if (go == null)
             return;
-        foreach(SpriteRenderer renderer in go.GetComponentsInChildren<SpriteRenderer>())
-            StartCoroutine(ControlAlpha(renderer, active ? 1f : 0f));
+        foreach (SpriteRenderer renderer in go.GetComponentsInChildren<SpriteRenderer>())
+        {
+            float targetAlpha = active ? 1f : 0f;
+            if (immediate)
+            {
+                Color c = renderer.color;
+                c.a = targetAlpha;
+                renderer.color = c;
+            }
+            else
+            {
+                StartCoroutine(ControlAlpha(renderer, targetAlpha));
+            }
+        }
         // Enable/disable particle systems (including inactive ones).
         foreach (ParticleSystem ps in go.GetComponentsInChildren<ParticleSystem>(true))
             ps.gameObject.SetActive(active);
@@ -823,6 +835,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         {
             Guid id = br.ReadGuid();
             GameObject go = guidmap[id];
+            // In play mode, start by hiding all tiles
+            if (mode == EditMode.Play)
+                SetTileActive(go, false, true);
             DeserializeComponents(go, br);
         }
         navmap.RecalculateBounds();

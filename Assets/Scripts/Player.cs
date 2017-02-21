@@ -16,6 +16,7 @@ public class Player : MonoBehaviour
     Rigidbody2D rb2d;
     public GameObject sword;
     public Texture2D healthTexture;
+    public Texture2D keyTexture;
     Health health;
 
     public float acceleration;
@@ -98,7 +99,11 @@ public class Player : MonoBehaviour
     void OnGUI()
     {
         if (LevelEditor.main.mode == EditMode.Play)
+        {
             for (int i = 1; i <= health.currentHealth; i++)
-                GUI.DrawTexture(new Rect(new Vector2(Screen.width - 20 - i * healthTexture.width/2, 20), new Vector2(healthTexture.width/2, healthTexture.height/2)), healthTexture);
+                GUI.DrawTexture(new Rect(new Vector2(Screen.width - 20 - i * healthTexture.width, 20), new Vector2(healthTexture.width, healthTexture.height)), healthTexture);
+            for (int i = 1; i <= keys; i++)
+                GUI.DrawTexture(new Rect(new Vector2(Screen.width - 20 - i * keyTexture.width, 20), new Vector2(keyTexture.width, keyTexture.height)), keyTexture);
+        }
     }
 }

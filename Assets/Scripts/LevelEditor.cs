@@ -228,7 +228,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         if (Input.GetKeyDown(KeyCode.Escape))
             SceneManager.LoadScene("MainMenu");
 
-        if (canEdit)
+        if (canEdit && !EventSystem.current.IsFieldFocused())
         {
             if (Input.GetButtonDown("Create Mode"))
                 ChangeMode(EditMode.Create);

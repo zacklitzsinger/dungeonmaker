@@ -65,6 +65,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public Toggle prefabToggleButton;
     public GameObject victoryPanel;
     public Text victoryTimeText;
+    public GameObject savePanel;
 
     // Circuits
     public Color circuitColor;
@@ -194,6 +195,11 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         if (sidebarContent != null)
             foreach (Transform child in sidebarContent.transform)
                 Destroy(child.gameObject);
+    }
+
+    public void OpenSaveWindow(bool val)
+    {
+        savePanel.SetActive(val);
     }
 
     /// <summary>

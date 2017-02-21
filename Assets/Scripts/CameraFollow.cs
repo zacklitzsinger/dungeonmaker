@@ -9,6 +9,9 @@ public class CameraFollow : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (PauseMenu.main.Open)
+            return;
+
         if (LevelEditor.main.mode >= EditMode.Create && !EventSystem.current.IsFieldFocused())
         {
             StopAllCoroutines();

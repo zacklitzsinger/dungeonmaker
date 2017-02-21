@@ -89,7 +89,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     /// </summary>
     bool lastAppFocused = true;
 
-    void Start()
+    void Awake()
     {
         main = this;
         navmap = new NavMap(tilemap);
@@ -99,7 +99,10 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         foreach (PrefabGroup group in prefabGroups)
             prefabs.AddRange(group.prefabs);
         allPrefabOptions = prefabs.ToArray();
+    }
 
+    void Start()
+    {
         SidebarCreateButtons();
 
         if (levelNameInput != null)
@@ -225,8 +228,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-            SceneManager.LoadScene("MainMenu");
+        if (PauseMenu.main.Open)
+            return;
 
         if (canEdit && !EventSystem.current.IsFieldFocused())
         {
@@ -613,7 +616,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         switch (mode)
         {
             case EditMode.Create:
-                if (EventSystem.current.IsPointerOverGameObject())
+                if (EventSystem.current.IsPointerOverGameObject() || PauseMenu.main.Open)
                     return;
                 // Draw currently selected grid square
                 Vector2 gridPos = Camera.main.WorldToScreenPoint(ConvertPositionToGrid(Camera.main.ScreenToWorldPoint(Input.mousePosition)));
@@ -649,7 +652,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             case EditMode.Circuit:
                 Line line = Camera.main.GetComponent<Line>();
                 // Draw line from selected object to mouse if we are placing a circuit
-                if (selectedGameObject)
+                if (selectedGameObject && !PauseMenu.main.Open)
                 {
                     line.DrawArrow(selectedGameObject.transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition), selectedConnectionColor);
                 }

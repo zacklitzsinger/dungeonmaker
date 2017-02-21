@@ -19,6 +19,16 @@ public class LevelBrowser : MonoBehaviour {
 	
     public void LoadLevelList()
     {
+        foreach (string filename in Directory.GetFiles(Application.persistentDataPath))
+        {
+            GameObject infoPanel = Instantiate(levelInfo, content);
+            infoPanel.GetComponentInChildren<Text>().text = Path.GetFileNameWithoutExtension(filename);
+            infoPanel.GetComponentInChildren<Button>().onClick.AddListener(() =>
+            {
+                SceneManager.LoadScene("LevelPlay");
+                StartCoroutine(LoadLevelFromLocal(filename));
+            });
+        }
         StartCoroutine(FetchLevelInfo());
     }
 
@@ -26,7 +36,10 @@ public class LevelBrowser : MonoBehaviour {
         WWW www = new WWW("localhost:3000/levels");
         yield return www;
         if (www.error != null)
+        {
             Debug.LogError(www.error);
+            yield break;
+        }
         JSONNode json = JSON.Parse(www.text);
         foreach(JSONNode info in json.Children)
         {
@@ -36,12 +49,12 @@ public class LevelBrowser : MonoBehaviour {
             infoPanel.GetComponentInChildren<Button>().onClick.AddListener(() =>
             {
                 SceneManager.LoadScene("LevelPlay");
-                StartCoroutine(LoadLevel(levelName));
+                StartCoroutine(LoadLevelFromWeb(levelName));
             });
         }
     }
 
-    IEnumerator LoadLevel(string levelName)
+    IEnumerator LoadLevelFromWeb(string levelName)
     {
         WWW www = new WWW("localhost:3000/levels/download/" + levelName);
         yield return www;
@@ -49,5 +62,12 @@ public class LevelBrowser : MonoBehaviour {
             Debug.LogError(www.error);
         LevelEditor.main.ChangeMode(EditMode.Play);
         LevelEditor.main.LoadFromBytes(www.bytes);
+    }
+
+    IEnumerator LoadLevelFromLocal(string levelName)
+    {
+        while (LevelEditor.main == null)
+            yield return new WaitForEndOfFrame();
+        LevelEditor.main.LoadFromDisk(levelName);
     }
 }

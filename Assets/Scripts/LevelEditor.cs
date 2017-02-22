@@ -54,7 +54,6 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     // UI
     public GameObject sidebar;
-    public InputField levelNameInput;
     public Text editModeLabel;
     public GameObject prefabButton;
     public GameObject sidebarContent;
@@ -66,6 +65,11 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public GameObject victoryPanel;
     public Text victoryTimeText;
     public GameObject savePanel;
+    public InputField saveNameInput;
+    public GameObject uploadPanel;
+    public InputField uploadNameInput;
+    public InputField uploadDescInput;
+    public GameObject uploadProgress;
 
     // Circuits
     public Color circuitColor;
@@ -75,6 +79,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     // Level information
     public string levelName;
+    public string levelDesc;
     public Dictionary<Vector2, List<GameObject>> tilemap = new Dictionary<Vector2, List<GameObject>>();
     public Dictionary<Guid, GameObject> guidmap = new Dictionary<Guid, GameObject>();
     public NavMap navmap;
@@ -108,16 +113,20 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     {
         SidebarCreateButtons();
 
-        if (levelNameInput != null)
-            levelNameInput.onValueChanged.AddListener((string str) =>
-            {
-                levelName = str;
-            });
+        if (saveNameInput != null)
+            saveNameInput.onValueChanged.AddListener((string str) => { levelName = str; });
+
+        if (uploadNameInput != null)
+            uploadNameInput.onValueChanged.AddListener((string str) => { levelName = str; });
+
+        if (uploadDescInput != null)
+            uploadDescInput.onValueChanged.AddListener((string str) => { levelDesc = str; });
 
         if (victoryPanel != null)
         {
             Button button = victoryPanel.GetComponentInChildren<Button>();
-            button.onClick.AddListener(() => {
+            button.onClick.AddListener(() =>
+            {
                 if (canEdit)
                     ChangeMode(EditMode.Create);
                 else
@@ -202,6 +211,11 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         savePanel.SetActive(val);
     }
 
+    public void OpenUploadWindow(bool val)
+    {
+        uploadPanel.SetActive(val);
+    }
+
     /// <summary>
     /// Change current level edit mode from one mode to another
     /// </summary>
@@ -236,6 +250,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     // Update is called once per frame
     void Update()
     {
+
         if (PauseMenu.main.Open)
             return;
 
@@ -726,13 +741,23 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     {
         WWWForm form = new WWWForm();
         form.AddField("levelName", levelName);
+        form.AddField("description", levelDesc);
         form.AddBinaryData("level", File.ReadAllBytes(filename));
-        WWW www = new WWW("localhost:3000/levels", form);
-        yield return www;
+        string url = WebServer.SERVER + "/levels";
+        WWW www = new WWW(url, form);
+        if (uploadProgress != null)
+            uploadProgress.SetActive(true);
+        while (www.error != null && www.uploadProgress < 1)
+        {
+            uploadProgress.GetComponentInChildren<ProgressBar>().percentage = www.uploadProgress;
+            yield return new WaitForFixedUpdate();
+        }
         if (www.error != null)
             Debug.Log(www.error);
         else
-            Debug.Log("Finished uploading level");
+            Debug.Log("Finished uploading level to: " + url);
+        if (uploadProgress != null)
+            uploadProgress.SetActive(false);
     }
 
     public void LoadFromDisk(string filename)
@@ -815,8 +840,10 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public void Deserialize(BinaryReader br)
     {
         levelName = br.ReadString();
-        if (levelNameInput != null)
-            levelNameInput.text = levelName;
+        if (saveNameInput != null)
+            saveNameInput.text = levelName;
+        if (uploadNameInput != null)
+            uploadNameInput.text = levelName;
         int tileCount = br.ReadInt32();
         for (int i = 0; i < tileCount; i++)
         {

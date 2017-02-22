@@ -33,7 +33,7 @@ public class LevelBrowser : MonoBehaviour {
     }
 
     IEnumerator FetchLevelInfo() {
-        WWW www = new WWW("localhost:3000/levels");
+        WWW www = new WWW(WebServer.SERVER + "/levels");
         yield return www;
         if (www.error != null)
         {
@@ -43,20 +43,44 @@ public class LevelBrowser : MonoBehaviour {
         JSONNode json = JSON.Parse(www.text);
         foreach(JSONNode info in json.Children)
         {
-            string levelName = info["name"];
             GameObject infoPanel = Instantiate(levelInfo, content);
-            infoPanel.GetComponentInChildren<Text>().text = levelName;
+            foreach (Text text in infoPanel.GetComponentsInChildren<Text>())
+            {
+                switch (text.name) {
+                    case "Name":
+                        text.text = info["name"];
+                        break;
+                    case "Description":
+                        text.text = info["description"];
+                        break;
+                    case "Size":
+                        string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+                        int len = info["size"].AsInt;
+                        int order = 0;
+                        while (len >= 1024 && order < sizes.Length - 1)
+                        {
+                            order++;
+                            len = len / 1024;
+                        }
+
+                        // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
+                        // show a single decimal place, and no space.
+                        string result = String.Format("{0:0.##} {1}", len, sizes[order]);
+                        text.text = result;
+                        break;
+                }
+            }
             infoPanel.GetComponentInChildren<Button>().onClick.AddListener(() =>
             {
                 SceneManager.LoadScene("LevelPlay");
-                StartCoroutine(LoadLevelFromWeb(levelName));
+                StartCoroutine(LoadLevelFromWeb(info["name"]));
             });
         }
     }
 
     IEnumerator LoadLevelFromWeb(string levelName)
     {
-        WWW www = new WWW("localhost:3000/levels/download/" + levelName);
+        WWW www = new WWW(WebServer.SERVER + "/levels/download/" + levelName);
         yield return www;
         if (www.error != null)
             Debug.LogError(www.error);

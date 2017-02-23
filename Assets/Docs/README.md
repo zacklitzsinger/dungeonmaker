@@ -20,15 +20,15 @@ This is a list of potential game objects to include.
 - Slippery ground tiles (ice)
 - Slow tiles (mud)
 - Pits (dark holes, empty sky, etc.)
-- Warp points
+- Warp points/stairs
 - Flammable objects
 - Levers (toggle power on and off)
-- Switches should be able to stay on for periods of time
 - Secret switches in walls
 - Moving platforms
 - Water (swimming)
 - Lights (torches, overhead lighting, lanterns, etc.)
 - Mine carts with track (follow a specific track)
+- Walls that fade away when powered
 
 ## Item ideas
 List of items to find in chests. Items should always have multiple puzzle/combat applications.

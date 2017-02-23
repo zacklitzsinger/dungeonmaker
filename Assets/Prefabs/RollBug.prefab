@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 114789258443482190}
   - component: {fileID: 114527416988667436}
   - component: {fileID: 114653371109974024}
+  - component: {fileID: 114081175117869926}
   m_Layer: 0
   m_Name: RollBug
   m_TagString: Untagged
@@ -161,6 +162,18 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Size: {x: 0.4, y: 0.6}
+--- !u!114 &114081175117869926
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147360471527010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc38bfe7b7a66124590035e44e1fff73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  reset: 0
 --- !u!114 &114527416988667436
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -186,6 +199,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 4
+  seeThrough: 1
+  ground: 0
 --- !u!114 &114653371109974024
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -226,7 +241,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8449060781c08b43be701b18c3a9c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  touching: []
 --- !u!114 &114967518113848878
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -242,7 +256,7 @@ MonoBehaviour:
   invulnFrames: 60
   currentHealth: 0
   remInvulnFrames: 0
-  respawnPoint: {fileID: 0}
+  deathRespawnPoint: {fileID: 0}
 --- !u!212 &212973353828650820
 SpriteRenderer:
   m_ObjectHideFlags: 1

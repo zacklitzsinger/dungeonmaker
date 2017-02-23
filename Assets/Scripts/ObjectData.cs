@@ -19,7 +19,7 @@ public class ObjectData : MonoBehaviour, ICustomSerializable
     public ObjectType type;
     public bool seeThrough = true;
     /// <summary>
-    /// Counts as ground for the purposes of falling even though its not a floor tile.
+    /// Counts as ground for the purposes of falling.
     /// </summary>
     public bool ground = false;
     SpriteRenderer sprite;
@@ -37,7 +37,7 @@ public class ObjectData : MonoBehaviour, ICustomSerializable
 
     void UpdateSortOrder()
     {
-        // Sprite draw order is dependent on Y because we are 2.5D. However, we multiple everything by 2 so that 
+        // Sprite draw order is dependent on Y because we are 2.5D. However, we multiple everything by a constant so that 
         // we don't get jumps when rounding. Ties are broken by object type on layer.
         sprite.sortingOrder = -4 * (int)Math.Floor(transform.position.y * 4) + (int)type * 4;
     }

@@ -36,7 +36,7 @@ public class Health : MonoBehaviour {
             if (deathRespawnPoint != null)
                 Respawn();
             else
-                Destroy(rb2d.gameObject);
+                gameObject.SetActive(false);
         } else if (fall && player)
         {
             RespawnAtRoomEntrance();

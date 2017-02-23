@@ -524,6 +524,20 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     }
 
     /// <summary>
+    /// Get an object at the position in the tilemap by type.
+    /// </summary>
+    public GameObject GetGameObjectAtPointWithType(Vector2 point, ObjectType type)
+    {
+        point = ConvertPositionToGrid(point);
+        if (!tilemap.ContainsKey(point))
+            return null;
+        return tilemap[point].Find((go) =>
+        {
+            return (go.transform.parent == transform && go.GetComponent<ObjectData>().type == type);
+        });
+    }
+
+    /// <summary>
     /// Set the currently active room. Uses NavMap to determine what is contained in the current room.
     /// </summary>
     public bool SetCurrentRoom(Vector2 gridPos)

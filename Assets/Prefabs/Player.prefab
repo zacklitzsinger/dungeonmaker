@@ -117,8 +117,8 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 15
+  m_Mass: 3
+  m_LinearDrag: 1
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -175,6 +175,7 @@ MonoBehaviour:
   attackFrames: 0
   remStateFrames: 0
   keys: 0
+  roomEntrance: {x: 0, y: 0}
   state: 0
 --- !u!114 &114554694894238124
 MonoBehaviour:
@@ -205,7 +206,7 @@ MonoBehaviour:
   invulnFrames: 90
   currentHealth: 0
   remInvulnFrames: 0
-  respawnPoint: {fileID: 0}
+  deathRespawnPoint: {fileID: 0}
 --- !u!114 &114626465262783684
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -217,7 +218,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8449060781c08b43be701b18c3a9c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  touching: []
 --- !u!114 &114965935551178052
 MonoBehaviour:
   m_ObjectHideFlags: 1

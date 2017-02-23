@@ -10,11 +10,13 @@ public class Gravity : MonoBehaviour {
     [ReadOnly]
     public HashSet<Collider2D> touching = new HashSet<Collider2D>();
     Health health;
+    Rigidbody2D rb2d;
 
     void Start()
     {
         // Currently assumes the object will have health - not necessarily a valid assumption
         health = GetComponent<Health>();
+        rb2d = GetComponentInParent<Rigidbody2D>();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -36,5 +38,16 @@ public class Gravity : MonoBehaviour {
     {
         if (touching.Count <= 0)
             health.Damage(1, true);
+    }
+
+    void FixedUpdate()
+    {
+        GameObject floor = LevelEditor.main.GetGameObjectAtPointWithType(transform.position, ObjectType.Floor);
+        FloorData floorData = null;
+        if (floor != null)
+        {
+            floorData = floor.GetComponent<FloorData>();
+            rb2d.drag = floorData.linearDrag;
+        }
     }
 }

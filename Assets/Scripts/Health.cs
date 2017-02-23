@@ -1,13 +1,16 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class Health : MonoBehaviour {
+public class Health : MonoBehaviour
+{
 
     public int maxHealth;
     public int invulnFrames;
     [ReadOnly]
     public int currentHealth;
-    [ReadOnly] public int remInvulnFrames;
+    [ReadOnly]
+    public int remInvulnFrames;
+    [ReadOnly]
     public Checkpoint deathRespawnPoint;
 
     Rigidbody2D rb2d;
@@ -37,7 +40,8 @@ public class Health : MonoBehaviour {
                 Respawn();
             else
                 gameObject.SetActive(false);
-        } else if (fall && player)
+        }
+        else if (fall && player)
         {
             RespawnAtRoomEntrance();
         }
@@ -84,7 +88,7 @@ public class Health : MonoBehaviour {
         {
             yield return new WaitForFixedUpdate();
             // Flicker alpha between 0 and 1
-            float alpha = Mathf.Sin(count/1.5f)/2 + 0.5f;
+            float alpha = Mathf.Sin(count / 1.5f) / 2 + 0.5f;
             c = r.color;
             c.a = alpha;
             r.color = c;

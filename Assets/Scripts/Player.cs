@@ -51,6 +51,11 @@ public class Player : MonoBehaviour
         if (LevelEditor.main.SetCurrentRoom(transform.position))
             roomEntrance = transform.position;
 
+        GameObject floor = LevelEditor.main.GetGameObjectAtPointWithType(transform.position, ObjectType.Floor);
+        FloorData floorData = null;
+        if (floor != null)
+            floorData = floor.GetComponent<FloorData>();
+
         float xMotion = Input.GetAxis("Horizontal");
         float yMotion = Input.GetAxis("Vertical");
         Vector2 targetMotion = Vector2.right * xMotion + Vector2.up * yMotion;
@@ -81,7 +86,8 @@ public class Player : MonoBehaviour
         }
         else
         {
-            rb2d.AddForce((targetMotion.magnitude > 1 ? targetMotion.normalized : targetMotion) * acceleration);
+            float modifiedAcceleration = (floorData ? floorData.accelerationModifier : 1) * acceleration;
+            rb2d.AddForce((targetMotion.magnitude > 1 ? targetMotion.normalized : targetMotion) * modifiedAcceleration);
         }
 
         if (Input.GetButtonDown("Attack") && state == PlayerState.Idle)

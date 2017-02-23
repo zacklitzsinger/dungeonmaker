@@ -8,7 +8,7 @@ using UnityEngine;
 public class Gravity : MonoBehaviour {
 
     [ReadOnly]
-    public List<Collider2D> touching = new List<Collider2D>();
+    public HashSet<Collider2D> touching = new HashSet<Collider2D>();
     Health health;
 
     void Start()
@@ -20,7 +20,7 @@ public class Gravity : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D other)
     {
         ObjectData data = other.GetComponent<ObjectData>();
-        if (data && (data.type == ObjectType.Floor || data.ground) && !touching.Contains(other))
+        if (data && (data.type == ObjectType.Floor || data.ground))
             touching.Add(other);
     }
 

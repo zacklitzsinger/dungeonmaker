@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 61084879577082304}
   - component: {fileID: 114395031546989370}
   m_Layer: 0
-  m_Name: Delay
+  m_Name: DelayGate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -68,7 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4020711b045e0e9479b4ba1d8f473c4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delay: 0
+  delaySeconds: 2
 --- !u!114 &114744713971349162
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -81,6 +81,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 3
+  seeThrough: 1
+  ground: 0
 --- !u!212 &212390731372897270
 SpriteRenderer:
   m_ObjectHideFlags: 1

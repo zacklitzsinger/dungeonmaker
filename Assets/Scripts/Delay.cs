@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-// TODO: GET WORKING
 public class Delay : MonoBehaviour, ICustomSerializable
 {
 
     /// <summary>
+    /// Number of seconds to delay inputs.
+    /// </summary>
+    [PlayerEditableRange("Delay", 0, 10)]
+    public int delaySeconds = 1;
+    /// <summary>
     /// Number of frames to delay inputs.
     /// </summary>
-    [PlayerEditableRange("Delay", 0, 300)]
-    public int delay;
+    public int DelayFrames { get { return delaySeconds * 60; } }
     Circuit circuit;
     Queue<bool> history = new Queue<bool>();
 
@@ -30,15 +31,16 @@ public class Delay : MonoBehaviour, ICustomSerializable
     {
         if (circuit)
         {
-            history.Enqueue(circuit.Powered);
-            if (history.Count > delay)
+            history.Enqueue(circuit.powerAmount > 1);
+            if (history.Count > DelayFrames)
                 history.Dequeue();
         }
     }
 
     void SetupCircuit()
     {
-        circuit.gateConditions.Add(() => { return delay == 0 || history.Count >= delay && history.Peek(); });
+        circuit.gateConditions.Add(() => { return DelayFrames == 0 || history.Count >= DelayFrames && history.Peek(); });
+        circuit.powerConditions.Add(() => { return true; });
     }
 
     public void Serialize(BinaryWriter bw)

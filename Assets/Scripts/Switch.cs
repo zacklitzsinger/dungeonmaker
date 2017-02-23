@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ public class Switch : MonoBehaviour, ICustomSerializable
     public bool invert = false;
     public bool active = false;
     [ReadOnly]
-    public int count;
+    public HashSet<ObjectData> touching = new HashSet<ObjectData>();
 
     Animator animator;
     Circuit circuit;
@@ -23,20 +24,22 @@ public class Switch : MonoBehaviour, ICustomSerializable
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.GetComponentInParent<ObjectData>() == null)
+        ObjectData data = other.GetComponentInParent<ObjectData>();
+        if (data == null)
             return;
         active = true;
-        count++;
+        touching.Add(data);
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.GetComponentInParent<ObjectData>() == null)
-            return;
         if (permanent)
             return;
-        count--;
-        if (count <= 0)
+        ObjectData data = other.GetComponentInParent<ObjectData>();
+        if (data == null)
+            return;
+        touching.Remove(data);
+        if (touching.Count <= 0)
             active = false;
     }
 

@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 114744713971349162}
   - component: {fileID: 61334987829417686}
   - component: {fileID: 114073071677959366}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: TreasureChest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -81,6 +81,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 4
+  seeThrough: 1
+  ground: 0
 --- !u!212 &212390731372897270
 SpriteRenderer:
   m_ObjectHideFlags: 1

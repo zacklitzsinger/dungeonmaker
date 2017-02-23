@@ -17,7 +17,6 @@ For now, this is just a collection of random thoughts.
 
 ## Object ideas
 This is a list of potential game objects to include.
-- Slippery ground tiles (ice)
 - Slow tiles (mud)
 - Pits (dark holes, empty sky, etc.)
 - Warp points/stairs

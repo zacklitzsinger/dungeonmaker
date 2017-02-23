@@ -58,7 +58,7 @@ GameObject:
   - component: {fileID: 4566434367239496}
   - component: {fileID: 61297409913586486}
   - component: {fileID: 114965935551178052}
-  m_Layer: 11
+  m_Layer: 13
   m_Name: PlayerTransparency
   m_TagString: Player
   m_Icon: {fileID: 0}

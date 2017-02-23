@@ -10,7 +10,8 @@ public enum ObjectType
     Floor,
     FloorAttachment, // E.g., spikes, grass, etc.
     Wall,
-    Interactable
+    Interactable,
+    Enemy
 }
 
 public class ObjectData : MonoBehaviour, ICustomSerializable
@@ -22,6 +23,7 @@ public class ObjectData : MonoBehaviour, ICustomSerializable
     /// Counts as ground for the purposes of falling.
     /// </summary>
     public bool ground = false;
+    public bool hideInPlayMode = false;
     SpriteRenderer sprite;
 
     void Start()
@@ -32,6 +34,10 @@ public class ObjectData : MonoBehaviour, ICustomSerializable
 
     void Update()
     {
+        if (hideInPlayMode)
+        {
+            sprite.enabled = (LevelEditor.main.mode >= EditMode.Create);
+        }
         UpdateSortOrder();
     }
 
@@ -39,7 +45,7 @@ public class ObjectData : MonoBehaviour, ICustomSerializable
     {
         // Sprite draw order is dependent on Y because we are 2.5D. However, we multiple everything by a constant so that 
         // we don't get jumps when rounding. Ties are broken by object type on layer.
-        sprite.sortingOrder = -4 * (int)Math.Floor(transform.position.y * 4) + (int)type * 4;
+        sprite.sortingOrder = -5 * (int)Math.Floor(transform.position.y * 5) + (int)type * 5;
     }
 
     public bool Navigable

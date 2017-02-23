@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 4238989630657178}
   - component: {fileID: 212390731372897270}
   - component: {fileID: 114744713971349162}
-  - component: {fileID: 61084879577082304}
   - component: {fileID: 114395031546989370}
   m_Layer: 0
   m_Name: DelayGate
@@ -43,20 +42,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &61084879577082304
-BoxCollider2D:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1002282342740670}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 6200000, guid: bc9f1f72ce5eaa34b987f7d06f8c3cfd, type: 2}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1}
 --- !u!114 &114395031546989370
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -83,6 +68,7 @@ MonoBehaviour:
   type: 3
   seeThrough: 1
   ground: 0
+  hideInPlayMode: 1
 --- !u!212 &212390731372897270
 SpriteRenderer:
   m_ObjectHideFlags: 1

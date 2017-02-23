@@ -21,9 +21,9 @@ GameObject:
   - component: {fileID: 4238989630657178}
   - component: {fileID: 212390731372897270}
   - component: {fileID: 114744713971349162}
-  - component: {fileID: 114597270367586456}
+  - component: {fileID: 114217354340848790}
   m_Layer: 0
-  m_Name: Timer
+  m_Name: EnemyGate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42,7 +42,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114597270367586456
+--- !u!114 &114217354340848790
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -50,13 +50,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1002282342740670}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4772f9ea06ec7994ab9936ecd0643141, type: 3}
+  m_Script: {fileID: 11500000, guid: 14bab46d7727cde46a346538dbb62fbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offSeconds: 1
-  onSeconds: 1
-  offset: 0
-  on: 0
 --- !u!114 &114744713971349162
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -103,7 +99,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: afbb79d19a6013e4b81a1b331b623d2e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 86f4a379e16154d49b4b2b7bb7b56c85, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

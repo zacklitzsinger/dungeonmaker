@@ -17,8 +17,8 @@ TagManager:
   - Wind
   - Player
   - IgnorePlayer
-  - 
-  - 
+  - IgnoreTransparency
+  - Transparency
   - 
   - 
   - 

@@ -561,6 +561,9 @@ MonoBehaviour:
     - {fileID: 1002282342740670, guid: 868134050bfd399488ad13ab019c1992, type: 2}
     - {fileID: 1002282342740670, guid: df7c4d4f79c94cd4cbcd96583c8a5bf3, type: 2}
     - {fileID: 1002282342740670, guid: e728c77264f7d7e4b93888635b3e4b2b, type: 2}
+    - {fileID: 1002282342740670, guid: 7395fafc5ed32f04f95e07893edeeb82, type: 2}
+    - {fileID: 1002282342740670, guid: 9c35a457d818abc44b57a93c397e3375, type: 2}
+    - {fileID: 1002282342740670, guid: 87870964d4de8f44fa88651baa4f4d9e, type: 2}
   - name: Enemies
     prefabs:
     - {fileID: 1147360471527010, guid: 90d4d477cb75b004192f7cadd6d2490e, type: 2}

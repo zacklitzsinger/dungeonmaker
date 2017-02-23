@@ -32,6 +32,8 @@ public class Player : MonoBehaviour
     public int keys = 0;
     public IItem[] Items { get { return GetComponentsInChildren<IItem>(); } }
 
+    public Vector2 roomEntrance;
+
     public PlayerState state = PlayerState.Idle;
 
     void Awake()
@@ -46,7 +48,8 @@ public class Player : MonoBehaviour
         if (state == PlayerState.Victory)
             return;
 
-        LevelEditor.main.SetCurrentRoom(transform.position);
+        if (LevelEditor.main.SetCurrentRoom(transform.position))
+            roomEntrance = transform.position;
 
         float xMotion = Input.GetAxis("Horizontal");
         float yMotion = Input.GetAxis("Vertical");

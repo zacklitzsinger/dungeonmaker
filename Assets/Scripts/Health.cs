@@ -8,17 +8,19 @@ public class Health : MonoBehaviour {
     [ReadOnly]
     public int currentHealth;
     [ReadOnly] public int remInvulnFrames;
-    public Checkpoint respawnPoint;
+    public Checkpoint deathRespawnPoint;
 
     Rigidbody2D rb2d;
+    Player player;
 
     void Start()
     {
         currentHealth = maxHealth;
         rb2d = GetComponentInParent<Rigidbody2D>();
+        player = GetComponentInParent<Player>();
     }
 
-    public int Damage(int dmg)
+    public int Damage(int dmg, bool fall = false)
     {
         if (remInvulnFrames > 0)
             dmg = 0;
@@ -28,6 +30,16 @@ public class Health : MonoBehaviour {
             remInvulnFrames = invulnFrames;
             if (invulnFrames > 0)
                 StartCoroutine(Flash(GetComponentInParent<SpriteRenderer>(), invulnFrames));
+        }
+        if (currentHealth <= 0)
+        {
+            if (deathRespawnPoint != null)
+                Respawn();
+            else
+                Destroy(rb2d.gameObject);
+        } else if (fall && player)
+        {
+            RespawnAtRoomEntrance();
         }
         return dmg;
     }
@@ -39,30 +51,28 @@ public class Health : MonoBehaviour {
 
     void Respawn()
     {
-        transform.parent.position = respawnPoint.transform.position;
+        transform.parent.position = deathRespawnPoint.transform.position;
         currentHealth = maxHealth;
         rb2d.velocity = Vector2.zero;
     }
 
-    public void SetRespawnPoint(Checkpoint checkpoint)
+    void RespawnAtRoomEntrance()
     {
-        if (respawnPoint != null)
-            respawnPoint.active = false;
-        respawnPoint = checkpoint;
+        transform.parent.position = player.roomEntrance;
+        rb2d.velocity = Vector2.zero;
+    }
+
+    public void SetDeathRespawnPoint(Checkpoint checkpoint)
+    {
+        if (deathRespawnPoint != null)
+            deathRespawnPoint.active = false;
+        deathRespawnPoint = checkpoint;
     }
 
     void FixedUpdate()
     {
         if (remInvulnFrames > 0)
             remInvulnFrames--;
-
-        if (currentHealth <= 0)
-        {
-            if (respawnPoint != null)
-                Respawn();
-            else
-                Destroy(rb2d.gameObject);
-        }
     }
 
 

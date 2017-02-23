@@ -20,7 +20,7 @@ public class Checkpoint : MonoBehaviour {
         Health health = other.GetComponent<Health>();
         if (health == null)
             return;
-        health.SetRespawnPoint(this);
+        health.SetDeathRespawnPoint(this);
         active = true;
     }
 

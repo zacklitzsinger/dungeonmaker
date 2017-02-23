@@ -526,21 +526,19 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     /// <summary>
     /// Set the currently active room. Uses NavMap to determine what is contained in the current room.
     /// </summary>
-    public void SetCurrentRoom(Vector2 gridPos)
+    public bool SetCurrentRoom(Vector2 gridPos)
     {
         gridPos = ConvertPositionToGrid(gridPos);
         MapNode currentNode = new MapNode(gridPos);
         if (currentRoom.Contains(currentNode))
-            return;
+            return false;
         currentRoom = navcalc.GetConnectedNodes(currentNode, true, true);
         // Iterate only through the original list.
         int nodeCount = currentRoom.Count;
         for (int i = 0; i < nodeCount; i++)
-        {
             foreach (MapNode node in navmap.GetPotentialNeighbors(currentRoom[i]))
                 if (!currentRoom.Contains(node))
                     currentRoom.Add(node);
-        }
 
         // Update visibility
         foreach (KeyValuePair<Vector2, List<GameObject>> pair in tilemap)
@@ -558,6 +556,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         avg /= currentRoom.Count;
         onRoomChanged.Invoke();
         Camera.main.GetComponent<CameraFollow>().SetTarget(avg);
+        return true;
     }
 
     /// <summary>

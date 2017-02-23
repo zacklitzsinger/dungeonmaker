@@ -143,7 +143,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 0.09019608, g: 0.05490196, b: 0.0627451, a: 1}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -568,7 +568,6 @@ MonoBehaviour:
   rotation: 0
   playFrames: 0
   sidebar: {fileID: 0}
-  levelNameInput: {fileID: 0}
   editModeLabel: {fileID: 0}
   prefabButton: {fileID: 1614214451602680, guid: 3524000e77cf0694f89486926e84e778,
     type: 2}
@@ -583,11 +582,23 @@ MonoBehaviour:
     type: 2}
   victoryPanel: {fileID: 1904068963}
   victoryTimeText: {fileID: 1445566069}
+  savePanel: {fileID: 0}
+  saveNameInput: {fileID: 0}
+  uploadPanel: {fileID: 0}
+  uploadNameInput: {fileID: 0}
+  uploadDescInput: {fileID: 0}
+  uploadProgress: {fileID: 0}
   circuitColor: {r: 0.86764705, g: 0.12759517, b: 0.12759517, a: 1}
   selectedCircuitInputColor: {r: 0.48417848, g: 0.9117647, b: 0, a: 1}
   selectedCircuitOutputColor: {r: 0.9852941, g: 0.40490997, b: 0.028979266, a: 1}
   selectedConnectionColor: {r: 0.9632353, g: 0.12748703, b: 0.4214399, a: 1}
   levelName: 
+  levelDesc: 
+  onRoomChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!1001 &1445566068
 Prefab:
   m_ObjectHideFlags: 0

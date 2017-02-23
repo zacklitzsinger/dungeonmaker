@@ -35,8 +35,6 @@ public class Gravity : MonoBehaviour {
     void CheckForDeath()
     {
         if (touching.Count <= 0)
-        {
-            health.Damage(health.currentHealth);
-        }
+            health.Damage(1, true);
     }
 }

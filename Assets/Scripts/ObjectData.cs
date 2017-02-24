@@ -45,7 +45,7 @@ public class ObjectData : MonoBehaviour, ICustomSerializable
     {
         // Sprite draw order is dependent on Y because we are 2.5D. However, we multiple everything by a constant so that 
         // we don't get jumps when rounding. Ties are broken by object type on layer.
-        sprite.sortingOrder = -5 * (int)Math.Floor(transform.position.y * 5) + (int)type * 5;
+        sprite.sortingOrder = -1 * (int)Math.Floor(transform.position.y * 4) + (int)type;
     }
 
     public bool Navigable

@@ -25,7 +25,7 @@ public class Switch : MonoBehaviour, ICustomSerializable
     void OnTriggerEnter2D(Collider2D other)
     {
         ObjectData data = other.GetComponentInParent<ObjectData>();
-        if (data == null)
+        if (data == null || other.isTrigger)
             return;
         active = true;
         touching.Add(data);
@@ -36,7 +36,7 @@ public class Switch : MonoBehaviour, ICustomSerializable
         if (permanent)
             return;
         ObjectData data = other.GetComponentInParent<ObjectData>();
-        if (data == null)
+        if (data == null || other.isTrigger)
             return;
         touching.Remove(data);
         if (touching.Count <= 0)

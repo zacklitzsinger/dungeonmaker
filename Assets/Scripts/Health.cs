@@ -39,7 +39,7 @@ public class Health : MonoBehaviour
             if (deathRespawnPoint != null)
                 Respawn();
             else
-                gameObject.SetActive(false);
+                GetComponentInParent<ObjectData>().gameObject.SetActive(false);
         }
         else if (fall && player)
         {

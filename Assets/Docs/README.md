@@ -38,5 +38,4 @@ List of items to find in chests. Items should always have multiple puzzle/combat
 
 ## Enemy ideas
 - Put keys into enemies
-- Circuit block that triggers when a room is cleared
 - Boss monsters

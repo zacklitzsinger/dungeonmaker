@@ -60,7 +60,7 @@ GameObject:
   - component: {fileID: 114965935551178052}
   m_Layer: 13
   m_Name: PlayerTransparency
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -166,13 +166,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sword: {fileID: 1002282342740670, guid: 440d7f478f067ab44b2b58da49e7d917, type: 2}
+  bullet: {fileID: 114536522912404158, guid: 0861409d57b6f1e458ad8ffefb4c1d96, type: 2}
   healthTexture: {fileID: 2800000, guid: 77ec5aa28ccc7864fbf35c3dbd9b2237, type: 3}
   keyTexture: {fileID: 2800000, guid: 8c013e97008c8e946affa29bef9a7cc6, type: 3}
   acceleration: 100
   rollFrames: 22
   rollForce: 1200
-  attackWindup: 7
+  minAttackWindup: 5
+  maxAttackWindup: 25
   attackFrames: 0
+  shotFrames: 15
   remStateFrames: 0
   keys: 0
   roomEntrance: {x: 0, y: 0}
@@ -191,6 +194,7 @@ MonoBehaviour:
   type: 4
   seeThrough: 1
   ground: 0
+  hideInPlayMode: 0
 --- !u!114 &114584143944205882
 MonoBehaviour:
   m_ObjectHideFlags: 1

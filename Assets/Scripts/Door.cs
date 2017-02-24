@@ -21,13 +21,13 @@ public class Door : MonoBehaviour, ICustomSerializable {
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player" && GetComponent<Circuit>() == null)
+        if (other.tag == "Player" && GetComponent<Circuit>() == null && !other.isTrigger)
             open = true;
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.tag == "Player" && GetComponent<Circuit>() == null)
+        if (other.tag == "Player" && GetComponent<Circuit>() == null && !other.isTrigger)
             open = false;
     }
 

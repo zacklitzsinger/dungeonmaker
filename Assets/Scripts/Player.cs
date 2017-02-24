@@ -6,6 +6,7 @@ public enum PlayerState
 {
     Idle,
     Rolling,
+    AttackWindup,
     Attacking,
     Victory
 }
@@ -15,6 +16,7 @@ public class Player : MonoBehaviour
 
     Rigidbody2D rb2d;
     public GameObject sword;
+    public Bullet bullet;
     public Texture2D healthTexture;
     public Texture2D keyTexture;
     Health health;
@@ -22,9 +24,11 @@ public class Player : MonoBehaviour
     public float acceleration;
     public int rollFrames; // Number of frames it takes to roll
     public float rollForce; // Force with which to roll
-    public int attackWindup; //Number of frames to actually start attacking
+    public int minAttackWindup; //Min number of frames to actually start attacking
+    public int maxAttackWindup; // Max number of frames to hold attack.
     [ReadOnly]
     public int attackFrames; // Number of frames to attack.
+    public int shotFrames; // Number of frames to idle after shooting
 
     [ReadOnly]
     public int remStateFrames; // Remaining frames to continue current state; 0 when in idle
@@ -41,6 +45,17 @@ public class Player : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();
         health = GetComponentInChildren<Health>();
         attackFrames = sword.GetComponentInChildren<Sword>().remainingFrames;
+    }
+
+    void Attack()
+    {
+        if (state != PlayerState.AttackWindup)
+            return;
+        Vector2 targetDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        targetDirection.Normalize();
+        Instantiate(sword, transform.position, Quaternion.LookRotation(Vector3.forward, targetDirection), transform);
+        state = PlayerState.Attacking;
+        remStateFrames = attackFrames;
     }
 
     void FixedUpdate()
@@ -63,19 +78,29 @@ public class Player : MonoBehaviour
         if (remStateFrames > 0)
         {
             remStateFrames--;
-            if (state == PlayerState.Rolling)
-                rb2d.AddForce(targetMotion.normalized * rollForce / (rollFrames - remStateFrames + 1));
-            if (state == PlayerState.Attacking && remStateFrames == attackFrames)
+            switch (state)
             {
-                Vector2 targetDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-                targetDirection.Normalize();
-                Instantiate(sword, transform.position, Quaternion.LookRotation(Vector3.forward, targetDirection), transform);
+                case PlayerState.Rolling:
+                    rb2d.AddForce(targetMotion.normalized * rollForce / (rollFrames - remStateFrames + 1));
+                    break;
+                case PlayerState.AttackWindup:
+                    if (remStateFrames <= maxAttackWindup - minAttackWindup && !Input.GetButton("Attack"))
+                    {
+                        Attack();
+                        break;
+                    }
+                    Vector2 targetDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+                    targetDirection.Normalize();
+                    rb2d.AddForce(targetDirection * 7 * remStateFrames);
+                    break;
             }
             return;
         }
         else
         {
             remStateFrames = 0;
+            if (state == PlayerState.AttackWindup)
+                Attack();
             state = PlayerState.Idle;
         }
 
@@ -92,11 +117,16 @@ public class Player : MonoBehaviour
 
         if (Input.GetButtonDown("Attack") && state == PlayerState.Idle)
         {
-            remStateFrames = sword.GetComponentInChildren<Sword>().remainingFrames + attackWindup;
-            state = PlayerState.Attacking;
+            remStateFrames = maxAttackWindup;
+            state = PlayerState.AttackWindup;
+        }
+
+        if (Input.GetButton("Shoot"))
+        {
             Vector2 targetDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
             targetDirection.Normalize();
-            rb2d.AddForce(targetDirection * 500);
+            Bullet newBullet = Instantiate(bullet, transform.position, Quaternion.LookRotation(Vector3.forward, targetDirection));
+            remStateFrames = shotFrames;
         }
 
         if (Input.GetButtonDown("Use item") && Items.Length >= 1)

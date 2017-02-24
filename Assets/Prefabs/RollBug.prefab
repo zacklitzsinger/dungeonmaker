@@ -60,7 +60,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4974358458183336}
   - component: {fileID: 60168033471408122}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: FOV
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -201,6 +201,7 @@ MonoBehaviour:
   type: 5
   seeThrough: 1
   ground: 0
+  hideInPlayMode: 0
 --- !u!114 &114653371109974024
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class MapNode : NavNode<MapNode>
@@ -45,13 +43,13 @@ public class MapNode : NavNode<MapNode>
 
 public class NavMap : INavMap<MapNode>
 {
-    Dictionary<Vector2, List<GameObject>> map;
+    Dictionary<Vector2, List<ObjectData>> map;
     Dictionary<Vector2, MapNode> hackNodeMap = new Dictionary<Vector2, MapNode>();
     Rect bounds = new Rect();
 
     public Rect Bounds { get { return bounds; } }
 
-    public NavMap(Dictionary<Vector2, List<GameObject>> map)
+    public NavMap(Dictionary<Vector2, List<ObjectData>> map)
     {
         this.map = map;
     }
@@ -84,9 +82,9 @@ public class NavMap : INavMap<MapNode>
     {
         if (!map.ContainsKey(node.ToVector2()))
             return false;
-        List<GameObject> goList = map[node.ToVector2()];
-        foreach (GameObject g in goList)
-            if (g != null && g.GetComponent<ObjectData>().type == ObjectType.Wall)
+        List<ObjectData> goList = map[node.ToVector2()];
+        foreach (ObjectData info in goList)
+            if (info != null && info.type == ObjectType.Wall)
                 return false;
         return true;
     }
@@ -95,9 +93,9 @@ public class NavMap : INavMap<MapNode>
     {
         if (!map.ContainsKey(node.ToVector2()))
             return true;
-        List<GameObject> goList = map[node.ToVector2()];
-        foreach (GameObject g in goList)
-            if (g != null && !g.GetComponent<ObjectData>().seeThrough)
+        List<ObjectData> goList = map[node.ToVector2()];
+        foreach (ObjectData info in goList)
+            if (info != null && !info.seeThrough)
                 return false;
         return true;
     }

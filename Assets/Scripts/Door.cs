@@ -7,41 +7,57 @@ using UnityEngine;
 public class Door : MonoBehaviour, ICustomSerializable {
 
     public bool open = false;
+    public bool Open
+    {
+        get { return open; }
+        set
+        {
+            if (open != value)
+                LevelEditor.main.currentRoomDirty = true;
+            open = value;
+            data.seeThrough = open;
+        }
+    }
 
     [PlayerEditable("Invert")]
     public bool invert = false;
 
     Animator animator;
     public GameObject child;
+    ObjectData data;
 
     void Awake()
     {
         animator = GetComponent<Animator>();
+        data = GetComponent<ObjectData>();
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player" && GetComponent<Circuit>() == null && !other.isTrigger)
-            open = true;
+        if (!other.CompareTag("Player") || GetComponent<Circuit>() != null || other.isTrigger || !enabled)
+            return;
+        Open = true;
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.tag == "Player" && GetComponent<Circuit>() == null && !other.isTrigger)
-            open = false;
+        if (!other.CompareTag("Player") || GetComponent<Circuit>() != null || other.isTrigger || !enabled)
+            return;
+        Open = false;
     }
 
     void Update()
     {
-        animator.SetBool("open", open);
+        animator.SetBool("open", Open);
     }
 
     void FixedUpdate()
     {
         Circuit circuit = GetComponent<Circuit>();
         if (circuit)
-            open = circuit.Powered ^ invert;
-        child.layer = open ? LayerMask.NameToLayer("IgnorePlayer") : LayerMask.NameToLayer("Default");
+            Open = circuit.Powered ^ invert;
+        child.layer = Open ? LayerMask.NameToLayer("IgnorePlayer") : LayerMask.NameToLayer("Default");
+        
     }
 
     public void Serialize(BinaryWriter bw)

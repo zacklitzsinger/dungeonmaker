@@ -53,8 +53,8 @@ public class Flamethrower : MonoBehaviour, ICustomSerializable
     bool CheckForCollisions(Vector2 pos)
     {
         if (LevelEditor.main.tilemap.ContainsKey(pos))
-            foreach (GameObject go in LevelEditor.main.tilemap[pos])
-                if (go != null && go.GetComponent<ObjectData>().type == ObjectType.Wall && go.GetComponent<Collider2D>().enabled)
+            foreach (ObjectData info in LevelEditor.main.tilemap[pos])
+                if (info.gameObject != null && info.type == ObjectType.Wall && info.GetComponent<Collider2D>().enabled)
                     return true;
         return false;
     }

@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 114744713971349162}
   - component: {fileID: 95681616803749666}
   - component: {fileID: 114616146336520474}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Switch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -103,6 +103,7 @@ MonoBehaviour:
   type: 2
   seeThrough: 1
   ground: 0
+  hideInPlayMode: 0
 --- !u!212 &212390731372897270
 SpriteRenderer:
   m_ObjectHideFlags: 1

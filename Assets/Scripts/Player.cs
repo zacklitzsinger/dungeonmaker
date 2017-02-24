@@ -125,7 +125,7 @@ public class Player : MonoBehaviour
         {
             Vector2 targetDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
             targetDirection.Normalize();
-            Bullet newBullet = Instantiate(bullet, transform.position, Quaternion.LookRotation(Vector3.forward, targetDirection));
+            Instantiate(bullet, transform.position, Quaternion.LookRotation(Vector3.forward, targetDirection));
             remStateFrames = shotFrames;
         }
 

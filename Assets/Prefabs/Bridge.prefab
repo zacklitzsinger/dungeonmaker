@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 114744713971349162}
   - component: {fileID: 95681616803749666}
   - component: {fileID: 114378870324409954}
+  - component: {fileID: 114082222608428068}
   m_Layer: 0
   m_Name: Bridge
   m_TagString: Untagged
@@ -75,6 +76,19 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114082222608428068
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1002282342740670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 157d01588e8da544492c9225e35ff3cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  accelerationModifier: 1
+  linearDrag: 5
 --- !u!114 &114378870324409954
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -102,6 +116,7 @@ MonoBehaviour:
   type: 1
   seeThrough: 1
   ground: 1
+  hideInPlayMode: 0
 --- !u!212 &212390731372897270
 SpriteRenderer:
   m_ObjectHideFlags: 1

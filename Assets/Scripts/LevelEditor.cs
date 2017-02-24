@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -80,11 +79,12 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     // Level information
     public string levelName;
     public string levelDesc;
-    public Dictionary<Vector2, List<GameObject>> tilemap = new Dictionary<Vector2, List<GameObject>>();
+    public Dictionary<Vector2, List<ObjectData>> tilemap = new Dictionary<Vector2, List<ObjectData>>();
     public Dictionary<Guid, GameObject> guidmap = new Dictionary<Guid, GameObject>();
     public NavMap navmap;
     public NavigationCalculator<MapNode> navcalc;
     public List<MapNode> currentRoom = new List<MapNode>();
+    public bool currentRoomDirty = false; // Set to true to guarantee the room is recalculated next frame.
     public UnityEvent onRoomChanged;
 
     /// <summary>
@@ -310,7 +310,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                             {
                                 Vector2 gridPos = GetGridMousePosition();
                                 GameObject go = GetGameObjectAtPoint(gridPos);
-                                DestroyGameObjectAtGridPosition(gridPos, go);
+                                DestroyGameObjectAtGridPosition(gridPos, go.GetComponent<ObjectData>());
                             }
                         }
                         // When dragging the mouse, destroy all objects along the path
@@ -424,14 +424,14 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         if (data == null)
             throw new Exception("Selected prefab missing ObjectData");
         if (!tilemap.ContainsKey(gridPos))
-            tilemap[gridPos] = new List<GameObject>();
-        GameObject sameGroupGameObject = tilemap[gridPos].Find((o) => { return o.GetComponent<ObjectData>().type == data.type; });
-        if (sameGroupGameObject)
+            tilemap[gridPos] = new List<ObjectData>();
+        ObjectData sameGroup = tilemap[gridPos].Find((info) => { return info.type == data.type; });
+        if (sameGroup)
         {
             // Don't replace if it's the same exact type of object
-            if (sameGroupGameObject.name == selectedPrefab.name)
+            if (sameGroup.name == selectedPrefab.name)
                 return null;
-            DestroyGameObjectAtGridPosition(gridPos, sameGroupGameObject);
+            DestroyGameObjectAtGridPosition(gridPos, sameGroup);
         }
         GameObject go = CreateObjectAtGrid(gridPos, selectedPrefab);
         Guid id = Guid.NewGuid();
@@ -449,7 +449,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     {
         if (!tilemap.ContainsKey(gridPos))
             return;
-        List<GameObject> goList = tilemap[gridPos];
+        List<ObjectData> goList = tilemap[gridPos];
         while (goList.Count > 0)
             DestroyGameObjectAtGridPosition(gridPos, goList[0]);
     }
@@ -457,18 +457,17 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     /// <summary>
     /// Destroy a single game object at the grid position in the tilemap.
     /// </summary>
-    void DestroyGameObjectAtGridPosition(Vector2 gridPos, GameObject go)
+    void DestroyGameObjectAtGridPosition(Vector2 gridPos, ObjectData data)
     {
         if (!tilemap.ContainsKey(gridPos))
             return;
-        ObjectData data = go.GetComponent<ObjectData>();
-        List<GameObject> goList = tilemap[gridPos];
-        goList.Remove(go);
+        List<ObjectData> goList = tilemap[gridPos];
+        goList.Remove(data);
         if (goList.Count == 0)
             tilemap.Remove(gridPos);
         Guid id = data.guid;
         guidmap.Remove(id);
-        Destroy(go);
+        Destroy(data.gameObject);
     }
 
     /// <summary>
@@ -496,8 +495,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         GameObject newObj = Instantiate(obj, point, Quaternion.identity, transform);
         newObj.name = obj.name;
         if (!tilemap.ContainsKey(point))
-            tilemap[point] = new List<GameObject>();
-        tilemap[point].Add(newObj);
+            tilemap[point] = new List<ObjectData>();
+        tilemap[point].Add(newObj.GetComponent<ObjectData>());
         return newObj;
     }
 
@@ -510,15 +509,15 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         if (!tilemap.ContainsKey(point))
             return null;
         ObjectData choice = null;
-        foreach (GameObject go in tilemap[point])
+        foreach (ObjectData data in tilemap[point])
         {
             // Must be an object the level editor knows about
-            if (go.transform.parent != transform)
+            if (data.transform.parent != transform)
                 continue;
             if (choice == null)
-                choice = go.GetComponent<ObjectData>();
-            else if (choice.type < go.GetComponent<ObjectData>().type)
-                choice = go.GetComponent<ObjectData>();
+                choice = data;
+            else if (choice.type < data.type)
+                choice = data;
         }
         return choice ? choice.gameObject : null;
     }
@@ -531,10 +530,11 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         point = ConvertPositionToGrid(point);
         if (!tilemap.ContainsKey(point))
             return null;
-        return tilemap[point].Find((go) =>
+        ObjectData info = tilemap[point].Find((data) =>
         {
-            return (go.transform.parent == transform && go.GetComponent<ObjectData>().type == type);
+            return (data.transform.parent == transform && data.type == type);
         });
+        return info != null ? info.gameObject : null;
     }
 
     /// <summary>
@@ -544,7 +544,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     {
         gridPos = ConvertPositionToGrid(gridPos);
         MapNode currentNode = new MapNode(gridPos);
-        if (currentRoom.Contains(currentNode))
+        if (currentRoom.Contains(currentNode) && !currentRoomDirty)
             return false;
         currentRoom = navcalc.GetConnectedNodes(currentNode, true, true);
         // Iterate only through the original list.
@@ -555,12 +555,12 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                     currentRoom.Add(node);
 
         // Update visibility
-        foreach (KeyValuePair<Vector2, List<GameObject>> pair in tilemap)
+        foreach (KeyValuePair<Vector2, List<ObjectData>> pair in tilemap)
         {
             bool active = currentRoom.Contains(new MapNode(pair.Key));
-            foreach (GameObject go in pair.Value)
-                if (go != null)
-                    SetTileActive(go, go.tag == "Player" || active);
+            foreach (ObjectData data in pair.Value)
+                if (data != null)
+                    SetTileVisibility(data.gameObject, data.CompareTag("Player") || active);
         }
 
         // Update camera
@@ -570,13 +570,14 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         avg /= currentRoom.Count;
         onRoomChanged.Invoke();
         Camera.main.GetComponent<CameraFollow>().SetTarget(avg);
+        currentRoomDirty = false;
         return true;
     }
 
     /// <summary>
     /// Shows or hides a given tile (based on whether it is in the current room).
     /// </summary>
-    void SetTileActive(GameObject go, bool active, bool immediate = false)
+    void SetTileVisibility(GameObject go, bool active, bool immediate = false)
     {
         if (go == null)
             return;
@@ -589,7 +590,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 c.a = targetAlpha;
                 renderer.color = c;
             }
-            else
+            // This is a hack - we want to skip doors and walls that have become see through.
+            else if (go.layer != LayerMask.NameToLayer("CollisionDisabled") || go.GetComponent<ObjectData>().type != ObjectType.Wall)
             {
                 StartCoroutine(ControlAlpha(renderer, targetAlpha));
             }
@@ -605,7 +607,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         while (alpha != targetAlpha && r != null)
         {
             alpha = Mathf.Lerp(alpha, targetAlpha, 0.15f);
-            if (Math.Abs(alpha - targetAlpha) < 0.05f)
+            if (Mathf.Abs(alpha - targetAlpha) < 0.05f)
                 alpha = targetAlpha;
             Color c = r.color;
             c.a = alpha;
@@ -814,15 +816,15 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     {
         bw.Write(levelName);
         bw.Write(tilemap.Count);
-        foreach (KeyValuePair<Vector2, List<GameObject>> pair in tilemap)
+        foreach (KeyValuePair<Vector2, List<ObjectData>> pair in tilemap)
         {
             bw.Write(pair.Key.x);
             bw.Write(pair.Key.y);
             bw.Write(pair.Value.Count);
-            foreach (GameObject go in pair.Value)
+            foreach (ObjectData data in pair.Value)
             {
-                bw.Write(go.name);
-                Guid id = go.GetComponent<ObjectData>().guid;
+                bw.Write(data.name);
+                Guid id = data.guid;
                 bw.Write(id);
             }
         }
@@ -886,7 +888,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             GameObject go = guidmap[id];
             // In play mode, start by hiding all tiles
             if (mode == EditMode.Play)
-                SetTileActive(go, false, true);
+                SetTileVisibility(go, false, true);
             DeserializeComponents(go, br);
         }
         navmap.RecalculateBounds();

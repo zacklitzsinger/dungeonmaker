@@ -14,20 +14,21 @@ public class LockedDoor : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D collider)
     {
-        if (locked && collider.tag == "Player")
+        if (locked && collider.CompareTag("Player"))
         {
             var player = collider.GetComponentInParent<Player>();
             if (player.keys > 0)
             {
                 player.keys--;
                 locked = false;
+                door.enabled = true;
+                door.Open = true;
             }
         }
     }
 
     void Update()
     {
-        door.enabled = !locked;
         animator.SetBool("locked", locked);
     }
 }

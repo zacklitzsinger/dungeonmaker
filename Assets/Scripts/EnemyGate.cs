@@ -25,11 +25,11 @@ public class EnemyGate : MonoBehaviour {
     {
         foreach (MapNode node in LevelEditor.main.currentRoom)
         {
-            List<GameObject> goList = LevelEditor.main.tilemap[node.ToVector2()];
+            List<ObjectData> goList = LevelEditor.main.tilemap[node.ToVector2()];
             if (goList == null)
                 continue;
-            foreach (GameObject go in goList)
-                if (go.GetComponent<ObjectData>().type == ObjectType.Enemy && go.activeInHierarchy)
+            foreach (ObjectData info in goList)
+                if (info.type == ObjectType.Enemy && info.gameObject.activeInHierarchy)
                     return false;
         }
         return true;

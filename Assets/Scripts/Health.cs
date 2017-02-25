@@ -13,6 +13,8 @@ public class Health : MonoBehaviour
     [ReadOnly]
     public Checkpoint deathRespawnPoint;
 
+    public ParticleSystem damageParticles;
+
     Rigidbody2D rb2d;
     Player player;
 
@@ -23,7 +25,7 @@ public class Health : MonoBehaviour
         player = GetComponentInParent<Player>();
     }
 
-    public int Damage(int dmg, bool fall = false)
+    public int Damage(int dmg, Vector2 direction, bool fall = false)
     {
         if (remInvulnFrames > 0)
             dmg = 0;
@@ -33,6 +35,8 @@ public class Health : MonoBehaviour
             remInvulnFrames = invulnFrames;
             if (invulnFrames > 0)
                 StartCoroutine(Flash(GetComponentInParent<SpriteRenderer>(), invulnFrames));
+            if (damageParticles && direction.magnitude > 0)
+                Instantiate(damageParticles, transform.position, Quaternion.LookRotation(direction, Vector3.forward));
             LevelEditor.main.HitPause(6);
         }
         if (currentHealth <= 0)

@@ -12,7 +12,7 @@ public class Fire : MonoBehaviour
         Health health = other.GetComponentInChildren<Health>();
         if (health == null)
             return;
-        health.Damage(1);
+        health.Damage(1, Vector2.zero);
     }
 
     void OnTriggerStay2D(Collider2D other)
@@ -20,7 +20,7 @@ public class Fire : MonoBehaviour
         Health health = other.GetComponentInChildren<Health>();
         if (health == null)
             return;
-        health.Damage(1);
+        health.Damage(1, Vector2.zero);
     }
 
     void Update()

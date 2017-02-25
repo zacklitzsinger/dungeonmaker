@@ -210,6 +210,8 @@ MonoBehaviour:
   currentHealth: 0
   remInvulnFrames: 0
   deathRespawnPoint: {fileID: 0}
+  damageParticles: {fileID: 198637271435436188, guid: 3203b49ec00b44246bc810d433c37f3c,
+    type: 2}
 --- !u!114 &114626465262783684
 MonoBehaviour:
   m_ObjectHideFlags: 1

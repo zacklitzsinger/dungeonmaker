@@ -23,7 +23,7 @@ public class Bullet : MonoBehaviour
             Destroy(gameObject);
             Health otherHealth = other.GetComponent<Health>();
             if (otherHealth)
-                otherHealth.Damage(1);
+                otherHealth.Damage(1, Vector2.zero);
         }
     }
 

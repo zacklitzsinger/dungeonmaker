@@ -15,8 +15,9 @@ public class Sword : MonoBehaviour
         Health health = other.GetComponent<Health>();
         if (!health)
             return;
-        health.Damage(damage);
-        health.Knockback((other.transform.position - transform.position).normalized * knockback);
+        Vector2 direction = (other.transform.position - transform.position).normalized;
+        health.Damage(damage, direction);
+        health.Knockback(direction * knockback);
     }
 
     void Update()

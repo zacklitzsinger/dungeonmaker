@@ -119,13 +119,13 @@ public class Player : MonoBehaviour
             state = PlayerState.AttackWindup;
         }
 
-        if (Input.GetButton("Shoot"))
-        {
-            Vector2 targetDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-            targetDirection.Normalize();
-            Instantiate(bullet, transform.position, Quaternion.LookRotation(Vector3.forward, targetDirection));
-            remStateFrames = shotFrames;
-        }
+        //if (Input.GetButton("Shoot"))
+        //{
+        //    Vector2 targetDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        //    targetDirection.Normalize();
+        //    Instantiate(bullet, transform.position, Quaternion.LookRotation(Vector3.forward, targetDirection));
+        //    remStateFrames = shotFrames;
+        //}
 
         if (Input.GetButtonDown("Use item") && Items.Length >= 1)
         {

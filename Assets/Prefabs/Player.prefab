@@ -169,11 +169,12 @@ MonoBehaviour:
   bullet: {fileID: 114536522912404158, guid: 0861409d57b6f1e458ad8ffefb4c1d96, type: 2}
   healthTexture: {fileID: 2800000, guid: 77ec5aa28ccc7864fbf35c3dbd9b2237, type: 3}
   keyTexture: {fileID: 2800000, guid: 8c013e97008c8e946affa29bef9a7cc6, type: 3}
-  acceleration: 60
+  acceleration: 90
   rollFrames: 17
-  rollForce: 1800
+  rollForce: 2200
   attackWindup: 8
   attackFrames: 22
+  attackForce: 800
   maxCombo: 3
   combo: 0
   shotFrames: 15

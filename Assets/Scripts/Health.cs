@@ -37,7 +37,7 @@ public class Health : MonoBehaviour
                 StartCoroutine(Flash(GetComponentInParent<SpriteRenderer>(), invulnFrames));
             if (damageParticles && direction.magnitude > 0)
                 Instantiate(damageParticles, transform.position, Quaternion.LookRotation(direction, Vector3.forward));
-            LevelEditor.main.HitPause(6);
+            LevelEditor.main.HitPause(10);
         }
         if (currentHealth <= 0)
         {

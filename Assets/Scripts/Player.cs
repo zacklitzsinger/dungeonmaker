@@ -28,6 +28,8 @@ public class Player : MonoBehaviour
     // Melee combat
     public int attackWindup; // Max number of frames to actually start attacking
     public int attackFrames; // Number of frames after attack starts before player can take another action.
+    public float attackForce; // Force to apply when attacking
+
     public int maxCombo; // Max number of attacks to be done in sequence
     [ReadOnly]
     public int combo; // Current combo
@@ -64,10 +66,9 @@ public class Player : MonoBehaviour
             return;
         Vector2 targetDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
         targetDirection.Normalize();
-        Instantiate(sword, transform.position, Quaternion.LookRotation((combo % 2 == 0 ? Vector3.forward: Vector3.back), targetDirection), transform);
+        Instantiate(sword, transform.position, Quaternion.LookRotation((combo % 2 == 1 ? Vector3.forward: Vector3.back), targetDirection), transform);
         state = PlayerState.Attacking;
         remStateFrames = attackFrames;
-        combo++;
     }
 
     void FixedUpdate()
@@ -104,8 +105,17 @@ public class Player : MonoBehaviour
                         gravity.dragModifier = 5;
                     break;
             }
-            if (remStateFrames > 8 || remStateFrames < 3 || combo >= maxCombo)
+            if (remStateFrames > 9 || remStateFrames < 2 || combo >= maxCombo)
+            {
+                // If the player isn't intentionally inputting buttons and just mashing, we should prevent the combo.
+                if (Input.GetButtonDown("Attack") || Input.GetButtonDown("Roll"))
+                    combo = maxCombo;
                 return;
+            }
+            // Don't allow player to cancel attack windup
+            if (state == PlayerState.AttackWindup)
+                return;
+            // Visual effect for combo opportunity
             spriteRenderer.color = new Color(.95f, .9f, 1f); 
         }
         else
@@ -128,7 +138,7 @@ public class Player : MonoBehaviour
             remStateFrames = rollFrames;
             state = PlayerState.Rolling;
             gravity.dragModifier = 1;
-            rb2d.AddForce(targetMotion.normalized * rollForce);
+            rb2d.AddForce(-targetMotion.normalized * rollForce);
             combo++;
         }
 
@@ -136,6 +146,9 @@ public class Player : MonoBehaviour
         {
             remStateFrames = attackWindup;
             state = PlayerState.AttackWindup;
+            gravity.dragModifier = 1;
+            rb2d.AddForce(targetMotion.normalized * attackForce * (combo + 3) / 3f);
+            combo++;
         }
 
         //if (Input.GetButton("Shoot"))

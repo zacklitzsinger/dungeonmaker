@@ -105,7 +105,7 @@ public class Player : MonoBehaviour
                         gravity.dragModifier = 5;
                     break;
             }
-            if (remStateFrames > 9 || remStateFrames < 2 || combo >= maxCombo)
+            if (remStateFrames > 9 || remStateFrames < 2 || combo >= maxCombo || state == PlayerState.Idle)
             {
                 // If the player isn't intentionally inputting buttons and just mashing, we should prevent the combo.
                 if (Input.GetButtonDown("Attack") || Input.GetButtonDown("Roll"))
@@ -129,6 +129,7 @@ public class Player : MonoBehaviour
             else
             {
                 state = PlayerState.Idle;
+                remStateFrames = combo * 2;
                 combo = 0;
             }
         }

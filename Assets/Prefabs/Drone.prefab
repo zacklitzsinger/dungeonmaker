@@ -134,7 +134,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 4
-  invulnFrames: 30
+  invulnFrames: 15
   currentHealth: 0
   remInvulnFrames: 0
   deathRespawnPoint: {fileID: 0}

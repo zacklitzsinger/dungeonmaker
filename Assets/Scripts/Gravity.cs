@@ -9,6 +9,9 @@ public class Gravity : MonoBehaviour {
 
     [ReadOnly]
     public HashSet<Collider2D> touching = new HashSet<Collider2D>();
+
+    public float dragModifier = 1;
+
     Health health;
     Rigidbody2D rb2d;
 
@@ -44,10 +47,12 @@ public class Gravity : MonoBehaviour {
     {
         GameObject floor = LevelEditor.main.GetGameObjectAtPointWithType(transform.position, ObjectType.Floor);
         FloorData floorData = null;
+        float baseDrag = 1f;
         if (floor != null)
         {
             floorData = floor.GetComponent<FloorData>();
-            rb2d.drag = floorData.linearDrag;
+            baseDrag = floorData.linearDrag;
         }
+        rb2d.drag = baseDrag * dragModifier;
     }
 }

@@ -14,12 +14,10 @@ public enum PlayerState
 public class Player : MonoBehaviour
 {
 
-    Rigidbody2D rb2d;
     public GameObject sword;
     public Bullet bullet;
     public Texture2D healthTexture;
     public Texture2D keyTexture;
-    Health health;
 
     public float acceleration;
 
@@ -30,6 +28,9 @@ public class Player : MonoBehaviour
     // Melee combat
     public int attackWindup; // Max number of frames to actually start attacking
     public int attackFrames; // Number of frames after attack starts before player can take another action.
+    public int maxCombo; // Max number of attacks to be done in sequence
+    [ReadOnly]
+    public int combo; // Current combo
 
     public int shotFrames; // Number of frames to idle after shooting
 
@@ -43,10 +44,17 @@ public class Player : MonoBehaviour
 
     public PlayerState state = PlayerState.Idle;
 
+    Rigidbody2D rb2d;
+    Health health;
+    Gravity gravity;
+    SpriteRenderer spriteRenderer;
+
     void Awake()
     {
         rb2d = GetComponent<Rigidbody2D>();
         health = GetComponentInChildren<Health>();
+        gravity = GetComponentInChildren<Gravity>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         attackFrames = sword.GetComponentInChildren<Sword>().remainingFrames;
     }
 
@@ -56,9 +64,10 @@ public class Player : MonoBehaviour
             return;
         Vector2 targetDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
         targetDirection.Normalize();
-        Instantiate(sword, transform.position, Quaternion.LookRotation(Vector3.forward, targetDirection), transform);
+        Instantiate(sword, transform.position, Quaternion.LookRotation((combo % 2 == 0 ? Vector3.forward: Vector3.back), targetDirection), transform);
         state = PlayerState.Attacking;
         remStateFrames = attackFrames;
+        combo++;
     }
 
     void FixedUpdate()
@@ -73,21 +82,31 @@ public class Player : MonoBehaviour
         FloorData floorData = null;
         if (floor != null)
             floorData = floor.GetComponent<FloorData>();
+        gravity.dragModifier = 1;
 
         float xMotion = Input.GetAxis("Horizontal");
         float yMotion = Input.GetAxis("Vertical");
         Vector2 targetMotion = Vector2.right * xMotion + Vector2.up * yMotion;
+        if (state == PlayerState.Attacking || state == PlayerState.Idle)
+        {
+            float modifiedAcceleration = (floorData ? floorData.accelerationModifier : 1) * acceleration;
+            rb2d.AddForce((targetMotion.magnitude > 1 ? targetMotion.normalized : targetMotion) * modifiedAcceleration);
+        }
 
+        spriteRenderer.color = Color.white;
         if (remStateFrames > 0)
         {
             remStateFrames--;
             switch (state)
             {
                 case PlayerState.Rolling:
-                    rb2d.AddForce(targetMotion.normalized * rollForce / (rollFrames - remStateFrames + 1));
+                    if (remStateFrames < rollFrames / 4)
+                        gravity.dragModifier = 5;
                     break;
             }
-            return;
+            if (remStateFrames > 8 || remStateFrames < 3 || combo >= maxCombo)
+                return;
+            spriteRenderer.color = new Color(.95f, .9f, 1f); 
         }
         else
         {
@@ -95,25 +114,25 @@ public class Player : MonoBehaviour
             if (state == PlayerState.AttackWindup)
             {
                 Attack();
+                return;
             }
             else
             {
                 state = PlayerState.Idle;
+                combo = 0;
             }
         }
 
-        if (Input.GetButtonDown("Roll") && state == PlayerState.Idle)
+        if (Input.GetButtonDown("Roll") && targetMotion.magnitude > 0)
         {
             remStateFrames = rollFrames;
             state = PlayerState.Rolling;
-        }
-        else
-        {
-            float modifiedAcceleration = (floorData ? floorData.accelerationModifier : 1) * acceleration;
-            rb2d.AddForce((targetMotion.magnitude > 1 ? targetMotion.normalized : targetMotion) * modifiedAcceleration);
+            gravity.dragModifier = 1;
+            rb2d.AddForce(targetMotion.normalized * rollForce);
+            combo++;
         }
 
-        if (Input.GetButtonDown("Attack") && state == PlayerState.Idle)
+        if (Input.GetButtonDown("Attack") && state != PlayerState.AttackWindup)
         {
             remStateFrames = attackWindup;
             state = PlayerState.AttackWindup;

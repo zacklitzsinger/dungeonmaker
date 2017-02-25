@@ -170,10 +170,12 @@ MonoBehaviour:
   healthTexture: {fileID: 2800000, guid: 77ec5aa28ccc7864fbf35c3dbd9b2237, type: 3}
   keyTexture: {fileID: 2800000, guid: 8c013e97008c8e946affa29bef9a7cc6, type: 3}
   acceleration: 60
-  rollFrames: 22
-  rollForce: 1200
+  rollFrames: 17
+  rollForce: 1800
   attackWindup: 8
   attackFrames: 22
+  maxCombo: 3
+  combo: 0
   shotFrames: 15
   remStateFrames: 0
   keys: 0
@@ -223,6 +225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8449060781c08b43be701b18c3a9c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dragModifier: 1
 --- !u!114 &114965935551178052
 MonoBehaviour:
   m_ObjectHideFlags: 1

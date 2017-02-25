@@ -133,8 +133,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6389aa04a6ae654fbe3575aa65009f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 2
-  invulnFrames: 60
+  maxHealth: 4
+  invulnFrames: 30
   currentHealth: 0
   remInvulnFrames: 0
   deathRespawnPoint: {fileID: 0}
@@ -152,6 +152,7 @@ MonoBehaviour:
   type: 5
   seeThrough: 1
   ground: 0
+  hideInPlayMode: 0
 --- !u!114 &114671667091109444
 MonoBehaviour:
   m_ObjectHideFlags: 1

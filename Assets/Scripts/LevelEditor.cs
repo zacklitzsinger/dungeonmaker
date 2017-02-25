@@ -133,6 +133,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                     SceneManager.LoadScene("MainMenu");
             });
         }
+
+        // Pause time while editing
+        Time.timeScale = (mode >= EditMode.Create ? 0 : 1);
     }
 
     void OnApplicationFocus(bool focus)
@@ -227,6 +230,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         mode = newMode;
         selectedGameObject = null;
         ClearSidebar();
+        // Pause time while editing
+        Time.timeScale = (mode >= EditMode.Create ? 0 : 1);
         if (mode == EditMode.Create)
             SidebarCreateButtons();
         if (mode == EditMode.Victory)
@@ -269,9 +274,6 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             else if (Input.GetButtonDown("Rotate CCW"))
                 rotation = (rotation + 270f) % 360;
         }
-
-        // Pause time while editing
-        Time.timeScale = (mode >= EditMode.Create ? 0 : 1);
 
         if (editModeLabel != null)
             editModeLabel.text = mode.ToString();
@@ -614,6 +616,21 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             r.color = c;
             yield return new WaitForFixedUpdate();
         }
+    }
+
+    public void HitPause(int duration)
+    {
+        StartCoroutine(PauseForDuration(duration));
+    }
+
+    IEnumerator PauseForDuration(int duration)
+    {
+        Time.timeScale = 0;
+        while (duration-- >= 0)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+        Time.timeScale = 1;
     }
 
     /// <summary>

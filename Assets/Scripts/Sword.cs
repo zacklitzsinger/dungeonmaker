@@ -5,16 +5,18 @@ using UnityEngine;
 public class Sword : MonoBehaviour
 {
     public int remainingFrames;
+    public int damage;
+    public float knockback;
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player")
+        if (other.CompareTag("Player"))
             return;
         Health health = other.GetComponent<Health>();
         if (!health)
             return;
-        health.Damage(1);
-        health.Knockback((other.transform.position - transform.position).normalized * 300f);
+        health.Damage(damage);
+        health.Knockback((other.transform.position - transform.position).normalized * knockback);
     }
 
     void Update()

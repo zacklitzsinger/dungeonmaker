@@ -115,6 +115,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   remainingFrames: 15
+  damage: 2
+  knockback: 300
 --- !u!212 &212929524074610912
 SpriteRenderer:
   m_ObjectHideFlags: 1

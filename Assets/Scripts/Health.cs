@@ -33,6 +33,7 @@ public class Health : MonoBehaviour
             remInvulnFrames = invulnFrames;
             if (invulnFrames > 0)
                 StartCoroutine(Flash(GetComponentInParent<SpriteRenderer>(), invulnFrames));
+            LevelEditor.main.HitPause(6);
         }
         if (currentHealth <= 0)
         {

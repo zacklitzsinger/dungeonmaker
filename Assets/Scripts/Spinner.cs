@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class Spinner : MonoBehaviour {
 
-    [PlayerEditable("Invert")]
-    public bool invert = false;
     public bool active = false;
     public float activationSpeed;
     [ReadOnly]
     public int counter = 0;
     public float rotationForce = 1f;
+    public float gustMultiplier = 4f;
 
     Rigidbody2D rb2d;
     Circuit circuit;
@@ -20,9 +19,10 @@ public class Spinner : MonoBehaviour {
         rb2d = GetComponentInChildren<Rigidbody2D>();
     }
 
+    // Handle wind zones
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.GetComponent<Wind>())
+        if (other.gameObject.layer != LayerMask.NameToLayer("Wind"))
             return;
         if (other.GetComponent<Rigidbody2D>())
             return;
@@ -30,19 +30,21 @@ public class Spinner : MonoBehaviour {
         counter++;
     }
 
+    // Handles gusts of wind
     void OnTriggerStay2D(Collider2D other)
     {
-        if (!other.GetComponent<Wind>())
+        if (other.gameObject.layer != LayerMask.NameToLayer("Wind"))
             return;
         Rigidbody2D otherRb2d = other.GetComponent<Rigidbody2D>();
         if (!otherRb2d)
             return;
-        rb2d.AddTorque(-otherRb2d.velocity.magnitude);
+        rb2d.AddTorque(-otherRb2d.velocity.magnitude * gustMultiplier);
     }
 
+    // Handle wind zones
     void OnTriggerExit2D(Collider2D other)
     {
-        if (!other.GetComponent<Wind>())
+        if (other.gameObject.layer != LayerMask.NameToLayer("Wind"))
             return;
         if (other.GetComponent<Rigidbody2D>())
             return;
@@ -63,7 +65,7 @@ public class Spinner : MonoBehaviour {
 
     void SetupCircuit()
     {
-        circuit.gateConditions.Add(() => { return (Mathf.Abs(rb2d.angularVelocity) > activationSpeed) ^ invert; });
+        circuit.gateConditions.Add(() => { return (Mathf.Abs(rb2d.angularVelocity) >= activationSpeed); });
     }
 
     void FixedUpdate()

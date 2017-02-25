@@ -20,9 +20,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4238989630657178}
   - component: {fileID: 50610769941585446}
-  - component: {fileID: 61025913196949640}
   - component: {fileID: 114153107429781060}
-  - component: {fileID: 114900200356105122}
+  - component: {fileID: 58783770684293808}
   m_Layer: 9
   m_Name: Gust
   m_TagString: Untagged
@@ -68,7 +67,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1653325509942388}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4238989630657178}
@@ -94,8 +93,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &61025913196949640
-BoxCollider2D:
+--- !u!58 &58783770684293808
+CircleCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -107,7 +106,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Size: {x: 0.8, y: 0.8}
+  m_Radius: 0.3
 --- !u!114 &114153107429781060
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -119,21 +118,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29dd262dabf7c4243b6c42c75754e8a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  aliveFrames: 300
---- !u!114 &114900200356105122
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1002282342740670}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28d885a00183da544b53198f09e1a3ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   force: 240
+  aliveFrames: 300
   active: 1
-  size: 1
 --- !u!198 &198891274136073290
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -189,7 +176,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1974287867
+  randomSeed: 1056409708
   InitialModule:
     serializedVersion: 3
     enabled: 1

@@ -120,6 +120,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
+  seeThrough: 1
+  ground: 0
+  hideInPlayMode: 0
 --- !u!114 &114765024785866122
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -133,9 +136,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   invert: 0
   active: 0
-  activationSpeed: 150
+  activationSpeed: 125
   counter: 0
   rotationForce: -1
+  gustMultiplier: 4
 --- !u!212 &212257462285786454
 SpriteRenderer:
   m_ObjectHideFlags: 1

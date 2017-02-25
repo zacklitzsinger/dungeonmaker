@@ -11,11 +11,15 @@ public class Wind : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (other.isTrigger)
+            return;
         Push(other);
     }
 
     void OnTriggerStay2D(Collider2D other)
     {
+        if (other.isTrigger)
+            return;
         Push(other);
     }
 

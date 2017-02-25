@@ -22,12 +22,15 @@ public class Player : MonoBehaviour
     Health health;
 
     public float acceleration;
+
+    // Rolling
     public int rollFrames; // Number of frames it takes to roll
     public float rollForce; // Force with which to roll
-    public int minAttackWindup; //Min number of frames to actually start attacking
-    public int maxAttackWindup; // Max number of frames to hold attack.
-    [ReadOnly]
-    public int attackFrames; // Number of frames to attack.
+
+    // Melee combat
+    public int attackWindup; // Max number of frames to actually start attacking
+    public int attackFrames; // Number of frames after attack starts before player can take another action.
+
     public int shotFrames; // Number of frames to idle after shooting
 
     [ReadOnly]
@@ -83,16 +86,6 @@ public class Player : MonoBehaviour
                 case PlayerState.Rolling:
                     rb2d.AddForce(targetMotion.normalized * rollForce / (rollFrames - remStateFrames + 1));
                     break;
-                case PlayerState.AttackWindup:
-                    if (remStateFrames <= maxAttackWindup - minAttackWindup && !Input.GetButton("Attack"))
-                    {
-                        Attack();
-                        break;
-                    }
-                    Vector2 targetDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-                    targetDirection.Normalize();
-                    rb2d.AddForce(targetDirection * 7 * remStateFrames);
-                    break;
             }
             return;
         }
@@ -100,8 +93,13 @@ public class Player : MonoBehaviour
         {
             remStateFrames = 0;
             if (state == PlayerState.AttackWindup)
+            {
                 Attack();
-            state = PlayerState.Idle;
+            }
+            else
+            {
+                state = PlayerState.Idle;
+            }
         }
 
         if (Input.GetButtonDown("Roll") && state == PlayerState.Idle)
@@ -117,7 +115,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetButtonDown("Attack") && state == PlayerState.Idle)
         {
-            remStateFrames = maxAttackWindup;
+            remStateFrames = attackWindup;
             state = PlayerState.AttackWindup;
         }
 

@@ -215,7 +215,8 @@ MonoBehaviour:
   deathRespawnPoint: {fileID: 0}
   damageParticles: {fileID: 198637271435436188, guid: 3203b49ec00b44246bc810d433c37f3c,
     type: 2}
-  sound: {fileID: 8300000, guid: 87e372e39fc06b14794ec2523cb17664, type: 3}
+  hitSound: {fileID: 8300000, guid: 87e372e39fc06b14794ec2523cb17664, type: 3}
+  deathSound: {fileID: 0}
 --- !u!114 &114626465262783684
 MonoBehaviour:
   m_ObjectHideFlags: 1

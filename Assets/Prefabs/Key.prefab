@@ -69,6 +69,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 4
+  seeThrough: 1
+  ground: 0
+  hideInPlayMode: 0
 --- !u!114 &114881940445859678
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -80,6 +83,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f72e7015248b58847b84a29f0a7f342b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sound: {fileID: 8300000, guid: 5724de7367e63c5498bca44dad6bff99, type: 3}
 --- !u!212 &212621048473382382
 SpriteRenderer:
   m_ObjectHideFlags: 1

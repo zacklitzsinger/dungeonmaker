@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class Key : MonoBehaviour {
 
+    public AudioClip sound;
+
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag == "Player")
+        if (other.CompareTag("Player"))
         {
             other.GetComponentInParent<Player>().keys++;
-            Destroy(gameObject);
+            AudioSource.PlayClipAtPoint(sound, transform.position);
+            gameObject.SetActive(false);
         }
     }
 

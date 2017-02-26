@@ -117,7 +117,8 @@ MonoBehaviour:
   remainingFrames: 15
   damage: 2
   knockback: 300
-  sound: {fileID: 8300000, guid: c13d70f253956a1468d77e82107f68bd, type: 3}
+  swordSwingSound: {fileID: 8300000, guid: d076a85372b79c34a8debd950f7d86dc, type: 3}
+  swordHitSound: {fileID: 8300000, guid: c13d70f253956a1468d77e82107f68bd, type: 3}
 --- !u!212 &212929524074610912
 SpriteRenderer:
   m_ObjectHideFlags: 1

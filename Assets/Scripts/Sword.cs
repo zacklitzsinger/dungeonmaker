@@ -7,7 +7,13 @@ public class Sword : MonoBehaviour
     public int remainingFrames;
     public int damage;
     public float knockback;
-    public AudioClip sound;
+    public AudioClip swordSwingSound;
+    public AudioClip swordHitSound;
+
+    void Start()
+    {
+        Camera.main.GetComponent<AudioSource>().PlayOneShot(swordSwingSound);
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -19,7 +25,7 @@ public class Sword : MonoBehaviour
         Vector2 direction = (other.transform.position - transform.position).normalized;
         health.Damage(damage, direction);
         health.Knockback(direction * knockback);
-        AudioSource.PlayClipAtPoint(sound, transform.position);
+        Camera.main.GetComponent<AudioSource>().PlayOneShot(swordHitSound);
     }
 
     void Update()

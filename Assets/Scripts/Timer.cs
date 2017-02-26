@@ -6,11 +6,11 @@ using UnityEngine;
 
 public class Timer : MonoBehaviour, ICustomSerializable {
 
-    [PlayerEditableRange("Off Time", 1, 10)]
+    [PlayerEditableRange("Off Time", 1, 20)]
     public int offSeconds = 1;
-    [PlayerEditableRange("On Time", 1, 10)]
+    [PlayerEditableRange("On Time", 1, 20)]
     public int onSeconds = 1;
-    [PlayerEditableRange("Offset Time", 0, 10)]
+    [PlayerEditableRange("Offset Time", 0, 20)]
     public int offset = 0;
     public bool on;
 

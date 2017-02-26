@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
-public class PermanentGate : MonoBehaviour {
+public class PermanentGate : MonoBehaviour
+{
 
     Circuit circuit;
     bool on = false;
@@ -17,7 +18,7 @@ public class PermanentGate : MonoBehaviour {
 
     void FixedUpdate()
     {
-        if (circuit.Powered)
+        if (circuit != null && circuit.Powered)
             on = true;
     }
 

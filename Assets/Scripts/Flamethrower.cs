@@ -54,7 +54,7 @@ public class Flamethrower : MonoBehaviour, ICustomSerializable
     {
         if (LevelEditor.main.tilemap.ContainsKey(pos))
             foreach (ObjectData info in LevelEditor.main.tilemap[pos])
-                if (info.gameObject != null && info.type == ObjectType.Wall && info.GetComponent<Collider2D>().enabled)
+                if (info.gameObject != null && info.type == ObjectType.Wall && info.GetComponent<Collider2D>() && info.GetComponent<Collider2D>().enabled)
                     return true;
         return false;
     }

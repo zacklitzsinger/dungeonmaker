@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class KeyUI : MonoBehaviour {
 
@@ -14,7 +12,7 @@ public class KeyUI : MonoBehaviour {
             for (int i = transform.childCount; i < amount; i++)
                 Instantiate(keyImage, transform);
             for (int i = transform.childCount; i > amount; i--)
-                Destroy(keyImage);
+                Destroy(transform.GetChild(0).gameObject);
         }
     }
 

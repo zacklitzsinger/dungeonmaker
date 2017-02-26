@@ -312,7 +312,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                             {
                                 Vector2 gridPos = GetGridMousePosition();
                                 GameObject go = GetGameObjectAtPoint(gridPos);
-                                DestroyGameObjectAtGridPosition(gridPos, go.GetComponent<ObjectData>());
+                                if (go != null)
+                                    DestroyGameObjectAtGridPosition(gridPos, go.GetComponent<ObjectData>());
                             }
                         }
                         // When dragging the mouse, destroy all objects along the path

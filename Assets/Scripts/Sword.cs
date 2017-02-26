@@ -7,6 +7,7 @@ public class Sword : MonoBehaviour
     public int remainingFrames;
     public int damage;
     public float knockback;
+    public AudioClip sound;
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -18,6 +19,7 @@ public class Sword : MonoBehaviour
         Vector2 direction = (other.transform.position - transform.position).normalized;
         health.Damage(damage, direction);
         health.Knockback(direction * knockback);
+        AudioSource.PlayClipAtPoint(sound, transform.position);
     }
 
     void Update()

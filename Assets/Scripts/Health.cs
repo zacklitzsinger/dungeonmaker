@@ -14,6 +14,7 @@ public class Health : MonoBehaviour
     public Checkpoint deathRespawnPoint;
 
     public ParticleSystem damageParticles;
+    public AudioClip sound;
 
     Rigidbody2D rb2d;
     Player player;
@@ -37,6 +38,7 @@ public class Health : MonoBehaviour
                 StartCoroutine(Flash(GetComponentInParent<SpriteRenderer>(), invulnFrames));
             if (damageParticles && direction.magnitude > 0)
                 Instantiate(damageParticles, transform.position, Quaternion.LookRotation(direction, Vector3.forward));
+            AudioSource.PlayClipAtPoint(sound, transform.position);
             LevelEditor.main.HitPause(10);
         }
         if (currentHealth <= 0)

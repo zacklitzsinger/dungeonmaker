@@ -169,7 +169,7 @@ MonoBehaviour:
   bullet: {fileID: 114536522912404158, guid: 0861409d57b6f1e458ad8ffefb4c1d96, type: 2}
   healthTexture: {fileID: 2800000, guid: 77ec5aa28ccc7864fbf35c3dbd9b2237, type: 3}
   keyTexture: {fileID: 2800000, guid: 8c013e97008c8e946affa29bef9a7cc6, type: 3}
-  acceleration: 90
+  acceleration: 110
   rollFrames: 17
   rollForce: 2200
   attackWindup: 8
@@ -215,6 +215,7 @@ MonoBehaviour:
   deathRespawnPoint: {fileID: 0}
   damageParticles: {fileID: 198637271435436188, guid: 3203b49ec00b44246bc810d433c37f3c,
     type: 2}
+  sound: {fileID: 8300000, guid: 87e372e39fc06b14794ec2523cb17664, type: 3}
 --- !u!114 &114626465262783684
 MonoBehaviour:
   m_ObjectHideFlags: 1

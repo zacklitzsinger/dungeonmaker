@@ -51,6 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ca5b51280153c44791835e338b5cea9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  icon: {fileID: 21300000, guid: dbead5da80ed79f429105d4b007f2879, type: 3}
   prefabGust: {fileID: 1002282342740670, guid: fd3f4e3153604d14f969cd33c9acae88, type: 2}
   cooldownFrames: 90
   remFrames: 0

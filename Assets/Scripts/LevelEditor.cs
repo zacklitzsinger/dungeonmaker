@@ -69,6 +69,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public InputField uploadNameInput;
     public InputField uploadDescInput;
     public GameObject uploadProgress;
+    public GameObject playerPanel;
 
     // Circuits
     public Color circuitColor;

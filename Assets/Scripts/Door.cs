@@ -22,6 +22,8 @@ public class Door : MonoBehaviour, ICustomSerializable {
     [PlayerEditable("Invert")]
     public bool invert = false;
 
+    public AudioClip sound;
+
     Animator animator;
     public GameObject child;
     ObjectData data;
@@ -37,6 +39,7 @@ public class Door : MonoBehaviour, ICustomSerializable {
         if (!other.CompareTag("Player") || GetComponent<Circuit>() != null || other.isTrigger || !enabled)
             return;
         Open = true;
+        AudioSource.PlayClipAtPoint(sound, transform.position);
     }
 
     void OnTriggerExit2D(Collider2D other)
@@ -44,6 +47,7 @@ public class Door : MonoBehaviour, ICustomSerializable {
         if (!other.CompareTag("Player") || GetComponent<Circuit>() != null || other.isTrigger || !enabled)
             return;
         Open = false;
+        AudioSource.PlayClipAtPoint(sound, transform.position);
     }
 
     void Update()

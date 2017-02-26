@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GustItem : MonoBehaviour, IItem {
 
+    public Sprite icon;
+    public Sprite Icon {  get { return icon; } }
     public GameObject prefabGust;
     public int cooldownFrames = 90;
     [ReadOnly]

@@ -15,9 +15,7 @@ public class Player : MonoBehaviour
 {
 
     public GameObject sword;
-    public Bullet bullet;
-    public Texture2D healthTexture;
-    public Texture2D keyTexture;
+    public Sprite dodgeIcon;
 
     public float acceleration;
 
@@ -30,21 +28,25 @@ public class Player : MonoBehaviour
     public int attackFrames; // Number of frames after attack starts before player can take another action.
     public float attackForce; // Force to apply when attacking
 
+    // Combo
     public int maxCombo; // Max number of attacks to be done in sequence
     [ReadOnly]
     public int combo; // Current combo
-
-    public int shotFrames; // Number of frames to idle after shooting
 
     [ReadOnly]
     public int remStateFrames; // Remaining frames to continue current state; 0 when in idle
 
     public int keys = 0;
     public IItem[] Items { get { return GetComponentsInChildren<IItem>(); } }
+    public string[] keybinds;
 
     public Vector2 roomEntrance;
 
     public PlayerState state = PlayerState.Idle;
+
+    public GameObject playerPanel;
+    public HealthUI healthIndicator;
+    public KeyUI keyIndicator;
 
     Rigidbody2D rb2d;
     Health health;
@@ -58,6 +60,9 @@ public class Player : MonoBehaviour
         gravity = GetComponentInChildren<Gravity>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         attackFrames = sword.GetComponentInChildren<Sword>().remainingFrames;
+        playerPanel = LevelEditor.main.playerPanel;
+        healthIndicator = playerPanel.GetComponentInChildren<HealthUI>(true);
+        keyIndicator = playerPanel.GetComponentInChildren<KeyUI>(true);
     }
 
     void Attack()
@@ -134,12 +139,14 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (Input.GetButtonDown("Roll") && targetMotion.magnitude > 0)
+        if (Input.GetButtonDown("Roll"))
         {
+            Vector2 targetDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+            targetDirection.Normalize();
             remStateFrames = rollFrames;
             state = PlayerState.Rolling;
             gravity.dragModifier = 1;
-            rb2d.AddForce(-targetMotion.normalized * rollForce);
+            rb2d.AddForce(-targetDirection * rollForce);
             combo++;
         }
 
@@ -152,14 +159,6 @@ public class Player : MonoBehaviour
             combo++;
         }
 
-        //if (Input.GetButton("Shoot"))
-        //{
-        //    Vector2 targetDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-        //    targetDirection.Normalize();
-        //    Instantiate(bullet, transform.position, Quaternion.LookRotation(Vector3.forward, targetDirection));
-        //    remStateFrames = shotFrames;
-        //}
-
         if (Input.GetButtonDown("Use item") && Items.Length >= 1)
         {
             Items[0].Activate(this);
@@ -168,12 +167,27 @@ public class Player : MonoBehaviour
 
     void OnGUI()
     {
-        if (LevelEditor.main.mode == EditMode.Play)
+        if (LevelEditor.main.mode >= EditMode.Create)
         {
-            for (int i = 1; i <= health.currentHealth; i++)
-                GUI.DrawTexture(new Rect(new Vector2(Screen.width - 20 - i * healthTexture.width, 20), new Vector2(healthTexture.width, healthTexture.height)), healthTexture);
-            for (int i = 1; i <= keys; i++)
-                GUI.DrawTexture(new Rect(new Vector2(Screen.width - 20 - i * keyTexture.width, 20), new Vector2(keyTexture.width, keyTexture.height)), keyTexture);
+            playerPanel.SetActive(false);
+            return;
+        }
+        playerPanel.SetActive(true);
+        healthIndicator.Amount = health.currentHealth;
+        keyIndicator.Amount = keys;
+        ItemSlot[] itemSlots = playerPanel.GetComponentsInChildren<ItemSlot>();
+        for (int i = 0; i < itemSlots.Length; i++)
+        {
+            if (i < keybinds.Length)
+                itemSlots[i].slot.text = keybinds[i];
+            if (i == 0)
+                itemSlots[i].ItemSprite = sword.GetComponentInChildren<SpriteRenderer>().sprite;
+            else if (i == 1)
+                itemSlots[i].ItemSprite = dodgeIcon;
+            else if (i - 2 < Items.Length)
+            {
+                itemSlots[i].ItemSprite = Items[i - 2].Icon;
+            }
         }
     }
 }

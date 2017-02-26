@@ -83,6 +83,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public Dictionary<Guid, GameObject> guidmap = new Dictionary<Guid, GameObject>();
     public NavMap navmap;
     public NavigationCalculator<MapNode> navcalc;
+    public List<MapNode> previousRoom;
     public List<MapNode> currentRoom = new List<MapNode>();
     public bool currentRoomDirty = false; // Set to true to guarantee the room is recalculated next frame.
     public UnityEvent onRoomChanged;
@@ -549,6 +550,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         MapNode currentNode = new MapNode(gridPos);
         if (currentRoom.Contains(currentNode) && !currentRoomDirty)
             return false;
+        previousRoom = currentRoom;
         currentRoom = navcalc.GetConnectedNodes(currentNode, true, true);
         // Iterate only through the original list.
         int nodeCount = currentRoom.Count;
@@ -688,10 +690,12 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 if (EventSystem.current.IsPointerOverGameObject() || PauseMenu.main.Open)
                     return;
                 // Draw currently selected grid square
-                Vector2 gridPos = Camera.main.WorldToScreenPoint(ConvertPositionToGrid(Camera.main.ScreenToWorldPoint(Input.mousePosition)));
-                gridPos.y = Screen.height - gridPos.y;
-                gridPos -= Vector2.one * GRID_SIZE / 2;
-                GUI.DrawTexture(new Rect(gridPos, Vector2.one * GRID_SIZE), selectionBox);
+                Vector2 gridPos = ConvertPositionToGrid(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                gridPos += Vector2.up;
+                Vector2 screenPos = Camera.main.WorldToScreenPoint(gridPos);
+                screenPos.y = Screen.height - screenPos.y;
+                screenPos -= Vector2.one * GRID_SIZE / 2;
+                GUI.DrawTexture(new Rect(screenPos, new Vector2(selectionBox.width, selectionBox.height)), selectionBox);
                 if (selectedPrefab)
                 {
                     Sprite sprite = selectedPrefab.GetComponentInChildren<SpriteRenderer>().sprite;
@@ -711,9 +715,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             case EditMode.Edit:
                 if (selectedGameObject)
                 {
-                    Vector2 rectPoint = Camera.main.WorldToScreenPoint((Vector2)selectedGameObject.transform.position);
+                    Vector2 rectPoint = Camera.main.WorldToScreenPoint((Vector2)selectedGameObject.transform.position + Vector2.up);
                     rectPoint.y = Screen.height - rectPoint.y;
-                    GUI.DrawTexture(new Rect(rectPoint - Vector2.one * GRID_SIZE / 2, new Vector2(GRID_SIZE, GRID_SIZE)), selectionBox);
+                    GUI.DrawTexture(new Rect(rectPoint - Vector2.one * GRID_SIZE / 2, new Vector2(selectionBox.width, selectionBox.height)), selectionBox);
                 }
 
                 break;

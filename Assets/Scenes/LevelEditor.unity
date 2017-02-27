@@ -2325,6 +2325,8 @@ MonoBehaviour:
     type: 2}
   prefabIntSlider: {fileID: 1120791588321864, guid: 45816976d412d3d4fad42df12d32cc1c,
     type: 2}
+  prefabDropdown: {fileID: 1560440110645574, guid: 4f1dee12289e1184aa8da9c080d75505,
+    type: 2}
   tabPanel: {fileID: 1173480818}
   prefabToggleButton: {fileID: 114427709937716774, guid: 6325090c5c605684db1447ea0f6e4c68,
     type: 2}

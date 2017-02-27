@@ -25,3 +25,15 @@ public class PlayerEditableRangeAttribute : PlayerEditableAttribute
         this.max = max;
     }
 }
+
+public class PlayerEditableEnumAttribute : PlayerEditableAttribute
+{
+    private Type type;
+    public string[] Choices {  get { return Enum.GetNames(type); } }
+
+    public PlayerEditableEnumAttribute(string name, Type type) : base(name)
+    {
+        this.type = type;
+    }
+
+}

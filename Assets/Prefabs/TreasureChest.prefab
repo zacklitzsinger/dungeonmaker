@@ -68,7 +68,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1a466c5ee0ae84895b4395b21f662e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabItem: {fileID: 1313807820324858, guid: 11884e9f6512f7a41964d8dc081f0054, type: 2}
+  contents: 0
+  prefabOptions:
+  - {fileID: 1313807820324858, guid: 11884e9f6512f7a41964d8dc081f0054, type: 2}
 --- !u!114 &114744713971349162
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -83,6 +85,7 @@ MonoBehaviour:
   type: 4
   seeThrough: 1
   ground: 0
+  hideInPlayMode: 0
 --- !u!212 &212390731372897270
 SpriteRenderer:
   m_ObjectHideFlags: 1

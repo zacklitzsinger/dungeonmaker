@@ -110,7 +110,7 @@ public class Player : MonoBehaviour
                         gravity.dragModifier = 5;
                     break;
             }
-            if (remStateFrames > 9 || remStateFrames < 2 || combo >= maxCombo || state == PlayerState.Idle)
+            if (remStateFrames > 10 || remStateFrames < 2 || combo >= maxCombo || state == PlayerState.Idle)
             {
                 // If the player isn't intentionally inputting buttons and just mashing, we should prevent the combo.
                 if (Input.GetButtonDown("Attack") || Input.GetButtonDown("Roll"))
@@ -139,14 +139,12 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (Input.GetButtonDown("Roll"))
+        if (Input.GetButtonDown("Roll") && targetMotion.magnitude > 0)
         {
-            Vector2 targetDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-            targetDirection.Normalize();
             remStateFrames = rollFrames;
             state = PlayerState.Rolling;
             gravity.dragModifier = 1;
-            rb2d.AddForce(-targetDirection * rollForce);
+            rb2d.AddForce(targetMotion.normalized * rollForce);
             combo++;
         }
 

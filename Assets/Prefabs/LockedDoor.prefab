@@ -160,6 +160,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   open: 0
   invert: 0
+  sound: {fileID: 8300000, guid: dab3fd7d336b1214d92fc143dd00ed06, type: 3}
   child: {fileID: 1512028653236358}
 --- !u!212 &212657564622608820
 SpriteRenderer:

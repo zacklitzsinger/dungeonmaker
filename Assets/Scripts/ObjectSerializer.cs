@@ -13,18 +13,20 @@ public static class ObjectSerializer
             return field.GetCustomAttributes(typeof(PlayerEditableAttribute), true).Length > 0;
         });
         bw.Write(fields.Length);
-        foreach(FieldInfo field in fields)
-            {
-                // TODO: Would be nice to clean this up, but using an older version of C# hurts here.
-                // TODO: Handle collections
-                bw.Write(field.Name);
-                object value = field.GetValue(component);
-                if (field.FieldType == typeof(int))
-                    bw.Write((int)value);
-                else if (field.FieldType == typeof(bool))
-                    bw.Write((bool)value);
-                else if (field.FieldType == typeof(Guid))
-                    bw.Write((Guid)value);             
+        foreach (FieldInfo field in fields)
+        {
+            // TODO: Would be nice to clean this up, but using an older version of C# hurts here.
+            // TODO: Handle collections
+            bw.Write(field.Name);
+            object value = field.GetValue(component);
+            if (field.FieldType == typeof(int))
+                bw.Write((int)value);
+            else if (field.FieldType == typeof(bool))
+                bw.Write((bool)value);
+            else if (field.FieldType == typeof(Guid))
+                bw.Write((Guid)value);
+            else if (field.FieldType == typeof(Enum))
+                bw.Write((int)value);
             }
     }
 
@@ -44,6 +46,8 @@ public static class ObjectSerializer
                 field.SetValue(component, br.ReadBoolean());
             else if (field.FieldType == typeof(Guid))
                 field.SetValue(component, br.ReadGuid());
+            else if (field.FieldType == typeof(Enum))
+                field.SetValue(component, br.ReadInt32());
         }
     }
 

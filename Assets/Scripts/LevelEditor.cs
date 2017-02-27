@@ -59,6 +59,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public Texture selectionBox;
     public Toggle prefabToggle;
     public GameObject prefabIntSlider;
+    public GameObject prefabDropdown;
     public ToggleGroup tabPanel;
     public Toggle prefabToggleButton;
     public GameObject victoryPanel;
@@ -676,7 +677,18 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                             field.SetValue(component, (int)val);
                             text.text = rangeAttr.Name + ": " + val;
                         });
-
+                    } else if (field.FieldType.IsEnum)
+                    {
+                        var enumAttr = attr as PlayerEditableEnumAttribute;
+                        GameObject labeledDropdown = Instantiate(prefabDropdown, sidebarContent.transform);
+                        Text label = labeledDropdown.GetComponentInChildren<Text>();
+                        label.text = enumAttr.Name + ":";
+                        Dropdown dropdown = labeledDropdown.GetComponentInChildren<Dropdown>();
+                        dropdown.AddOptions(new List<string>(enumAttr.Choices));
+                        dropdown.onValueChanged.AddListener((val) =>
+                        {
+                            field.SetValue(component, (int)val);
+                        });
                     }
                 }
             }

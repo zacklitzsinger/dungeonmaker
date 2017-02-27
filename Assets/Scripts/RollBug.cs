@@ -64,16 +64,12 @@ public class RollBug : MonoBehaviour
         if (!collision.collider.CompareTag("Player"))
             return;
         Vector2 dir = (collision.transform.position - transform.position).normalized;
-        int dmg = collision.collider.GetComponent<Health>().Damage(1, dir);
-        if (dmg > 0)
-        {
-            collision.rigidbody.AddForce(dir * 1200f);
-        }
+        collision.collider.GetComponent<Health>().Damage(1, dir * 2400f);
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag("Player"))
+        if (!other.CompareTag("Player") || currentState == AIState.Attack)
             return;
         SetCurrentState(AIState.Attack);
         attack.target = other.transform.position;

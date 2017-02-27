@@ -23,7 +23,7 @@ public class Spikes : MonoBehaviour {
         Health health = other.GetComponent<Health>();
         if (health == null)
             return;
-        health.Damage(damage, Vector2.zero);
+        health.Damage(damage, (other.transform.position - transform.position).normalized * 1200f);
     }
 
     void FixedUpdate()

@@ -27,7 +27,7 @@ public class Health : MonoBehaviour
         player = GetComponentInParent<Player>();
     }
 
-    public int Damage(int dmg, Vector2 direction, bool fall = false)
+    public int Damage(int dmg, Vector2 knockback, bool fall = false)
     {
         if (remInvulnFrames > 0)
             dmg = 0;
@@ -37,10 +37,13 @@ public class Health : MonoBehaviour
             remInvulnFrames = invulnFrames;
             if (invulnFrames > 0)
                 StartCoroutine(Flash(GetComponentInParent<SpriteRenderer>(), invulnFrames));
-            if (damageParticles && direction.magnitude > 0)
-                Instantiate(damageParticles, transform.position, Quaternion.LookRotation(direction, Vector3.forward));
+            if (damageParticles && knockback.magnitude > 0)
+            {
+                Instantiate(damageParticles, transform.position, Quaternion.LookRotation(knockback, Vector3.forward));
+                rb2d.AddForce(knockback);
+            }
             Camera.main.GetComponent<AudioSource>().PlayOneShot(hitSound);
-            LevelEditor.main.HitPause(10);
+            LevelEditor.main.HitPause(4);
         }
         if (currentHealth <= 0)
         {
@@ -56,11 +59,6 @@ public class Health : MonoBehaviour
             RespawnAtRoomEntrance();
         }
         return dmg;
-    }
-
-    public void Knockback(Vector2 motion)
-    {
-        rb2d.AddForce(motion);
     }
 
     void Respawn()

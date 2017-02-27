@@ -11,6 +11,19 @@ public enum PlayerState
     Victory
 }
 
+public struct PlayerAction
+{
+    public PlayerState type;
+    public int frames;
+    public Vector2 direction;
+    public bool combo;
+
+    public override string ToString()
+    {
+        return "[" + type + "|" + frames + "|" + direction + "]";
+    }
+}
+
 public class Player : MonoBehaviour
 {
 
@@ -32,6 +45,7 @@ public class Player : MonoBehaviour
     public int maxCombo; // Max number of attacks to be done in sequence
     [ReadOnly]
     public int combo; // Current combo
+    public int postComboCooldown; // Number of frames to idle per combo executed after comboing.
 
     [ReadOnly]
     public int remStateFrames; // Remaining frames to continue current state; 0 when in idle
@@ -42,11 +56,12 @@ public class Player : MonoBehaviour
 
     public Vector2 roomEntrance;
 
-    public PlayerState state = PlayerState.Idle;
+    public PlayerAction currentAction;
+    public Queue<PlayerAction> actions = new Queue<PlayerAction>();
 
-    public GameObject playerPanel;
-    public HealthUI healthIndicator;
-    public KeyUI keyIndicator;
+    GameObject playerPanel;
+    HealthUI healthIndicator;
+    KeyUI keyIndicator;
 
     Rigidbody2D rb2d;
     Health health;
@@ -59,26 +74,57 @@ public class Player : MonoBehaviour
         health = GetComponentInChildren<Health>();
         gravity = GetComponentInChildren<Gravity>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        attackFrames = sword.GetComponentInChildren<Sword>().remainingFrames;
         playerPanel = LevelEditor.main.playerPanel;
         healthIndicator = playerPanel.GetComponentInChildren<HealthUI>(true);
         keyIndicator = playerPanel.GetComponentInChildren<KeyUI>(true);
     }
 
-    void Attack()
+    /// <summary>
+    /// Called the first frame an action becomes active
+    /// </summary>
+    void TriggerAction(PlayerAction action)
     {
-        if (state != PlayerState.AttackWindup)
-            return;
-        Vector2 targetDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-        targetDirection.Normalize();
-        Instantiate(sword, transform.position, Quaternion.LookRotation((combo % 2 == 1 ? Vector3.forward: Vector3.back), targetDirection), transform);
-        state = PlayerState.Attacking;
-        remStateFrames = attackFrames;
+        remStateFrames = action.frames;
+        if (action.combo)
+            combo++;
+        switch (action.type)
+        {
+            case PlayerState.AttackWindup:
+                gravity.dragModifier = 1;
+                if (action.direction.magnitude > 0)
+                    rb2d.AddForce(action.direction.normalized * attackForce * (combo + 3) / 3f);
+                break;
+
+            case PlayerState.Attacking:
+                if (action.direction.magnitude > 0)
+                    Instantiate(sword, transform.position, Quaternion.LookRotation((combo % 2 == 1 ? Vector3.forward : Vector3.back), action.direction.normalized), transform);
+                break;
+
+            case PlayerState.Rolling:
+                gravity.dragModifier = 1;
+                if (action.direction.magnitude > 0)
+                    rb2d.AddForce(action.direction.normalized * rollForce);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Backswing can be cancelled in a certain frame window if there are no additional actions queued.
+    /// </summary>
+    bool CanCancelBackswing()
+    {
+        return (3 < remStateFrames && remStateFrames < 11 && combo < maxCombo && currentAction.type != PlayerState.Idle && actions.Count == 0);
+    }
+
+    void TryCancelBackswing()
+    {
+        if (CanCancelBackswing())
+            remStateFrames = 0;
     }
 
     void FixedUpdate()
     {
-        if (state == PlayerState.Victory)
+        if (currentAction.type == PlayerState.Victory)
             return;
 
         if (LevelEditor.main.SetCurrentRoom(transform.position))
@@ -93,7 +139,7 @@ public class Player : MonoBehaviour
         float xMotion = Input.GetAxis("Horizontal");
         float yMotion = Input.GetAxis("Vertical");
         Vector2 targetMotion = Vector2.right * xMotion + Vector2.up * yMotion;
-        if (state == PlayerState.Attacking || state == PlayerState.Idle)
+        if (currentAction.type == PlayerState.AttackWindup || currentAction.type == PlayerState.Attacking || currentAction.type == PlayerState.Idle)
         {
             float modifiedAcceleration = (floorData ? floorData.accelerationModifier : 1) * acceleration;
             rb2d.AddForce((targetMotion.magnitude > 1 ? targetMotion.normalized : targetMotion) * modifiedAcceleration);
@@ -103,58 +149,48 @@ public class Player : MonoBehaviour
         if (remStateFrames > 0)
         {
             remStateFrames--;
-            switch (state)
+            switch (currentAction.type)
             {
                 case PlayerState.Rolling:
                     if (remStateFrames < rollFrames / 4)
                         gravity.dragModifier = 5;
                     break;
             }
-            if (remStateFrames > 10 || remStateFrames < 2 || combo >= maxCombo || state == PlayerState.Idle)
-            {
-                // If the player isn't intentionally inputting buttons and just mashing, we should prevent the combo.
-                if (Input.GetButtonDown("Attack") || Input.GetButtonDown("Roll"))
-                    combo = maxCombo;
-                return;
-            }
-            // Don't allow player to cancel attack windup
-            if (state == PlayerState.AttackWindup)
-                return;
-            // Visual effect for combo opportunity
-            spriteRenderer.color = new Color(.95f, .9f, 1f); 
+            if (CanCancelBackswing())
+                // Visual effect for combo opportunity
+                spriteRenderer.color = new Color(.95f, .9f, 1f);
         }
         else
         {
             remStateFrames = 0;
-            if (state == PlayerState.AttackWindup)
+            if (combo >= maxCombo)
+                actions.Clear();
+            if (actions.Count > 0)
             {
-                Attack();
-                return;
+                currentAction = actions.Dequeue();
+                TriggerAction(currentAction);
             }
-            else
+            else if (combo > 0)
             {
-                state = PlayerState.Idle;
-                remStateFrames = combo * 2;
+                currentAction = new PlayerAction();
+                remStateFrames = combo * postComboCooldown;
                 combo = 0;
             }
         }
 
         if (Input.GetButtonDown("Roll") && targetMotion.magnitude > 0)
         {
-            remStateFrames = rollFrames;
-            state = PlayerState.Rolling;
-            gravity.dragModifier = 1;
-            rb2d.AddForce(targetMotion.normalized * rollForce);
-            combo++;
+            TryCancelBackswing();
+            actions.Enqueue(new PlayerAction() { type = PlayerState.Rolling, frames = rollFrames, direction = targetMotion.normalized, combo = true });
+
         }
 
-        if (Input.GetButtonDown("Attack") && state != PlayerState.AttackWindup)
+        if (Input.GetButtonDown("Attack"))
         {
-            remStateFrames = attackWindup;
-            state = PlayerState.AttackWindup;
-            gravity.dragModifier = 1;
-            rb2d.AddForce(targetMotion.normalized * attackForce * (combo + 3) / 3f);
-            combo++;
+            TryCancelBackswing();
+            Vector2 targetDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+            actions.Enqueue(new PlayerAction() { type = PlayerState.AttackWindup, frames = attackWindup, direction = targetDirection.normalized });
+            actions.Enqueue(new PlayerAction() { type = PlayerState.Attacking, frames = attackFrames, direction = targetDirection.normalized, combo = true });
         }
 
         if (Input.GetButtonDown("Use item") && Items.Length >= 1)

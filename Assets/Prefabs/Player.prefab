@@ -169,12 +169,13 @@ MonoBehaviour:
   dodgeIcon: {fileID: 21300000, guid: af8cf2bd83ed29747b03cbf2619d8150, type: 3}
   acceleration: 110
   rollFrames: 17
-  rollForce: 2200
+  rollForce: 2500
   attackWindup: 8
   attackFrames: 22
-  attackForce: 800
+  attackForce: 1000
   maxCombo: 3
   combo: 0
+  postComboCooldown: 5
   remStateFrames: 0
   keys: 0
   keybinds:
@@ -182,7 +183,6 @@ MonoBehaviour:
   - R
   - E
   roomEntrance: {x: 0, y: 0}
-  state: 0
   playerPanel: {fileID: 0}
   healthIndicator: {fileID: 0}
   keyIndicator: {fileID: 0}

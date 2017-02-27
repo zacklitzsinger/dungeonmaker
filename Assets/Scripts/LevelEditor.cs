@@ -630,7 +630,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     IEnumerator PauseForDuration(int duration)
     {
-        Time.timeScale = 0;
+        Time.timeScale = 0f;
         while (duration-- >= 0)
         {
             yield return new WaitForEndOfFrame();

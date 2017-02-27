@@ -23,8 +23,7 @@ public class Sword : MonoBehaviour
         if (!health)
             return;
         Vector2 direction = (other.transform.position - transform.position).normalized;
-        health.Damage(damage, direction);
-        health.Knockback(direction * knockback);
+        health.Damage(damage, direction * knockback);
         Camera.main.GetComponent<AudioSource>().PlayOneShot(swordHitSound);
     }
 

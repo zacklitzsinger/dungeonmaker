@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Knight: MonoBehaviour
 {
@@ -36,7 +34,7 @@ public class Knight: MonoBehaviour
         {
             if (go.CompareTag("Player"))
                 vision.target = go.transform;
-            attack.staggerFrames += health.invulnFrames / 2;
+            attack.staggerFrames += 15;
         };
     }
 

@@ -175,7 +175,7 @@ MonoBehaviour:
   attackForce: 1000
   maxCombo: 3
   combo: 0
-  postComboCooldown: 5
+  postComboCooldown: 15
   remStateFrames: 0
   keys: 0
   keybinds:

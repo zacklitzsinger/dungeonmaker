@@ -25,7 +25,6 @@ GameObject:
   - component: {fileID: 114789258443482190}
   - component: {fileID: 114904661763868058}
   - component: {fileID: 114081175117869926}
-  - component: {fileID: 114273371594712796}
   - component: {fileID: 114918477643818858}
   - component: {fileID: 114610941385884982}
   - component: {fileID: 114689978433671992}
@@ -127,19 +126,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   reset: 1
---- !u!114 &114273371594712796
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1147360471527010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3c7349317724424eb285151a2abc252, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 1
-  knockback: 1200
 --- !u!114 &114554694894238124
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -234,9 +220,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   acceleration: 65
+  minAttackDelay: 10
+  maxAttackDelay: 30
   attackFrames: 30
-  attackDistance: 1.5
-  sword: {fileID: 1002282342740670, guid: 440d7f478f067ab44b2b58da49e7d917, type: 2}
+  attackDistance: 2.5
+  attackMoveForce: 200
+  sword: {fileID: 1002282342740670, guid: 05e94e4be2872ea4b9c33c51b7f2b372, type: 2}
   staggerFrames: 0
 --- !u!114 &114918477643818858
 MonoBehaviour:
@@ -250,7 +239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 15
-  invulnFrames: 60
+  invulnFrames: 0
   currentHealth: 0
   remInvulnFrames: 0
   deathRespawnPoint: {fileID: 0}

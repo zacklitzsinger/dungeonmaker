@@ -12,8 +12,11 @@ public class KnightAttack : MonoBehaviour
 {
 
     public float acceleration;
+    public int minAttackDelay;
+    public int maxAttackDelay;
     public int attackFrames;
     public float attackDistance;
+    public float attackMoveForce;
     public GameObject sword;
     public int staggerFrames; // can't do anything while stagger frames > 0
 
@@ -42,9 +45,11 @@ public class KnightAttack : MonoBehaviour
         switch (action.type)
         {
             case State.Attack:
-                Sword swordInstance = Instantiate(sword, transform.position, Quaternion.LookRotation(Vector3.forward, action.direction.normalized), transform).GetComponentInChildren<Sword>();
+                Quaternion rotation = Quaternion.LookRotation(Random.value < 0.5f ? Vector3.forward : Vector3.back, action.direction.normalized);
+                Sword swordInstance = Instantiate(sword, transform.position, rotation, transform).GetComponentInChildren<Sword>();
                 swordInstance.friendly = false;
                 swordInstance.owner = gameObject;
+                rb2d.AddForce(action.direction * attackMoveForce);
                 // After attacking, force a waiting period
                 actions.Enqueue(new KnightAction() { type = State.Idle, frames = 60 });
                 break;
@@ -56,7 +61,10 @@ public class KnightAttack : MonoBehaviour
         if (vision.target)
         {
             if ((vision.target.position - transform.position).magnitude < attackDistance)
+            {
+                actions.Enqueue(new KnightAction() { type = State.Idle, frames = Random.Range(minAttackDelay, maxAttackDelay) });
                 actions.Enqueue(new KnightAction() { type = State.Attack, frames = attackFrames, direction = (vision.target.position - transform.position) });
+            }
             else
             {
                 RecalcPath();
@@ -88,6 +96,12 @@ public class KnightAttack : MonoBehaviour
         }
         if (currentAction.type == State.Chase && path != null && path.Count > 0)
         {
+            if (vision.target && (vision.target.position - transform.position).magnitude < attackDistance)
+            {
+                TriggerAction(DecideNextAction());
+                return;
+            }
+            // TODO: Do some movement prediction
             if (vision.target != null && Vector2.Distance(path[path.Count - 1], vision.target.position) > 1)
                 RecalcPath();
             Debug.DrawLine(transform.position, path[0], Color.blue);

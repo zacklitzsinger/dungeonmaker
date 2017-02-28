@@ -2346,6 +2346,8 @@ MonoBehaviour:
   selectedConnectionColor: {r: 0.9632353, g: 0.12748703, b: 0.4214399, a: 1}
   levelName: 
   levelDesc: 
+  previousRoom: []
+  currentRoom: []
   currentRoomDirty: 0
   onRoomChanged:
     m_PersistentCalls:

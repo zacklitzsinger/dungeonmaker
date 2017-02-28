@@ -84,7 +84,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public Dictionary<Guid, GameObject> guidmap = new Dictionary<Guid, GameObject>();
     public NavMap navmap;
     public NavigationCalculator navcalc;
+    [ReadOnly]
     public List<Vector2> previousRoom;
+    [ReadOnly]
     public List<Vector2> currentRoom = new List<Vector2>();
     public bool currentRoomDirty = false; // Set to true to guarantee the room is recalculated next frame.
     public UnityEvent onRoomChanged;

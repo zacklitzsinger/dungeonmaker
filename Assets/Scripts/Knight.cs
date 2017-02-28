@@ -15,6 +15,7 @@ public class Knight: MonoBehaviour
     public int decisionInterval = 60;
     int remFrames;
 
+    Circuit circuit;
     Wander wander;
     VisionCone vision;
     KnightAttack attack;
@@ -55,6 +56,10 @@ public class Knight: MonoBehaviour
 
     void FixedUpdate()
     {
+        if (circuit == null)
+            circuit = GetComponent<Circuit>();
+        if (circuit && !circuit.Powered)
+            SetCurrentState(AIState.Idle);
         if (vision.target != null)
             SetCurrentState(AIState.Attack);
         else if (!wander.enabled && !attack.enabled)

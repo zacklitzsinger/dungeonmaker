@@ -23,6 +23,7 @@ public class Sword : MonoBehaviour
         if (friendly == other.CompareTag("Player"))
             return;
         Health health = other.GetComponentInParent<Health>();
+        // TODO Perhaps trigger knockback when the sword hits a wall?
         if (!health)
             return;
         Vector2 direction = (other.transform.position - transform.position).normalized;

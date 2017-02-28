@@ -650,6 +650,7 @@ MonoBehaviour:
     prefabs:
     - {fileID: 1147360471527010, guid: 90d4d477cb75b004192f7cadd6d2490e, type: 2}
     - {fileID: 1147360471527010, guid: 5ebc96384c2dc314bbcbde1c9cd6b088, type: 2}
+    - {fileID: 1147360471527010, guid: 3375c1657c158bf4c8a93a5229c0b781, type: 2}
   rotation: 0
   playFrames: 0
   sidebar: {fileID: 0}
@@ -662,6 +663,7 @@ MonoBehaviour:
     type: 2}
   prefabIntSlider: {fileID: 1120791588321864, guid: 45816976d412d3d4fad42df12d32cc1c,
     type: 2}
+  prefabDropdown: {fileID: 0}
   tabPanel: {fileID: 0}
   prefabToggleButton: {fileID: 114427709937716774, guid: 6325090c5c605684db1447ea0f6e4c68,
     type: 2}
@@ -680,6 +682,8 @@ MonoBehaviour:
   selectedConnectionColor: {r: 0.9632353, g: 0.12748703, b: 0.4214399, a: 1}
   levelName: 
   levelDesc: 
+  previousRoom: []
+  currentRoom: []
   currentRoomDirty: 0
   onRoomChanged:
     m_PersistentCalls:

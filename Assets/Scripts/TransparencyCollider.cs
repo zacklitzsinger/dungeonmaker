@@ -20,7 +20,7 @@ public class TransparencyCollider : MonoBehaviour {
     {
         SpriteRenderer sr = other.GetComponent<SpriteRenderer>();
         ObjectData data = other.GetComponent<ObjectData>();
-        if (sr == null || data == null || data.type != ObjectType.Wall || !LevelEditor.main.currentRoom.Contains(new MapNode(other.transform.position)))
+        if (sr == null || data == null || data.type != ObjectType.Wall || !LevelEditor.main.currentRoom.Contains(other.transform.position))
             return;
         fadingOut.Add(sr);
         fadingIn.Remove(sr);
@@ -48,7 +48,7 @@ public class TransparencyCollider : MonoBehaviour {
     {
         SpriteRenderer sr = other.GetComponent<SpriteRenderer>();
         ObjectData data = other.GetComponent<ObjectData>();
-        if (sr == null || data == null || data.type != ObjectType.Wall || !LevelEditor.main.currentRoom.Contains(new MapNode(other.transform.position)))
+        if (sr == null || data == null || data.type != ObjectType.Wall || !LevelEditor.main.currentRoom.Contains(other.transform.position))
             return;
         fadingOut.Remove(sr);
         fadingIn.Add(sr);

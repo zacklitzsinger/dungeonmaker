@@ -8,11 +8,11 @@ public class Wander : MonoBehaviour
     public float acceleration;
     public bool flying = false;
 
-    public List<MapNode> path = new List<MapNode>();
-    List<MapNode> choices;
+    public List<Vector2> path = new List<Vector2>();
+    List<Vector2> choices;
     Vector2 chosenTarget;
 
-    NavigationCalculator<MapNode> navcalc;
+    NavigationCalculator navcalc;
     Rigidbody2D rb2d;
 
 
@@ -25,19 +25,19 @@ public class Wander : MonoBehaviour
     void FixedUpdate()
     {
         if (choices == null)
-            choices = navcalc.GetConnectedNodes(GetCurrentNode(), flying);
+            choices = navcalc.GetConnectedNodes(LevelEditor.main.ConvertPositionToGrid(transform.position), flying);
 
         Debug.DrawLine(transform.position, chosenTarget, Color.cyan);
         if (path != null)
             for (int i = 0; i < path.Count; i++)
-                Debug.DrawLine(i > 0 ? path[i - 1].ToVector2() : (Vector2)transform.position, path[i].ToVector2(), Color.magenta);
+                Debug.DrawLine(i > 0 ? path[i - 1] : (Vector2)transform.position, path[i], Color.magenta);
 
 
         if (path == null || path.Count == 0)
             ChooseTarget();
         if (path != null && path.Count > 0)
         {
-            Vector2 delta = path[0].ToVector2() - (Vector2)transform.position;
+            Vector2 delta = path[0] - (Vector2)transform.position;
             // Close enough to point
             if (delta.magnitude <= 0.5f)
             {
@@ -49,22 +49,17 @@ public class Wander : MonoBehaviour
         }
     }
 
-    MapNode GetCurrentNode()
-    {
-        return new MapNode(LevelEditor.main.ConvertPositionToGrid(transform.position));
-    }
-
     void ChooseTarget()
     {
-        MapNode currentNode = GetCurrentNode();
+        Vector2 currentNode = LevelEditor.main.ConvertPositionToGrid(transform.position);
         if (!choices.Contains(currentNode))
             Debug.LogWarning("Changed room!");
-        MapNode target;
+        Vector2 target;
         do
         {
             target = choices[Random.Range(0, choices.Count)];
         } while (choices.Count > 1 && target == currentNode);
-        chosenTarget = target.ToVector2();
+        chosenTarget = target;
         path = navcalc.CalculatePath(currentNode, target, flying);
         if (path == null)
             Debug.LogWarning("Could not find path! " + gameObject.name + ", currentNode: " + currentNode + ", target: " + target);

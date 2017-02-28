@@ -19,6 +19,8 @@ public class VisionCone : MonoBehaviour {
 
     Transform CheckFOV()
     {
+        if (angle <= 0)
+            return null;
         Transform t = null;
         // Not optimal, but better for debugging purposes
         for (float a = -angle/2; a <= angle/2; a += angle/5)

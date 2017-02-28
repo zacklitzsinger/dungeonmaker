@@ -42,7 +42,7 @@ public class Drone : MonoBehaviour
         if (collision.collider.tag != "Player")
             return;
         Vector2 dir = (collision.transform.position - transform.position).normalized;
-        int dmg = collision.collider.GetComponent<Health>().Damage(1, dir * 1200f);
+        int dmg = collision.collider.GetComponentInParent<Health>().Damage(1, gameObject, dir * 1200f);
     }
 
 }

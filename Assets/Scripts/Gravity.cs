@@ -40,7 +40,7 @@ public class Gravity : MonoBehaviour {
     void CheckForDeath()
     {
         if (touching.Count <= 0)
-            health.Damage(1, Vector2.zero, true);
+            health.Damage(1, gameObject, Vector2.zero, true);
     }
 
     void FixedUpdate()

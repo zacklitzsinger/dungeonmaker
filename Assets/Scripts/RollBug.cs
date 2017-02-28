@@ -64,7 +64,7 @@ public class RollBug : MonoBehaviour
         if (!collision.collider.CompareTag("Player"))
             return;
         Vector2 dir = (collision.transform.position - transform.position).normalized;
-        collision.collider.GetComponent<Health>().Damage(1, dir * 2400f);
+        collision.collider.GetComponent<Health>().Damage(1, gameObject, dir * 2400f);
     }
 
     void OnTriggerEnter2D(Collider2D other)

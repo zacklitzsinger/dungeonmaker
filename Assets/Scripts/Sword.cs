@@ -6,6 +6,7 @@ public class Sword : MonoBehaviour
     public int damage;
     public float knockback;
     public bool friendly;
+    public GameObject owner;
     public AudioClip swordSwingSound;
     public AudioClip swordHitSound;
 
@@ -22,7 +23,7 @@ public class Sword : MonoBehaviour
         if (!health)
             return;
         Vector2 direction = (other.transform.position - transform.position).normalized;
-        health.Damage(damage, direction * knockback);
+        health.Damage(damage, owner, direction * knockback);
         Camera.main.GetComponent<AudioSource>().PlayOneShot(swordHitSound);
     }
 

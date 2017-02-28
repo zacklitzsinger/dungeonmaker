@@ -23,9 +23,9 @@ public class EnemyGate : MonoBehaviour {
 
     bool AllEnemiesDeadInRoom()
     {
-        foreach (MapNode node in LevelEditor.main.currentRoom)
+        foreach (Vector2 node in LevelEditor.main.currentRoom)
         {
-            List<ObjectData> goList = LevelEditor.main.tilemap[node.ToVector2()];
+            List<ObjectData> goList = LevelEditor.main.tilemap[node];
             if (goList == null)
                 continue;
             foreach (ObjectData info in goList)

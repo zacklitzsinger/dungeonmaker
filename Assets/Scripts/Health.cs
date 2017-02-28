@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Health : MonoBehaviour
 {
@@ -17,6 +18,9 @@ public class Health : MonoBehaviour
     public AudioClip hitSound;
     public AudioClip deathSound;
 
+    public delegate void OnDamagedDelegate(GameObject source);
+    public event OnDamagedDelegate onDamaged;
+
     Rigidbody2D rb2d;
     Player player;
 
@@ -27,7 +31,7 @@ public class Health : MonoBehaviour
         player = GetComponentInParent<Player>();
     }
 
-    public int Damage(int dmg, Vector2 knockback, bool fall = false)
+    public int Damage(int dmg, GameObject source, Vector2 knockback, bool fall = false)
     {
         if (remInvulnFrames > 0)
             dmg = 0;
@@ -43,7 +47,9 @@ public class Health : MonoBehaviour
                 rb2d.AddForce(knockback);
             }
             Camera.main.GetComponent<AudioSource>().PlayOneShot(hitSound);
-            LevelEditor.main.HitPause(4);
+            LevelEditor.main.HitPause(Constants.HIT_PAUSE);
+            if (onDamaged != null)
+                onDamaged(source);
         }
         if (currentHealth <= 0)
         {

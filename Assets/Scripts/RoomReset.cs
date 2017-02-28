@@ -22,7 +22,7 @@ public class RoomReset : MonoBehaviour, ICustomSerializable
             if (!reset)
                 return;
             // If the player moved into a room that was not previously active, reset
-            if (!LevelEditor.main.previousRoom.Contains(new MapNode(initialPosition)) && LevelEditor.main.currentRoom.Contains(new MapNode(initialPosition)))
+            if (!LevelEditor.main.previousRoom.Contains(initialPosition) && LevelEditor.main.currentRoom.Contains(initialPosition))
                 ResetSelf();
         });
 

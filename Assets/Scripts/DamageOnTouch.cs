@@ -10,6 +10,6 @@ public class DamageOnTouch : MonoBehaviour {
         if (!collision.collider.CompareTag("Player"))
             return;
         Vector2 dir = (collision.transform.position - transform.position).normalized;
-        collision.collider.GetComponentInParent<Health>().Damage(damage, dir * knockback);
+        collision.collider.GetComponentInParent<Health>().Damage(damage, gameObject, dir * knockback);
     }
 }

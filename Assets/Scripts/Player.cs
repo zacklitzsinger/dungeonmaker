@@ -97,7 +97,11 @@ public class Player : MonoBehaviour
 
             case PlayerState.Attacking:
                 if (action.direction.magnitude > 0)
-                    Instantiate(sword, transform.position, Quaternion.LookRotation((combo % 2 == 1 ? Vector3.forward : Vector3.back), action.direction.normalized), transform);
+                {
+                    Quaternion rotation = Quaternion.LookRotation((combo % 2 == 1 ? Vector3.forward : Vector3.back), action.direction.normalized);
+                    GameObject swordObj = Instantiate(sword, transform.position, rotation, transform);
+                    swordObj.GetComponentInChildren<Sword>().owner = gameObject;
+                }
                 break;
 
             case PlayerState.Rolling:

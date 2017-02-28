@@ -44,7 +44,6 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     private GameObject[] allPrefabOptions;
     [ReadOnly]
     public float rotation;
-    public const int GRID_SIZE = 32;
     [ReadOnly]
     /// <summary>
     /// Number of frames since play started.
@@ -84,9 +83,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public Dictionary<Vector2, List<ObjectData>> tilemap = new Dictionary<Vector2, List<ObjectData>>();
     public Dictionary<Guid, GameObject> guidmap = new Dictionary<Guid, GameObject>();
     public NavMap navmap;
-    public NavigationCalculator<MapNode> navcalc;
-    public List<MapNode> previousRoom;
-    public List<MapNode> currentRoom = new List<MapNode>();
+    public NavigationCalculator navcalc;
+    public List<Vector2> previousRoom;
+    public List<Vector2> currentRoom = new List<Vector2>();
     public bool currentRoomDirty = false; // Set to true to guarantee the room is recalculated next frame.
     public UnityEvent onRoomChanged;
 
@@ -104,7 +103,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     {
         main = this;
         navmap = new NavMap(tilemap);
-        navcalc = new NavigationCalculator<MapNode>(navmap);
+        navcalc = new NavigationCalculator(navmap);
 
         List<GameObject> prefabs = new List<GameObject>();
         foreach (PrefabGroup group in prefabGroups)
@@ -548,8 +547,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     /// </summary>
     public bool SetCurrentRoom(Vector2 gridPos)
     {
-        gridPos = ConvertPositionToGrid(gridPos);
-        MapNode currentNode = new MapNode(gridPos);
+        Vector2 currentNode = ConvertPositionToGrid(gridPos);
         if (currentRoom.Contains(currentNode) && !currentRoomDirty)
             return false;
         previousRoom = currentRoom;
@@ -557,14 +555,14 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         // Iterate only through the original list.
         int nodeCount = currentRoom.Count;
         for (int i = 0; i < nodeCount; i++)
-            foreach (MapNode node in navmap.GetPotentialNeighbors(currentRoom[i]))
+            foreach (Vector2 node in navmap.GetPotentialNeighbors(currentRoom[i]))
                 if (!currentRoom.Contains(node))
                     currentRoom.Add(node);
 
         // Update visibility
         foreach (KeyValuePair<Vector2, List<ObjectData>> pair in tilemap)
         {
-            bool active = currentRoom.Contains(new MapNode(pair.Key));
+            bool active = currentRoom.Contains(pair.Key);
             foreach (ObjectData data in pair.Value)
                 if (data != null)
                     SetTileVisibility(data.gameObject, data.CompareTag("Player") || active);
@@ -572,7 +570,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
         // Update camera
         Vector2 avg = Vector2.zero;
-        foreach (MapNode node in currentRoom)
+        foreach (Vector2 node in currentRoom)
             avg += new Vector2(node.x, node.y);
         avg /= currentRoom.Count;
         onRoomChanged.Invoke();
@@ -707,7 +705,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 gridPos += Vector2.up;
                 Vector2 screenPos = Camera.main.WorldToScreenPoint(gridPos);
                 screenPos.y = Screen.height - screenPos.y;
-                screenPos -= Vector2.one * GRID_SIZE / 2;
+                screenPos -= Vector2.one * Constants.GRID_SIZE / 2;
                 GUI.DrawTexture(new Rect(screenPos, new Vector2(selectionBox.width, selectionBox.height)), selectionBox);
                 if (selectedPrefab)
                 {
@@ -730,7 +728,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 {
                     Vector2 rectPoint = Camera.main.WorldToScreenPoint((Vector2)selectedGameObject.transform.position + Vector2.up);
                     rectPoint.y = Screen.height - rectPoint.y;
-                    GUI.DrawTexture(new Rect(rectPoint - Vector2.one * GRID_SIZE / 2, new Vector2(selectionBox.width, selectionBox.height)), selectionBox);
+                    GUI.DrawTexture(new Rect(rectPoint - Vector2.one * Constants.GRID_SIZE / 2, new Vector2(selectionBox.width, selectionBox.height)), selectionBox);
                 }
 
                 break;
@@ -840,11 +838,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     /// <summary>
     /// Rounds the given position to the grid. Assumes world position.
     /// </summary>
-    public Vector3 ConvertPositionToGrid(Vector3 pos)
+    public Vector2 ConvertPositionToGrid(Vector2 pos)
     {
-        pos.x = Mathf.Round(pos.x);
-        pos.y = Mathf.Round(pos.y);
-        return pos;
+        return pos.ToGrid();
     }
 
     public void Serialize(BinaryWriter bw)

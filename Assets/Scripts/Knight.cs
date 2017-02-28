@@ -21,6 +21,7 @@ public class Knight: MonoBehaviour
     VisionCone vision;
     KnightAttack attack;
     Rigidbody2D rb2d;
+    Health health;
 
     void Start()
     {
@@ -28,6 +29,15 @@ public class Knight: MonoBehaviour
         attack = GetComponent<KnightAttack>();
         rb2d = GetComponent<Rigidbody2D>();
         vision = GetComponent<VisionCone>();
+        health = GetComponent<Health>();
+        // When damaged by the player, they should become the focus. This code can't be in the behaviors
+        // because they are in various states of enabled/disabled.
+        health.onDamaged += (go) =>
+        {
+            if (go.CompareTag("Player"))
+                vision.target = go.transform;
+            attack.staggerFrames += health.invulnFrames / 2;
+        };
     }
 
     void SetCurrentState(AIState state)
@@ -53,7 +63,9 @@ public class Knight: MonoBehaviour
             PickRandomState();
         else if (remFrames-- <= 0)
             PickRandomState();
-        if (rb2d.velocity.magnitude > 0)
+        if (vision.target != null)
+            transform.localRotation = Quaternion.LookRotation(Vector3.forward, (vision.target.position - transform.position).normalized);
+        else if (rb2d.velocity.magnitude > 0)
             transform.localRotation = Quaternion.LookRotation(Vector3.forward, rb2d.velocity.normalized);
     }
 }

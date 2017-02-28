@@ -179,7 +179,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   angle: 60
-  distance: 4
+  distance: 4.5
   target: {fileID: 0}
   mask:
     serializedVersion: 2
@@ -208,6 +208,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   acceleration: 30
   flying: 0
+  path: []
 --- !u!114 &114862122591297864
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -232,10 +233,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cab804a2f8937146a0e75745e76034b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  acceleration: 45
+  acceleration: 65
   attackFrames: 30
   attackDistance: 1.5
   sword: {fileID: 1002282342740670, guid: 440d7f478f067ab44b2b58da49e7d917, type: 2}
+  staggerFrames: 0
 --- !u!114 &114918477643818858
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -247,8 +249,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6389aa04a6ae654fbe3575aa65009f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 10
-  invulnFrames: 30
+  maxHealth: 15
+  invulnFrames: 60
   currentHealth: 0
   remInvulnFrames: 0
   deathRespawnPoint: {fileID: 0}

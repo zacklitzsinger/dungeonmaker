@@ -179,8 +179,8 @@ MonoBehaviour:
   remStateFrames: 0
   keys: 0
   keybinds:
-  - L
-  - R
+  - Left
+  - Right
   - E
   roomEntrance: {x: 0, y: 0}
 --- !u!114 &114554694894238124

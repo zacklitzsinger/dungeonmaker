@@ -4,6 +4,7 @@ using UnityEngine.Events;
 
 public class Health : MonoBehaviour
 {
+    public bool invulnerableOverride = false;
 
     public int maxHealth;
     public int invulnFrames;
@@ -33,7 +34,7 @@ public class Health : MonoBehaviour
 
     public int Damage(int dmg, GameObject source, Vector2 knockback, bool fall = false)
     {
-        if (remInvulnFrames > 0)
+        if (remInvulnFrames > 0 || invulnerableOverride)
             dmg = 0;
         currentHealth -= dmg;
         if (dmg > 0)

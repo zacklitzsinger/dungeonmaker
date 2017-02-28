@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Knight: MonoBehaviour
+public class Knight : MonoBehaviour
 {
 
     public enum AIState
@@ -12,8 +12,11 @@ public class Knight: MonoBehaviour
 
     [ReadOnly]
     public AIState currentState = AIState.Wander;
+    [Tooltip("How frequently to make decisions about wander state")]
     public int decisionInterval = 60;
     int remFrames;
+    [Tooltip("How many frames to stagger per instance of damage")]
+    public int hitStagger;
 
     Circuit circuit;
     Wander wander;
@@ -35,12 +38,14 @@ public class Knight: MonoBehaviour
         {
             if (go.CompareTag("Player"))
                 vision.target = go.transform;
-            attack.staggerFrames += 15;
+            attack.staggerFrames += hitStagger;
         };
     }
 
     void SetCurrentState(AIState state)
     {
+        if (currentState == state)
+            return;
         currentState = state;
         wander.enabled = (currentState == AIState.Wander);
         attack.enabled = (currentState == AIState.Attack);
@@ -58,8 +63,18 @@ public class Knight: MonoBehaviour
     {
         if (circuit == null)
             circuit = GetComponent<Circuit>();
-        if (circuit && !circuit.Powered)
-            SetCurrentState(AIState.Idle);
+        if (circuit)
+        {
+            if (!circuit.Powered)
+            {
+                health.invulnerableOverride = true;
+                SetCurrentState(AIState.Idle);
+            }
+            else
+            {
+                health.invulnerableOverride = false;
+            }
+        }
         if (vision.target != null)
             SetCurrentState(AIState.Attack);
         else if (!wander.enabled && !attack.enabled)

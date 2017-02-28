@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Sword : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class Sword : MonoBehaviour
     public AudioClip swordSwingSound;
     public AudioClip swordHitSound;
 
+    HashSet<GameObject> hits = new HashSet<GameObject>();
+
     Rigidbody2D rb2d;
 
     void Start()
@@ -20,14 +23,23 @@ public class Sword : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (friendly == other.CompareTag("Player"))
-            return;
-        Health health = other.GetComponentInParent<Health>();
-        // TODO Perhaps trigger knockback when the sword hits a wall?
-        if (!health)
+        if (friendly == other.CompareTag("Player") || hits.Contains(other.gameObject))
             return;
         Vector2 direction = (other.transform.position - transform.position).normalized;
-        health.Damage(damage, owner, direction * knockback);
+        ObjectData otherData = other.GetComponentInParent<ObjectData>();
+        if (otherData.type == ObjectType.Wall)
+        {
+            //TODO Animation or particle effect when sword bonks against a wall
+            Destroy(gameObject);
+            if (rb2d)
+                rb2d.AddForce(-direction * knockback);
+            return;
+        }
+        Health health = other.GetComponentInParent<Health>();
+        if (!health)
+            return;
+        int dmg = health.Damage(damage, owner, direction * knockback);
+        hits.Add(other.gameObject);
         if (rb2d)
             rb2d.AddForce(-direction * knockback);
         Camera.main.GetComponent<AudioSource>().PlayOneShot(swordHitSound);

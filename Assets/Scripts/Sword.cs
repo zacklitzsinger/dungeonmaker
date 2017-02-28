@@ -10,9 +10,12 @@ public class Sword : MonoBehaviour
     public AudioClip swordSwingSound;
     public AudioClip swordHitSound;
 
+    Rigidbody2D rb2d;
+
     void Start()
     {
         Camera.main.GetComponent<AudioSource>().PlayOneShot(swordSwingSound);
+        rb2d = owner.GetComponent<Rigidbody2D>();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -24,6 +27,8 @@ public class Sword : MonoBehaviour
             return;
         Vector2 direction = (other.transform.position - transform.position).normalized;
         health.Damage(damage, owner, direction * knockback);
+        if (rb2d)
+            rb2d.AddForce(-direction * knockback);
         Camera.main.GetComponent<AudioSource>().PlayOneShot(swordHitSound);
     }
 

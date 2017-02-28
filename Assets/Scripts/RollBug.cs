@@ -54,7 +54,7 @@ public class RollBug : MonoBehaviour
     {
         if (!wander.enabled && !attack.enabled)
             PickRandomState();
-        if (remFrames-- <= 0)
+        else if (remFrames-- <= 0)
             PickRandomState();
         transform.localRotation = Quaternion.LookRotation(Vector3.forward, rb2d.velocity.normalized);
     }

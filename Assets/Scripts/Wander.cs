@@ -10,6 +10,7 @@ public class Wander : MonoBehaviour
 
     public List<MapNode> path = new List<MapNode>();
     List<MapNode> choices;
+    Vector2 chosenTarget;
 
     NavigationCalculator<MapNode> navcalc;
     Rigidbody2D rb2d;
@@ -25,6 +26,12 @@ public class Wander : MonoBehaviour
     {
         if (choices == null)
             choices = navcalc.GetConnectedNodes(GetCurrentNode(), flying);
+
+        Debug.DrawLine(transform.position, chosenTarget, Color.cyan);
+        if (path != null)
+            for (int i = 0; i < path.Count; i++)
+                Debug.DrawLine(i > 0 ? path[i - 1].ToVector2() : (Vector2)transform.position, path[i].ToVector2(), Color.magenta);
+
 
         if (path == null || path.Count == 0)
             ChooseTarget();
@@ -52,9 +59,14 @@ public class Wander : MonoBehaviour
         MapNode currentNode = GetCurrentNode();
         if (!choices.Contains(currentNode))
             Debug.LogWarning("Changed room!");
-        MapNode target = choices[Random.Range(0, choices.Count)];
+        MapNode target;
+        do
+        {
+            target = choices[Random.Range(0, choices.Count)];
+        } while (choices.Count > 1 && target == currentNode);
+        chosenTarget = target.ToVector2();
         path = navcalc.CalculatePath(currentNode, target, flying);
         if (path == null)
-            Debug.LogWarning("Could not find path! " + gameObject.name);
+            Debug.LogWarning("Could not find path! " + gameObject.name + ", currentNode: " + currentNode + ", target: " + target);
     }
 }

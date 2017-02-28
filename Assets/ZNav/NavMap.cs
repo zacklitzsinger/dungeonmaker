@@ -18,7 +18,7 @@ public class MapNode : NavNode<MapNode>
         MapNode other = obj as MapNode;
         if (other == null)
             return false;
-        return (other.x == x && other.y == y);
+        return (other.ToVector2() == ToVector2());
     }
 
     public override int GetHashCode()
@@ -54,12 +54,17 @@ public class NavMap : INavMap<MapNode>
         this.map = map;
     }
 
-    public MapNode GetNode(int x, int y)
+    public MapNode GetNode(Vector2 v)
     {
         MapNode node;
-        if (!hackNodeMap.TryGetValue(new Vector2(x, y), out node))
-            node = hackNodeMap[new Vector2(x, y)] = new MapNode(x, y);
+        if (!hackNodeMap.TryGetValue(v, out node))
+            node = hackNodeMap[v] = new MapNode(v);
         return node;
+    }
+
+    public MapNode GetNode(int x, int y)
+    {
+        return this.GetNode(new Vector2(x, y));
     }
 
     public void RecalculateBounds()

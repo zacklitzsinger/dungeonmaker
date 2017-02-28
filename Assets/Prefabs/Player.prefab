@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 4508309996000950}
   - component: {fileID: 114626465262783684}
   - component: {fileID: 61473721731018750}
-  - component: {fileID: 114584143944205882}
   m_Layer: 10
   m_Name: PlayerCollider
   m_TagString: Player
@@ -41,6 +40,7 @@ GameObject:
   - component: {fileID: 114357101590825330}
   - component: {fileID: 50582811179672188}
   - component: {fileID: 114554694894238124}
+  - component: {fileID: 114899060306880196}
   m_Layer: 10
   m_Name: Player
   m_TagString: Player
@@ -58,7 +58,7 @@ GameObject:
   - component: {fileID: 4566434367239496}
   - component: {fileID: 61297409913586486}
   - component: {fileID: 114965935551178052}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: PlayerTransparency
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183,9 +183,6 @@ MonoBehaviour:
   - R
   - E
   roomEntrance: {x: 0, y: 0}
-  playerPanel: {fileID: 0}
-  healthIndicator: {fileID: 0}
-  keyIndicator: {fileID: 0}
 --- !u!114 &114554694894238124
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -201,26 +198,6 @@ MonoBehaviour:
   seeThrough: 1
   ground: 0
   hideInPlayMode: 0
---- !u!114 &114584143944205882
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1049442760431690}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6389aa04a6ae654fbe3575aa65009f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 3
-  invulnFrames: 90
-  currentHealth: 0
-  remInvulnFrames: 0
-  deathRespawnPoint: {fileID: 0}
-  damageParticles: {fileID: 198637271435436188, guid: 3203b49ec00b44246bc810d433c37f3c,
-    type: 2}
-  hitSound: {fileID: 8300000, guid: 87e372e39fc06b14794ec2523cb17664, type: 3}
-  deathSound: {fileID: 0}
 --- !u!114 &114626465262783684
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -233,6 +210,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dragModifier: 1
+--- !u!114 &114899060306880196
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147360471527010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6389aa04a6ae654fbe3575aa65009f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 5
+  invulnFrames: 90
+  currentHealth: 0
+  remInvulnFrames: 0
+  deathRespawnPoint: {fileID: 0}
+  damageParticles: {fileID: 198637271435436188, guid: 3203b49ec00b44246bc810d433c37f3c,
+    type: 2}
+  hitSound: {fileID: 8300000, guid: 87e372e39fc06b14794ec2523cb17664, type: 3}
+  deathSound: {fileID: 0}
 --- !u!114 &114965935551178052
 MonoBehaviour:
   m_ObjectHideFlags: 1

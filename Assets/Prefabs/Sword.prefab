@@ -52,7 +52,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1002282342740670}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.7591014, y: -16.068727, z: 0}
+  m_LocalPosition: {x: -0.79268336, y: -1.0355908, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4245474625007916}
@@ -117,6 +117,7 @@ MonoBehaviour:
   remainingFrames: 15
   damage: 2
   knockback: 300
+  friendly: 1
   swordSwingSound: {fileID: 8300000, guid: d076a85372b79c34a8debd950f7d86dc, type: 3}
   swordHitSound: {fileID: 8300000, guid: c13d70f253956a1468d77e82107f68bd, type: 3}
 --- !u!212 &212929524074610912

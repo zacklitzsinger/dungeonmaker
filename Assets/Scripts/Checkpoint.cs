@@ -15,9 +15,9 @@ public class Checkpoint : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag != "Player")
+        if (!other.CompareTag("Player") || other.isTrigger)
             return;
-        Health health = other.GetComponent<Health>();
+        Health health = other.GetComponentInParent<Health>();
         if (health == null)
             return;
         health.SetDeathRespawnPoint(this);

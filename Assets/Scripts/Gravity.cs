@@ -18,7 +18,7 @@ public class Gravity : MonoBehaviour {
     void Start()
     {
         // Currently assumes the object will have health - not necessarily a valid assumption
-        health = GetComponent<Health>();
+        health = GetComponentInParent<Health>();
         rb2d = GetComponentInParent<Rigidbody2D>();
     }
 

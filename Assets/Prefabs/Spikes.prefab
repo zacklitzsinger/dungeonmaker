@@ -91,6 +91,7 @@ MonoBehaviour:
   framesUp: 120
   remFrames: 0
   damage: 1
+  knockback: 1200
 --- !u!114 &114744713971349162
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -103,6 +104,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
+  seeThrough: 1
+  ground: 0
+  hideInPlayMode: 0
 --- !u!212 &212390731372897270
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -26,7 +26,7 @@ public class RoomReset : MonoBehaviour, ICustomSerializable
                 ResetSelf();
         });
 
-        health = GetComponent<Health>();
+        health = GetComponentInChildren<Health>();
     }
 
     void ResetSelf()

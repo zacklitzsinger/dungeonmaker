@@ -178,14 +178,14 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (Input.GetButtonDown("Roll") && targetMotion.magnitude > 0)
+        if (Input.GetButtonUp("Roll") && targetMotion.magnitude > 0)
         {
             TryCancelBackswing();
             actions.Enqueue(new PlayerAction() { type = PlayerState.Rolling, frames = rollFrames, direction = targetMotion.normalized, combo = true });
 
         }
 
-        if (Input.GetButtonDown("Attack"))
+        if (Input.GetButtonUp("Attack"))
         {
             TryCancelBackswing();
             Vector2 targetDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;

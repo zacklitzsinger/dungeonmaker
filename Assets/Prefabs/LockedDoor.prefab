@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4697655051986882}
   - component: {fileID: 61849599570842752}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 114765350761504142}
   - component: {fileID: 61531381919237382}
   - component: {fileID: 114289668341676712}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: LockedDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}

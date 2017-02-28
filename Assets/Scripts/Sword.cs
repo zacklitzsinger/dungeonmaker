@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Sword : MonoBehaviour
 {
     public int remainingFrames;
     public int damage;
     public float knockback;
+    public bool friendly;
     public AudioClip swordSwingSound;
     public AudioClip swordHitSound;
 
@@ -17,9 +16,9 @@ public class Sword : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (friendly == other.CompareTag("Player"))
             return;
-        Health health = other.GetComponent<Health>();
+        Health health = other.GetComponentInParent<Health>();
         if (!health)
             return;
         Vector2 direction = (other.transform.position - transform.position).normalized;

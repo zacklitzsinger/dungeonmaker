@@ -36,7 +36,7 @@ public class Health : MonoBehaviour
         {
             remInvulnFrames = invulnFrames;
             if (invulnFrames > 0)
-                StartCoroutine(Flash(GetComponentInParent<SpriteRenderer>(), invulnFrames));
+                StartCoroutine(Flash(GetComponentInChildren<SpriteRenderer>(), invulnFrames));
             if (damageParticles && knockback.magnitude > 0)
             {
                 Instantiate(damageParticles, transform.position, Quaternion.LookRotation(knockback, Vector3.forward));
@@ -63,14 +63,14 @@ public class Health : MonoBehaviour
 
     void Respawn()
     {
-        transform.parent.position = deathRespawnPoint.transform.position;
+        player.transform.position = deathRespawnPoint.transform.position;
         currentHealth = maxHealth;
         rb2d.velocity = Vector2.zero;
     }
 
     void RespawnAtRoomEntrance()
     {
-        transform.parent.position = player.roomEntrance;
+        player.transform.position = player.roomEntrance;
         rb2d.velocity = Vector2.zero;
     }
 

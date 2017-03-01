@@ -56,7 +56,7 @@ public class Flamethrower : MonoBehaviour, ICustomSerializable
         ObjectData info = go.GetComponentInParent<ObjectData>();
         if (!info || info.gameObject == gameObject)
             return false;
-        if (info.type == ObjectType.Wall)
+        if (info.type == ObjectType.Wall || go.GetComponent<Health>() && go.GetComponent<Health>().invulnerableOverride)
             return true;
         return false;
     }

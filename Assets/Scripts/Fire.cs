@@ -9,7 +9,7 @@ public class Fire : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Health health = other.GetComponentInChildren<Health>();
+        Health health = other.GetComponentInParent<Health>();
         if (health == null)
             return;
         health.Damage(1, gameObject, Vector2.zero);
@@ -17,7 +17,7 @@ public class Fire : MonoBehaviour
 
     void OnTriggerStay2D(Collider2D other)
     {
-        Health health = other.GetComponentInChildren<Health>();
+        Health health = other.GetComponentInParent<Health>();
         if (health == null)
             return;
         health.Damage(1, gameObject, Vector2.zero);

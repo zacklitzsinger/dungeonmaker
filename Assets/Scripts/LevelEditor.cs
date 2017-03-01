@@ -70,6 +70,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public InputField uploadDescInput;
     public GameObject uploadProgress;
     public GameObject playerPanel;
+    public GameObject helpPanel;
 
     // Circuits
     public Color circuitColor;
@@ -115,6 +116,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     void Start()
     {
+
+        SetHelpTextMode(mode);
         SidebarCreateButtons();
 
         if (saveNameInput != null)
@@ -223,6 +226,37 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         uploadPanel.SetActive(val);
     }
 
+    void SetHelpPanelText(string text = "")
+    {
+        if (!helpPanel)
+            return;
+        helpPanel.SetActive(text.Length > 0);
+        helpPanel.GetComponentInChildren<Text>().text = text;
+    }
+
+    void SetHelpTextMode(EditMode mode)
+    {
+        switch (mode)
+        {
+
+            case EditMode.Create:
+                SetHelpPanelText("Place new objects into the level. Left click to place the selected object. Right click to remove objects.");
+                break;
+            case EditMode.Edit:
+                SetHelpPanelText("Edit properties of objects. Left click to select an object to edit.");
+                break;
+            case EditMode.Circuit:
+                SetHelpPanelText("Connect elements via wires. Left click on a input and then an output to place a wire. Right click an object to remove all wires connected to it.");
+                break;
+            case EditMode.Victory:
+                SetHelpPanelText();
+                break;
+            case EditMode.Play:
+                SetHelpPanelText();
+                break;
+        }
+    }
+
     /// <summary>
     /// Change current level edit mode from one mode to another
     /// </summary>
@@ -236,18 +270,23 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         ClearSidebar();
         // Pause time while editing
         Time.timeScale = (mode >= EditMode.Create ? 0 : 1);
-        if (mode == EditMode.Create)
-            SidebarCreateButtons();
-        if (mode == EditMode.Victory)
+        SetHelpTextMode(mode);
+        switch (mode)
         {
-            TimeSpan time = TimeSpan.FromMilliseconds(playFrames * 1000f / 60f);
-            victoryTimeText.text = string.Format("{0}:{1:00}:{2:00}", time.Hours, time.Minutes, time.Seconds);
-        }
-        if (mode == EditMode.Play)
-        {
-            playFrames = 0;
-            if (canEdit)
-                SaveToTemp();
+
+            case EditMode.Create:
+                SidebarCreateButtons();
+                break;
+            case EditMode.Victory:
+                SetHelpPanelText();
+                TimeSpan time = TimeSpan.FromMilliseconds(playFrames * 1000f / 60f);
+                victoryTimeText.text = string.Format("{0}:{1:00}:{2:00}", time.Hours, time.Minutes, time.Seconds);
+                break;
+            case EditMode.Play:
+                playFrames = 0;
+                if (canEdit)
+                    SaveToTemp();
+                break;
         }
         if ((prevMode == EditMode.Play || prevMode == EditMode.Victory) && mode >= EditMode.Create)
         {
@@ -259,7 +298,6 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     // Update is called once per frame
     void Update()
     {
-
         if (PauseMenu.main.Open)
             return;
 
@@ -677,7 +715,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                             field.SetValue(component, (int)val);
                             text.text = rangeAttr.Name + ": " + val;
                         });
-                    } else if (field.FieldType.IsEnum)
+                    }
+                    else if (field.FieldType.IsEnum)
                     {
                         var enumAttr = attr as PlayerEditableEnumAttribute;
                         GameObject labeledDropdown = Instantiate(prefabDropdown, sidebarContent.transform);

@@ -116,7 +116,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   remainingFrames: 15
   damage: 1
-  knockback: 300
+  knockback: 600
   friendly: 1
   owner: {fileID: 0}
   swordSwingSound: {fileID: 8300000, guid: d076a85372b79c34a8debd950f7d86dc, type: 3}
@@ -152,6 +152,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1915133395
   m_SortingOrder: 0
+  m_Sprite: {fileID: 21300000, guid: 31dd6a2b30350014d85592611e007ca6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

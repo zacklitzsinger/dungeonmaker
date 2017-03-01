@@ -33,21 +33,21 @@ public class Flamethrower : MonoBehaviour, ICustomSerializable
         if (circuit)
             active = circuit.Powered ^ invert;
         fire.active = active;
-        int distance = FindDistance();
+        float distance = FindDistance();
         if (distance <= fire.size)
             fire.size = distance;
         else
             fire.size = Mathf.Min(fire.size + 0.016f, distance); // ~ 1 tiles per second
     }
 
-    int FindDistance()
+    float FindDistance()
     {
         if (!active)
             return 0;
         RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, transform.up, distance);
         foreach (RaycastHit2D hit in hits)
             if (!hit.collider.isTrigger && CheckForCollisions(hit.collider.gameObject))
-                return (int)(Mathf.Max(0, (hit.collider.transform.position - transform.position).magnitude - 1));
+                return Mathf.Max(0, (hit.collider.transform.position - transform.position).magnitude - 1);
         return distance;
     }
 

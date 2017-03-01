@@ -31,21 +31,21 @@ public class Fan : MonoBehaviour, ICustomSerializable
         Wind wind = GetComponentInChildren<Wind>();
         wind.active = active;
         wind.force = force;
-        int distance = FindDistance();
+        float distance = FindDistance();
         if (distance <= wind.size)
             wind.size = distance;
         else
             wind.size = Mathf.Min(wind.size + 0.016f * activationSpeed, distance); // ~ 2 tiles per second by default
     }
 
-    int FindDistance()
+    float FindDistance()
     {
         if (!active)
             return 0;
         RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, transform.up, distance);
         foreach (RaycastHit2D hit in hits)
             if (!hit.collider.isTrigger && CheckForCollisions(hit.collider.gameObject))
-                return (int)(Mathf.Max(0, (hit.collider.transform.position - transform.position).magnitude - 1));
+                return Mathf.Max(0, (hit.collider.transform.position - transform.position).magnitude - 1);
         return distance;
     }
 

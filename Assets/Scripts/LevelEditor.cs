@@ -689,49 +689,50 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         {
             foreach (FieldInfo field in component.GetType().GetFields())
             {
-                foreach (PlayerEditableAttribute attr in field.GetCustomAttributes(typeof(PlayerEditableAttribute), true))
+                object[] attrs = field.GetCustomAttributes(typeof(PlayerEditableAttribute), true);
+                if (attrs.Length == 0)
+                    continue;
+                PlayerEditableAttribute attr = attrs[0] as PlayerEditableAttribute;
+                if (field.FieldType == typeof(bool))
                 {
-                    if (field.FieldType == typeof(bool))
+                    Toggle toggle = Instantiate(prefabToggle, sidebarContent.transform);
+                    toggle.isOn = (bool)field.GetValue(component);
+                    toggle.GetComponentInChildren<Text>().text = attr.Name;
+                    toggle.onValueChanged.AddListener((val) =>
                     {
-                        Toggle toggle = Instantiate(prefabToggle, sidebarContent.transform);
-                        toggle.isOn = (bool)field.GetValue(component);
-                        toggle.GetComponentInChildren<Text>().text = attr.Name;
-                        toggle.onValueChanged.AddListener((val) =>
-                        {
-                            field.SetValue(component, (bool)val);
-                        });
-                    }
-                    else if (field.FieldType == typeof(int))
+                        field.SetValue(component, (bool)val);
+                    });
+                }
+                else if (field.FieldType == typeof(int))
+                {
+                    var rangeAttr = attr as PlayerEditableRangeAttribute;
+                    GameObject range = Instantiate(prefabIntSlider, sidebarContent.transform);
+                    Slider slider = range.GetComponentInChildren<Slider>();
+                    slider.wholeNumbers = true;
+                    slider.minValue = rangeAttr.Min;
+                    slider.maxValue = rangeAttr.Max;
+                    slider.value = (int)field.GetValue(component);
+                    Text text = range.GetComponentInChildren<Text>();
+                    text.text = rangeAttr.Name + ": " + slider.value;
+                    slider.onValueChanged.AddListener((val) =>
                     {
-                        var rangeAttr = attr as PlayerEditableRangeAttribute;
-                        GameObject range = Instantiate(prefabIntSlider, sidebarContent.transform);
-                        Slider slider = range.GetComponentInChildren<Slider>();
-                        slider.wholeNumbers = true;
-                        slider.minValue = rangeAttr.Min;
-                        slider.maxValue = rangeAttr.Max;
-                        slider.value = (int)field.GetValue(component);
-                        Text text = range.GetComponentInChildren<Text>();
-                        text.text = rangeAttr.Name + ": " + slider.value;
-                        slider.onValueChanged.AddListener((val) =>
-                        {
-                            field.SetValue(component, (int)val);
-                            text.text = rangeAttr.Name + ": " + val;
-                        });
-                    }
-                    else if (field.FieldType.IsEnum)
+                        field.SetValue(component, (int)val);
+                        text.text = rangeAttr.Name + ": " + val;
+                    });
+                }
+                else if (field.FieldType.IsEnum)
+                {
+                    var enumAttr = attr as PlayerEditableEnumAttribute;
+                    GameObject labeledDropdown = Instantiate(prefabDropdown, sidebarContent.transform);
+                    Text label = labeledDropdown.GetComponentInChildren<Text>();
+                    label.text = enumAttr.Name + ":";
+                    Dropdown dropdown = labeledDropdown.GetComponentInChildren<Dropdown>();
+                    dropdown.AddOptions(new List<string>(enumAttr.Choices));
+                    dropdown.value = (int)field.GetValue(component);
+                    dropdown.onValueChanged.AddListener((val) =>
                     {
-                        var enumAttr = attr as PlayerEditableEnumAttribute;
-                        GameObject labeledDropdown = Instantiate(prefabDropdown, sidebarContent.transform);
-                        Text label = labeledDropdown.GetComponentInChildren<Text>();
-                        label.text = enumAttr.Name + ":";
-                        Dropdown dropdown = labeledDropdown.GetComponentInChildren<Dropdown>();
-                        dropdown.AddOptions(new List<string>(enumAttr.Choices));
-                        dropdown.value = (int)field.GetValue(component);
-                        dropdown.onValueChanged.AddListener((val) =>
-                        {
-                            field.SetValue(component, (int)val);
-                        });
-                    }
+                        field.SetValue(component, (int)val);
+                    });
                 }
             }
         }

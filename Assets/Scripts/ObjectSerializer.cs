@@ -18,7 +18,8 @@ public static class ObjectSerializer
             // TODO: Would be nice to clean this up, but using an older version of C# hurts here.
             // TODO: Handle collections
             // TODO: Write by the field attribute name, not by the variable name
-            bw.Write(field.Name);
+            PlayerEditableAttribute attr = field.GetCustomAttributes(typeof(PlayerEditableAttribute), true)[0] as PlayerEditableAttribute;
+            bw.Write(attr.Name);
             object value = field.GetValue(component);
             if (field.FieldType == typeof(int))
                 bw.Write((int)value);
@@ -40,7 +41,16 @@ public static class ObjectSerializer
         {
             // Handle collections
             string fieldName = br.ReadString();
-            FieldInfo field = component.GetType().GetField(fieldName);
+            FieldInfo[] fields = component.GetType().GetFields();
+            FieldInfo field = Array.Find(fields, (f) =>
+            {
+                if (f.Name == fieldName)
+                    return true;
+                foreach (PlayerEditableAttribute attr in f.GetCustomAttributes(typeof(PlayerEditableAttribute), true))
+                    if (attr.Name == fieldName)
+                        return true;
+                return false;
+            });
             if (field == null)
                 continue;
             if (field.FieldType == typeof(int))

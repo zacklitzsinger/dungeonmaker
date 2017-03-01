@@ -91,7 +91,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc38bfe7b7a66124590035e44e1fff73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reset: 0
+  reset: 1
 --- !u!114 &114379229927955460
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -115,13 +115,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6389aa04a6ae654fbe3575aa65009f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  invulnerableOverride: 0
   maxHealth: 1
   invulnFrames: 0
   currentHealth: 0
   remInvulnFrames: 0
   deathRespawnPoint: {fileID: 0}
+  itemChanceDropOnDeath: 0
+  itemChoices: []
   damageParticles: {fileID: 0}
-  sound: {fileID: 0}
+  hitSound: {fileID: 0}
+  deathSound: {fileID: 0}
 --- !u!114 &114923516325275864
 MonoBehaviour:
   m_ObjectHideFlags: 1

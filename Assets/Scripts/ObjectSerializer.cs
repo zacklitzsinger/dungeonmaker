@@ -17,6 +17,7 @@ public static class ObjectSerializer
         {
             // TODO: Would be nice to clean this up, but using an older version of C# hurts here.
             // TODO: Handle collections
+            // TODO: Write by the field attribute name, not by the variable name
             bw.Write(field.Name);
             object value = field.GetValue(component);
             if (field.FieldType == typeof(int))

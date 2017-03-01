@@ -25,6 +25,8 @@ public class EnemyGate : MonoBehaviour {
     {
         foreach (Vector2 node in LevelEditor.main.currentRoom)
         {
+            if (!LevelEditor.main.tilemap.ContainsKey(node))
+                continue;
             List<ObjectData> goList = LevelEditor.main.tilemap[node];
             if (goList == null)
                 continue;

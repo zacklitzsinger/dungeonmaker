@@ -42,23 +42,20 @@ public class Fan : MonoBehaviour, ICustomSerializable
     {
         if (!active)
             return 0;
-        for (int i = 1; i <= distance; i++)
-        {
-            Vector2 pos = transform.position + transform.up * i;
-            if (CheckForCollisions(LevelEditor.main.ConvertPositionToGrid(pos)))
-                return i - 1;
-        }
+        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, transform.up, distance);
+        foreach (RaycastHit2D hit in hits)
+            if (!hit.collider.isTrigger && CheckForCollisions(hit.collider.gameObject))
+                return (int)(Mathf.Max(0, (hit.collider.transform.position - transform.position).magnitude - 1));
         return distance;
     }
 
-    bool CheckForCollisions(Vector2 pos)
+    bool CheckForCollisions(GameObject go)
     {
-        if (LevelEditor.main.tilemap.ContainsKey(pos))
-        {
-            foreach (ObjectData info in LevelEditor.main.tilemap[pos])
-                if (info.gameObject != null && info.type == ObjectType.Wall && info.GetComponent<Collider2D>().enabled)
-                    return true;
-        }
+        ObjectData info = go.GetComponentInParent<ObjectData>();
+        if (!info || info.gameObject == gameObject)
+            return false;
+        if (info.type == ObjectType.Wall)
+            return true;
         return false;
     }
 

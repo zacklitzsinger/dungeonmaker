@@ -38,13 +38,17 @@ public class Wall : MonoBehaviour {
             // Default behavior of a wall should be to be a wall.
             Active = !circuit.Powered;
             gameObject.layer = Active ? LayerMask.NameToLayer("Wall") : LayerMask.NameToLayer("CollisionDisabled");
-            float targetAlpha = Active ? 1 : 0;
-            Color c = spriteRenderer.color;
-            c.a = Mathf.Lerp(c.a, targetAlpha, 0.15f);
-            if (Mathf.Abs(c.a - targetAlpha) < 0.05f)
-                c.a = targetAlpha;
-            spriteRenderer.color = c;
             data.seeThrough = !Active;
+
+            if (LevelEditor.main.currentRoom.Contains(transform.position))
+            {
+                float targetAlpha = Active ? 1 : 0;
+                Color c = spriteRenderer.color;
+                c.a = Mathf.Lerp(c.a, targetAlpha, 0.15f);
+                if (Mathf.Abs(c.a - targetAlpha) < 0.05f)
+                    c.a = targetAlpha;
+                spriteRenderer.color = c;
+            }
         }
     }
 

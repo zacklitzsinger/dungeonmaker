@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
-public class Health : MonoBehaviour
+public class Health : MonoBehaviour, ICustomSerializable
 {
+    [PlayerEditable("Invulnerable")]
     [ReadOnly]
     public bool invulnerableOverride = false; // Invulnerability, set by some effects
 
@@ -69,9 +72,9 @@ public class Health : MonoBehaviour
                 Respawn();
             else
             {
-                if (Random.value <= itemChanceDropOnDeath && itemChoices.Count > 0)
+                if (UnityEngine.Random.value <= itemChanceDropOnDeath && itemChoices.Count > 0)
                 {
-                    GameObject itemChoice = itemChoices[Random.Range(0, itemChoices.Count)];
+                    GameObject itemChoice = itemChoices[UnityEngine.Random.Range(0, itemChoices.Count)];
                     LevelEditor.main.CreateObjectAtGrid(transform.position, itemChoice);
                 }
                 GetComponentInParent<ObjectData>().gameObject.SetActive(false);
@@ -127,5 +130,15 @@ public class Health : MonoBehaviour
         c = r.color;
         c.a = 1f;
         r.color = c;
+    }
+
+    public void Serialize(BinaryWriter bw)
+    {
+        ObjectSerializer.Serialize(bw, this);
+    }
+
+    public void Deserialize(BinaryReader br)
+    {
+        ObjectSerializer.Deserialize(br, this);
     }
 }

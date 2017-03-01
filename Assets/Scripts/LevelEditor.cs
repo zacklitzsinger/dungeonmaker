@@ -603,6 +603,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         foreach (KeyValuePair<Vector2, List<ObjectData>> pair in tilemap)
         {
             bool active = currentRoom.Contains(pair.Key);
+            if (active && active == previousRoom.Contains(pair.Key))
+                continue;
             foreach (ObjectData data in pair.Value)
                 if (data != null)
                     SetTileVisibility(data.gameObject, data.CompareTag("Player") || active);

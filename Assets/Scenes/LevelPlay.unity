@@ -627,6 +627,8 @@ MonoBehaviour:
     - {fileID: 1002282342740670, guid: 433a3505907197848b3e7aa9cc527f08, type: 2}
     - {fileID: 1906677971985918, guid: 6371163f87b5c10458f74a1f6ff2b4ed, type: 2}
     - {fileID: 1002282342740670, guid: b6115e7fce7cd554e9f5b450b7d6ec98, type: 2}
+    - {fileID: 1002282342740670, guid: 57a309115b5c7c64f987b6ed2f96ee91, type: 2}
+    - {fileID: 1002282342740670, guid: 3866e6b505560624db21fb2ed1506a4f, type: 2}
   - name: Interactive
     prefabs:
     - {fileID: 1906677971985918, guid: 3b78b21213f71984f9872364f17a2bc9, type: 2}
@@ -676,6 +678,7 @@ MonoBehaviour:
   uploadDescInput: {fileID: 0}
   uploadProgress: {fileID: 0}
   playerPanel: {fileID: 1396154692}
+  helpPanel: {fileID: 0}
   circuitColor: {r: 0.86764705, g: 0.12759517, b: 0.12759517, a: 1}
   selectedCircuitInputColor: {r: 0.48417848, g: 0.9117647, b: 0, a: 1}
   selectedCircuitOutputColor: {r: 0.9852941, g: 0.40490997, b: 0.028979266, a: 1}

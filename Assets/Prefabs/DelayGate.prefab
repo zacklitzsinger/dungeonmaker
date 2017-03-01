@@ -66,6 +66,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createText: Delays input signals for a specified number of seconds.
+  category: 2
   type: 3
   seeThrough: 1
   ground: 0

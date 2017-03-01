@@ -69,6 +69,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createText: Alternates between allowing and disallowing power to pass on an interval.
+  category: 2
   type: 3
   seeThrough: 1
   ground: 0

@@ -222,6 +222,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createText: Pushes all moveable objects in a direction.
+  category: 1
   type: 3
   seeThrough: 1
   ground: 0

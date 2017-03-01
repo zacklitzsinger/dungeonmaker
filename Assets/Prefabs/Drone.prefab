@@ -20,8 +20,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4023337709139090}
   - component: {fileID: 212973353828650820}
-  - component: {fileID: 50582811179672188}
   - component: {fileID: 114554694894238124}
+  - component: {fileID: 50582811179672188}
   - component: {fileID: 114388379784414160}
   - component: {fileID: 61603716421069490}
   - component: {fileID: 114789258443482190}
@@ -159,6 +159,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createText: A simple flying enemy.
+  category: 3
   type: 5
   seeThrough: 1
   ground: 0

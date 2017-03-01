@@ -37,8 +37,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4023337709139090}
   - component: {fileID: 212973353828650820}
-  - component: {fileID: 50582811179672188}
   - component: {fileID: 114554694894238124}
+  - component: {fileID: 50582811179672188}
   - component: {fileID: 114789258443482190}
   - component: {fileID: 114527416988667436}
   - component: {fileID: 114653371109974024}
@@ -213,6 +213,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createText: A slow enemy that dashes at the player when in line of sight.
+  category: 3
   type: 5
   seeThrough: 1
   ground: 0

@@ -20,13 +20,6 @@ public enum EditMode
     Circuit
 }
 
-[Serializable]
-public class PrefabGroup
-{
-    public string name;
-    public GameObject[] prefabs;
-}
-
 public class LevelEditor : MonoBehaviour, ICustomSerializable
 {
     public static LevelEditor main;
@@ -40,8 +33,6 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public GameObject selectedPrefab;
     [ReadOnly]
     public GameObject selectedGameObject;
-    public PrefabGroup[] prefabGroups;
-    private GameObject[] allPrefabOptions;
     [ReadOnly]
     public float rotation;
     [ReadOnly]
@@ -107,11 +98,6 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         main = this;
         navmap = new NavMap(tilemap);
         navcalc = new NavigationCalculator(navmap);
-
-        List<GameObject> prefabs = new List<GameObject>();
-        foreach (PrefabGroup group in prefabGroups)
-            prefabs.AddRange(group.prefabs);
-        allPrefabOptions = prefabs.ToArray();
     }
 
     void Start()
@@ -158,21 +144,25 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     {
         if (sidebarContent == null)
             return;
-        foreach (PrefabGroup group in prefabGroups)
+        bool first = true;
+        foreach (string groupName in Enum.GetNames(typeof(Category)))
         {
             Toggle toggleButton = Instantiate(prefabToggleButton, tabPanel.transform);
-            toggleButton.name = group.name;
-            toggleButton.isOn = (group == prefabGroups[0]);
+            toggleButton.name = groupName;
+            toggleButton.isOn = first;
+            first = false;
             toggleButton.group = tabPanel;
-            toggleButton.GetComponentInChildren<Text>().text = group.name;
+            toggleButton.GetComponentInChildren<Text>().text = groupName;
             toggleButton.onValueChanged.AddListener((bool val) =>
             {
                 if (val)
-                    SidebarSelectGroup(group.name);
+                    SidebarSelectGroup((Category)Enum.Parse(typeof(Category), groupName));
             });
 
-            foreach (GameObject option in group.prefabs)
+            foreach (GameObject option in ObjectMasterList.main.options)
             {
+                if (option.GetComponent<ObjectData>().category != (Category)Enum.Parse(typeof(Category), groupName))
+                    continue;
                 GameObject button = Instantiate(prefabButton, sidebarContent.transform);
                 button.name = option.name;
                 RectTransform rectTransform = button.GetComponent<RectTransform>();
@@ -190,18 +180,18 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             }
         }
 
-        SidebarSelectGroup(prefabGroups[0].name);
+        SidebarSelectGroup(0);
     }
 
-    void SidebarSelectGroup(string groupName)
+    void SidebarSelectGroup(Category category)
     {
         foreach (Transform child in sidebarContent.transform)
         {
-            PrefabGroup childGroup = Array.Find(prefabGroups, (group) =>
+            bool active = Array.Exists(ObjectMasterList.main.options, (go) =>
             {
-                return Array.Find(group.prefabs, (i) => { return i.name == child.name; });
+                return go.name == child.name && go.GetComponent<ObjectData>().category == category;
             });
-            child.gameObject.SetActive(childGroup != null && childGroup.name == groupName);
+            child.gameObject.SetActive(active);
         }
     }
 
@@ -948,7 +938,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 // TODO: Should separate deserialization with instantiating game objects so levels can easily be reset
                 string goName = br.ReadString();
                 Guid id = br.ReadGuid();
-                GameObject prefab = Array.Find(allPrefabOptions, (o) => { return o.name == goName; });
+                GameObject prefab = Array.Find(ObjectMasterList.main.options, (o) => { return o.name == goName; });
                 if (prefab == null)
                 {
                     throw new Exception("Could not find prefab in level named " + goName);

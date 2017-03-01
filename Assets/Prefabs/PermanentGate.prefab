@@ -65,6 +65,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createText: When powered, becomes permanently powered.
+  category: 2
   type: 3
   seeThrough: 1
   ground: 0

@@ -120,6 +120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createText: Allows power to pass if the spinner is spinning from wind.
+  category: 2
   type: 2
   seeThrough: 1
   ground: 0

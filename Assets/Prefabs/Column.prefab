@@ -72,6 +72,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createText: Decoration.
+  category: 4
   type: 3
   seeThrough: 1
   ground: 0

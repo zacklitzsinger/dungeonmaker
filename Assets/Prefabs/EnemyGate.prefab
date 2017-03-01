@@ -66,6 +66,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   createText: Allows power to pass if the current room occupied by the player has
     no enemies.
+  category: 2
   type: 3
   seeThrough: 1
   ground: 0

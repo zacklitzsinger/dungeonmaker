@@ -65,6 +65,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createText: Inverts the power from its inputs.
+  category: 2
   type: 3
   seeThrough: 1
   ground: 0

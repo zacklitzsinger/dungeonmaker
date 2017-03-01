@@ -65,6 +65,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createText: Allows power to pass if exactly one input is powered.
+  category: 2
   type: 3
   seeThrough: 1
   ground: 0

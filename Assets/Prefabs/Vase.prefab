@@ -139,6 +139,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createText: Has a chance to drop health when destroyed.
+  category: 0
   type: 4
   seeThrough: 1
   ground: 0

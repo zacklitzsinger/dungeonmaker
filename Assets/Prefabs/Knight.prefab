@@ -19,8 +19,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4023337709139090}
-  - component: {fileID: 50582811179672188}
   - component: {fileID: 114554694894238124}
+  - component: {fileID: 50582811179672188}
   - component: {fileID: 114862122591297864}
   - component: {fileID: 114789258443482190}
   - component: {fileID: 114904661763868058}
@@ -207,6 +207,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   createText: An enemy that chases the player with a strong sword attack after spotting
     the player.
+  category: 3
   type: 5
   seeThrough: 1
   ground: 0

@@ -231,6 +231,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createText: Damages all objects with health in a given direction.
+  category: 1
   type: 3
   seeThrough: 1
   ground: 0

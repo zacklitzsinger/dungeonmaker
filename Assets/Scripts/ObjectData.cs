@@ -14,10 +14,21 @@ public enum ObjectType
     Enemy
 }
 
+public enum Category
+{
+    Basic,
+    Interactive,
+    Circuits,
+    Enemies,
+    Decor
+}
+
 public class ObjectData : MonoBehaviour, ICustomSerializable
 {
     // Tooltip text
+    [TextArea]
     public string createText;
+    public Category category;
 
     public Guid guid; // Set outside of this behavior...
     public ObjectType type;

@@ -20,12 +20,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4238989630657178}
   - component: {fileID: 212390731372897270}
-  - component: {fileID: 61843042662235576}
   - component: {fileID: 114744713971349162}
-  - component: {fileID: 95681616803749666}
-  - component: {fileID: 114616146336520474}
-  m_Layer: 0
-  m_Name: Switch
+  m_Layer: 12
+  m_Name: InvisibleWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,51 +41,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &61843042662235576
-BoxCollider2D:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1002282342740670}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 6200000, guid: bc9f1f72ce5eaa34b987f7d06f8c3cfd, type: 2}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1}
---- !u!95 &95681616803749666
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1002282342740670}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 23a40c3b5f8e2694496146178594d633, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114616146336520474
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1002282342740670}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fca1133e517bdf94d8fa97a9186d6608, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  permanent: 0
-  invert: 0
-  active: 0
 --- !u!114 &114744713971349162
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -100,12 +52,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ee4e40eca2f1241b95124f3997a91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  createText: Allows power to pass through when pressed.
-  category: 2
-  type: 2
-  seeThrough: 1
+  createText: Forms boundaries for rooms.
+  type: 3
+  seeThrough: 0
   ground: 0
-  hideInPlayMode: 0
+  hideInPlayMode: 1
 --- !u!212 &212390731372897270
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -137,7 +88,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: deaf71a79ab2e8443a3631c7f444b577, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 48dd739245e70c44aa2afcd6797a633c, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.29411766}
   m_FlipX: 0
   m_FlipY: 0

@@ -20,8 +20,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4238989630657178}
   - component: {fileID: 212390731372897270}
-  - component: {fileID: 50610769941585446}
   - component: {fileID: 114923516325275864}
+  - component: {fileID: 50610769941585446}
   - component: {fileID: 114539856944044160}
   - component: {fileID: 61025913196949640}
   - component: {fileID: 114023323705220298}
@@ -138,6 +138,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createText: A breakable, movable object.
+  category: 1
   type: 4
   seeThrough: 1
   ground: 0

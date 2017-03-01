@@ -20,8 +20,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4238989630657178}
   - component: {fileID: 212390731372897270}
-  - component: {fileID: 61843042662235576}
   - component: {fileID: 114744713971349162}
+  - component: {fileID: 61843042662235576}
   - component: {fileID: 95681616803749666}
   - component: {fileID: 114712017682502596}
   m_Layer: 0
@@ -104,6 +104,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createText: Deadly spike trap. Automatically pops up at an interval. Can be powered.
+  category: 1
   type: 2
   seeThrough: 1
   ground: 0

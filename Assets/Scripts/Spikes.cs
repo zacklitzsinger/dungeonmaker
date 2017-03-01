@@ -21,7 +21,7 @@ public class Spikes : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Health health = other.GetComponent<Health>();
+        Health health = other.GetComponentInParent<Health>();
         if (health == null)
             return;
         health.Damage(damage, gameObject, (other.transform.position - transform.position).normalized * knockback);

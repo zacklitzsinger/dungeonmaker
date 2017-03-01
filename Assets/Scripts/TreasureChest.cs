@@ -18,11 +18,24 @@ public class TreasureChest : MonoBehaviour, ICustomSerializable
 
     public GameObject[] prefabOptions;
 
+    Circuit circuit;
+
+    void Update()
+    {
+        if (circuit == null)
+        {
+            circuit = GetComponent<Circuit>();
+            if (circuit)
+                circuit.gateConditions.Add(() => { return !enabled; });
+        }
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (!other.CompareTag("Player"))
             return;
-        Destroy(gameObject);
+        enabled = false;
+        GetComponent<SpriteRenderer>().enabled = false;
         if (contents == ChestItem.None)
             return;
         if (contents == ChestItem.Key)

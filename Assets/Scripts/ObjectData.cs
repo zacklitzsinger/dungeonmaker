@@ -16,6 +16,9 @@ public enum ObjectType
 
 public class ObjectData : MonoBehaviour, ICustomSerializable
 {
+    // Tooltip text
+    public string createText;
+
     public Guid guid; // Set outside of this behavior...
     public ObjectType type;
     public bool seeThrough = true;

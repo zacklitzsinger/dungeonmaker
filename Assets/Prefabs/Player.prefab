@@ -213,6 +213,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ee4e40eca2f1241b95124f3997a91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  createText: The player - place exactly one in the level.
   type: 4
   seeThrough: 1
   ground: 0
@@ -246,6 +247,8 @@ MonoBehaviour:
   currentHealth: 0
   remInvulnFrames: 0
   deathRespawnPoint: {fileID: 0}
+  itemChanceDropOnDeath: 0
+  itemChoices: []
   damageParticles: {fileID: 198637271435436188, guid: 3203b49ec00b44246bc810d433c37f3c,
     type: 2}
   hitSound: {fileID: 8300000, guid: 87e372e39fc06b14794ec2523cb17664, type: 3}

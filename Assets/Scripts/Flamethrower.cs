@@ -37,7 +37,7 @@ public class Flamethrower : MonoBehaviour, ICustomSerializable
         if (distance <= fire.size)
             fire.size = distance;
         else
-            fire.size = Mathf.Min(fire.size + 0.016f, distance); // ~ 1 tiles per second
+            fire.size = Mathf.Min(fire.size + 0.016f, distance);
     }
 
     float FindDistance()

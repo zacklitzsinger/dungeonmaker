@@ -217,7 +217,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   active: 1
-  distance: 5
+  distance: 0
   invert: 0
 --- !u!114 &114744713971349162
 MonoBehaviour:
@@ -230,9 +230,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ee4e40eca2f1241b95124f3997a91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  createText: Damages all objects with health in a given direction.
   type: 3
   seeThrough: 1
   ground: 0
+  hideInPlayMode: 0
 --- !u!198 &198164836438612714
 ParticleSystem:
   m_ObjectHideFlags: 1

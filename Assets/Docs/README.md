@@ -27,7 +27,6 @@ This is a list of potential game objects to include.
 - Water (swimming)
 - Lights (torches, overhead lighting, lanterns, etc.)
 - Mine carts with track (follow a specific track)
-- Walls that fade away when powered
 
 ## Item ideas
 List of items to find in chests. Items should always have multiple puzzle/combat applications.

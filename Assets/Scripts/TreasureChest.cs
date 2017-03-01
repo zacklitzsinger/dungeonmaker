@@ -18,9 +18,17 @@ public class TreasureChest : MonoBehaviour, ICustomSerializable
 
     public GameObject[] prefabOptions;
 
+    Collider2D collider2d;
+    SpriteRenderer spriteRenderer;
     Circuit circuit;
 
-    void Update()
+    void Start()
+    {
+        collider2d = GetComponent<Collider2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    void FixedUpdate()
     {
         if (circuit == null)
         {
@@ -28,6 +36,11 @@ public class TreasureChest : MonoBehaviour, ICustomSerializable
             if (circuit)
                 circuit.gateConditions.Add(() => { return !enabled; });
         }
+        if (circuit)
+        {
+            collider2d.enabled = circuit.Powered;
+            spriteRenderer.enabled = circuit.Powered;
+        }   
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -35,7 +48,8 @@ public class TreasureChest : MonoBehaviour, ICustomSerializable
         if (!other.CompareTag("Player"))
             return;
         enabled = false;
-        GetComponent<SpriteRenderer>().enabled = false;
+        collider2d.enabled = false;
+        spriteRenderer.enabled = false;
         if (contents == ChestItem.None)
             return;
         if (contents == ChestItem.Key)

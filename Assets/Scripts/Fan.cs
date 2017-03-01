@@ -35,7 +35,7 @@ public class Fan : MonoBehaviour, ICustomSerializable
         if (distance <= wind.size)
             wind.size = distance;
         else
-            wind.size = Mathf.Min(wind.size + 0.016f * activationSpeed, distance); // ~ 2 tiles per second by default
+            wind.size = Mathf.Min(wind.size + 0.016f * activationSpeed, distance);
     }
 
     float FindDistance()

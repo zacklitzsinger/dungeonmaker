@@ -185,6 +185,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                     rotation = 0f;
                     selectedPrefab = option;
                 });
+                Tooltip tooltip = button.AddComponent<Tooltip>();
+                tooltip.text = option.GetComponent<ObjectData>().createText;
             }
         }
 

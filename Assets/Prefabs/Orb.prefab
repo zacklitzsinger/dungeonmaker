@@ -86,7 +86,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ee4e40eca2f1241b95124f3997a91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  createText: Causes the player to win the current level.
   type: 4
+  seeThrough: 1
+  ground: 0
+  hideInPlayMode: 0
 --- !u!114 &114753418894817474
 MonoBehaviour:
   m_ObjectHideFlags: 1

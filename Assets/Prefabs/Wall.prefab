@@ -84,6 +84,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ee4e40eca2f1241b95124f3997a91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  createText: Simple dungeon wall. Can be powered to disappear.
   type: 3
   seeThrough: 0
   ground: 0

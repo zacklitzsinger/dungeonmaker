@@ -83,6 +83,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ee4e40eca2f1241b95124f3997a91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  createText: Can contain new items for the player to collect. If powered, appears
+    when powered and allows power to pass when collected.
   type: 4
   seeThrough: 1
   ground: 0

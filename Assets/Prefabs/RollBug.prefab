@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 114653371109974024}
   - component: {fileID: 114081175117869926}
   - component: {fileID: 114742922827966254}
+  - component: {fileID: 114071373991600454}
   m_Layer: 0
   m_Name: RollBug
   m_TagString: Untagged
@@ -162,6 +163,19 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Size: {x: 0.6, y: 0.9}
+--- !u!114 &114071373991600454
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147360471527010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3c7349317724424eb285151a2abc252, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 1
+  knockback: 2400
 --- !u!114 &114081175117869926
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -229,6 +243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6389aa04a6ae654fbe3575aa65009f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  invulnerableOverride: 0
   maxHealth: 5
   invulnFrames: 30
   currentHealth: 0
@@ -251,6 +266,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   acceleration: 25
   flying: 0
+  path: []
 --- !u!114 &114851085109820288
 MonoBehaviour:
   m_ObjectHideFlags: 1

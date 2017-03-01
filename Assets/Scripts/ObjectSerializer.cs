@@ -25,8 +25,10 @@ public static class ObjectSerializer
                 bw.Write((bool)value);
             else if (field.FieldType == typeof(Guid))
                 bw.Write((Guid)value);
-            else if (field.FieldType == typeof(Enum))
-                bw.Write((int)value);
+            else if (field.FieldType.IsEnum)
+                bw.Write(Enum.GetName(field.FieldType, value));
+            else
+                Debug.LogWarning("Couldn't serialize field: " + field.Name);
             }
     }
 
@@ -46,8 +48,10 @@ public static class ObjectSerializer
                 field.SetValue(component, br.ReadBoolean());
             else if (field.FieldType == typeof(Guid))
                 field.SetValue(component, br.ReadGuid());
-            else if (field.FieldType == typeof(Enum))
-                field.SetValue(component, br.ReadInt32());
+            else if (field.FieldType.IsEnum)
+                field.SetValue(component, Enum.Parse(field.FieldType, br.ReadString()));
+            else
+                Debug.LogWarning("Couldn't deserialize field: " + field.Name);
         }
     }
 

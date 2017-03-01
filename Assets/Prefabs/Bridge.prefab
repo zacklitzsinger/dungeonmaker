@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 95681616803749666}
   - component: {fileID: 114378870324409954}
   - component: {fileID: 114082222608428068}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Bridge
   m_TagString: Untagged
   m_Icon: {fileID: 0}

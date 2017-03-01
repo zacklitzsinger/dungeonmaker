@@ -33,16 +33,6 @@ public class Drone : MonoBehaviour
                 wander.enabled = false;
             else
                 wander.enabled = true;
-            
         }
     }
-
-    void OnCollisionEnter2D(Collision2D collision)
-    {    
-        if (collision.collider.tag != "Player")
-            return;
-        Vector2 dir = (collision.transform.position - transform.position).normalized;
-        int dmg = collision.collider.GetComponentInParent<Health>().Damage(1, gameObject, dir * 1200f);
-    }
-
 }

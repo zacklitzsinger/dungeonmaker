@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +8,8 @@ public enum PlayerState
     Rolling,
     AttackWindup,
     Attacking,
+    // Time independent state
+    Shadow,
     Victory
 }
 
@@ -59,6 +61,8 @@ public class Player : MonoBehaviour
     public PlayerAction currentAction;
     public Queue<PlayerAction> actions = new Queue<PlayerAction>();
 
+    public bool shadow = false;
+
     GameObject playerPanel;
     HealthUI healthIndicator;
     KeyUI keyIndicator;
@@ -67,6 +71,7 @@ public class Player : MonoBehaviour
     Health health;
     Gravity gravity;
     SpriteRenderer spriteRenderer;
+    Animator animator;
 
     void Awake()
     {
@@ -74,6 +79,7 @@ public class Player : MonoBehaviour
         health = GetComponentInChildren<Health>();
         gravity = GetComponentInChildren<Gravity>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
         playerPanel = LevelEditor.main.playerPanel;
         healthIndicator = playerPanel.GetComponentInChildren<HealthUI>(true);
         keyIndicator = playerPanel.GetComponentInChildren<KeyUI>(true);
@@ -90,12 +96,14 @@ public class Player : MonoBehaviour
         switch (action.type)
         {
             case PlayerState.AttackWindup:
+                shadow = false;
                 gravity.dragModifier = 1;
                 if (action.direction.magnitude > 0)
                     rb2d.AddForce(action.direction.normalized * attackForce * (combo + 3) / 3f);
                 break;
 
             case PlayerState.Attacking:
+                shadow = false;
                 if (action.direction.magnitude > 0)
                 {
                     Quaternion rotation = Quaternion.LookRotation((combo % 2 == 1 ? Vector3.forward : Vector3.back), action.direction.normalized);
@@ -105,9 +113,14 @@ public class Player : MonoBehaviour
                 break;
 
             case PlayerState.Rolling:
+                shadow = false;
                 gravity.dragModifier = 1;
                 if (action.direction.magnitude > 0)
                     rb2d.AddForce(action.direction.normalized * rollForce);
+                break;
+
+            case PlayerState.Shadow:
+                shadow = !shadow;
                 break;
         }
     }
@@ -126,10 +139,19 @@ public class Player : MonoBehaviour
             remStateFrames = 0;
     }
 
+    void Update()
+    {
+        animator.SetBool("shadow", shadow);
+    }
+
     void FixedUpdate()
     {
         if (currentAction.type == PlayerState.Victory)
             return;
+        LayerMask targetLayer = shadow ? LayerMask.NameToLayer("Shadow") : LayerMask.NameToLayer("Player");
+        gameObject.layer = targetLayer;
+        foreach (Transform t in transform)
+            t.gameObject.layer = targetLayer;
 
         if (LevelEditor.main.SetCurrentRoom(transform.position))
             roomEntrance = transform.position;
@@ -174,11 +196,14 @@ public class Player : MonoBehaviour
                 currentAction = actions.Dequeue();
                 TriggerAction(currentAction);
             }
-            else if (combo > 0)
+            else
             {
                 currentAction = new PlayerAction();
-                remStateFrames = combo * postComboCooldown;
-                combo = 0;
+                if (combo > 0)
+                {
+                    remStateFrames = combo * postComboCooldown;
+                    combo = 0;
+                }
             }
         }
 

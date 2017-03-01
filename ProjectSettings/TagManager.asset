@@ -18,8 +18,8 @@ TagManager:
   - Player
   - IgnorePlayer
   - Wall
-  - 
-  - 
+  - Floor
+  - Shadow
   - 
   - 
   - 

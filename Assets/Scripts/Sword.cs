@@ -38,7 +38,7 @@ public class Sword : MonoBehaviour
         Health health = other.GetComponentInParent<Health>();
         if (!health)
             return;
-        int dmg = health.Damage(damage, owner, direction * knockback);
+        health.Damage(damage, owner, direction * knockback);
         hits.Add(other.gameObject);
         if (rb2d)
             rb2d.AddForce(-direction * knockback);

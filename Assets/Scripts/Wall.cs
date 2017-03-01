@@ -37,7 +37,7 @@ public class Wall : MonoBehaviour {
         {
             // Default behavior of a wall should be to be a wall.
             Active = !circuit.Powered;
-            gameObject.layer = Active ? LayerMask.NameToLayer("Default") : LayerMask.NameToLayer("CollisionDisabled");
+            gameObject.layer = Active ? LayerMask.NameToLayer("Wall") : LayerMask.NameToLayer("CollisionDisabled");
             float targetAlpha = Active ? 1 : 0;
             Color c = spriteRenderer.color;
             c.a = Mathf.Lerp(c.a, targetAlpha, 0.15f);

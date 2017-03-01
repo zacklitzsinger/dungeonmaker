@@ -608,7 +608,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             ps.gameObject.SetActive(active);
     }
 
-    IEnumerator ControlAlpha(SpriteRenderer r, float targetAlpha)
+    public IEnumerator ControlAlpha(SpriteRenderer r, float targetAlpha)
     {
         float alpha = r.color.a;
         while (alpha != targetAlpha && r != null)
@@ -685,6 +685,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                         label.text = enumAttr.Name + ":";
                         Dropdown dropdown = labeledDropdown.GetComponentInChildren<Dropdown>();
                         dropdown.AddOptions(new List<string>(enumAttr.Choices));
+                        dropdown.value = (int)field.GetValue(component);
                         dropdown.onValueChanged.AddListener((val) =>
                         {
                             field.SetValue(component, (int)val);

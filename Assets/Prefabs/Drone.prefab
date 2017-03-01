@@ -29,6 +29,7 @@ GameObject:
   - component: {fileID: 114671667091109444}
   - component: {fileID: 61799263046837588}
   - component: {fileID: 114013204344090042}
+  - component: {fileID: 114683092624723160}
   m_Layer: 0
   m_Name: Drone
   m_TagString: Untagged
@@ -133,6 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6389aa04a6ae654fbe3575aa65009f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  invulnerableOverride: 0
   maxHealth: 4
   invulnFrames: 15
   currentHealth: 0
@@ -168,6 +170,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f371417c52363548a779879588ea96a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114683092624723160
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147360471527010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3c7349317724424eb285151a2abc252, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 1
+  knockback: 1200
 --- !u!114 &114789258443482190
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -181,6 +196,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   acceleration: 3
   flying: 1
+  path: []
 --- !u!212 &212973353828650820
 SpriteRenderer:
   m_ObjectHideFlags: 1

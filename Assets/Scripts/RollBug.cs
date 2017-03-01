@@ -59,14 +59,6 @@ public class RollBug : MonoBehaviour
         transform.localRotation = Quaternion.LookRotation(Vector3.forward, rb2d.velocity.normalized);
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (!collision.collider.CompareTag("Player"))
-            return;
-        Vector2 dir = (collision.transform.position - transform.position).normalized;
-        collision.collider.GetComponent<Health>().Damage(1, gameObject, dir * 2400f);
-    }
-
     void OnTriggerEnter2D(Collider2D other)
     {
         if (!other.CompareTag("Player") || currentState == AIState.Attack)

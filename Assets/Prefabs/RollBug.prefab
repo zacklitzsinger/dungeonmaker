@@ -249,6 +249,9 @@ MonoBehaviour:
   currentHealth: 0
   remInvulnFrames: 0
   deathRespawnPoint: {fileID: 0}
+  itemChanceDropOnDeath: 0.25
+  itemChoices:
+  - {fileID: 1906677971985918, guid: 18988c1a83705c645be824996fdde668, type: 2}
   damageParticles: {fileID: 198637271435436188, guid: 3203b49ec00b44246bc810d433c37f3c,
     type: 2}
   hitSound: {fileID: 8300000, guid: 87e372e39fc06b14794ec2523cb17664, type: 3}

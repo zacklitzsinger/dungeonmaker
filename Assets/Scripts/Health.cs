@@ -1,10 +1,11 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class Health : MonoBehaviour
 {
-    public bool invulnerableOverride = false;
+    [ReadOnly]
+    public bool invulnerableOverride = false; // Invulnerability, set by some effects
 
     public int maxHealth;
     public int invulnFrames;
@@ -14,6 +15,9 @@ public class Health : MonoBehaviour
     public int remInvulnFrames;
     [ReadOnly]
     public Checkpoint deathRespawnPoint;
+
+    public float itemChanceDropOnDeath;
+    public List<GameObject> itemChoices = new List<GameObject>();
 
     public ParticleSystem damageParticles;
     public AudioClip hitSound;
@@ -30,6 +34,11 @@ public class Health : MonoBehaviour
         currentHealth = maxHealth;
         rb2d = GetComponentInParent<Rigidbody2D>();
         player = GetComponentInParent<Player>();
+    }
+
+    public void Heal(int amt)
+    {
+        currentHealth = Mathf.Min(maxHealth, amt + currentHealth);
     }
 
     public int Damage(int dmg, GameObject source, Vector2 knockback, bool fall = false)
@@ -59,7 +68,14 @@ public class Health : MonoBehaviour
             if (deathRespawnPoint != null)
                 Respawn();
             else
+            {
+                if (Random.value <= itemChanceDropOnDeath && itemChoices.Count > 0)
+                {
+                    GameObject itemChoice = itemChoices[Random.Range(0, itemChoices.Count)];
+                    LevelEditor.main.CreateObjectAtGrid(transform.position, itemChoice);
+                }
                 GetComponentInParent<ObjectData>().gameObject.SetActive(false);
+            }
         }
         else if (fall && player)
         {

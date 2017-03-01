@@ -497,7 +497,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     /// <summary>
     /// Instantiates given prefab at the point on the grid
     /// </summary>
-    GameObject CreateObjectAtGrid(Vector2 point, GameObject obj)
+    public GameObject CreateObjectAtGrid(Vector2 point, GameObject obj)
     {
         GameObject newObj = Instantiate(obj, point, Quaternion.identity, transform);
         newObj.name = obj.name;

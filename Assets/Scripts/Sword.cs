@@ -26,15 +26,6 @@ public class Sword : MonoBehaviour
         if (friendly == other.CompareTag("Player") || hits.Contains(other.gameObject))
             return;
         Vector2 direction = (other.transform.position - transform.position).normalized;
-        ObjectData otherData = other.GetComponentInParent<ObjectData>();
-        if (otherData.type == ObjectType.Wall)
-        {
-            //TODO Animation or particle effect when sword bonks against a wall
-            Destroy(gameObject);
-            if (rb2d)
-                rb2d.AddForce(-direction * knockback);
-            return;
-        }
         Health health = other.GetComponentInParent<Health>();
         if (!health)
             return;
@@ -43,6 +34,21 @@ public class Sword : MonoBehaviour
         if (rb2d)
             rb2d.AddForce(-direction * knockback);
         Camera.main.GetComponent<AudioSource>().PlayOneShot(swordHitSound);
+    }
+
+    void OnTriggerStay2D(Collider2D other)
+    {
+        if (remainingFrames > 8 || friendly == other.CompareTag("Player") || hits.Contains(other.gameObject))
+            return;
+        Vector2 direction = (other.transform.position - transform.position).normalized;
+        ObjectData otherData = other.GetComponentInParent<ObjectData>();
+        if (otherData.type != ObjectType.Wall)
+            return;
+        //TODO Animation or particle effect when sword bonks against a wall
+        Destroy(gameObject);
+        if (rb2d)
+            rb2d.AddForce(-direction * knockback);
+        return;
     }
 
     void Update()

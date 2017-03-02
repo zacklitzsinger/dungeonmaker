@@ -3,6 +3,13 @@ using UnityEngine;
 
 public class Sword : MonoBehaviour
 {
+    public enum Style
+    {
+        Swing,
+        Thrust
+    }
+
+    public Style style;
     public int remainingFrames;
     public int damage;
     public float knockback;
@@ -13,12 +20,14 @@ public class Sword : MonoBehaviour
 
     HashSet<GameObject> hits = new HashSet<GameObject>();
 
-    Rigidbody2D rb2d;
+    Rigidbody2D ownerRb2d;
+    Animator animator;
 
     void Start()
     {
         Camera.main.GetComponent<AudioSource>().PlayOneShot(swordSwingSound);
-        rb2d = owner.GetComponent<Rigidbody2D>();
+        ownerRb2d = owner.GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -31,8 +40,8 @@ public class Sword : MonoBehaviour
             return;
         health.Damage(damage, owner, direction * knockback);
         hits.Add(other.gameObject);
-        if (rb2d)
-            rb2d.AddForce(-direction * knockback);
+        if (ownerRb2d)
+            ownerRb2d.AddForce(-direction * knockback);
         Camera.main.GetComponent<AudioSource>().PlayOneShot(swordHitSound);
     }
 
@@ -46,13 +55,14 @@ public class Sword : MonoBehaviour
             return;
         //TODO Animation or particle effect when sword bonks against a wall
         Destroy(gameObject);
-        if (rb2d)
-            rb2d.AddForce(-direction * knockback);
+        if (ownerRb2d)
+            ownerRb2d.AddForce(-direction * knockback);
         return;
     }
 
     void Update()
     {
+        animator.SetInteger("style", (int)style);
         if (remainingFrames > 0)
             remainingFrames--;
         else

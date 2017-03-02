@@ -21,6 +21,7 @@ public struct PlayerAction
     public int frames;
     public Vector2 vector;
     public bool combo;
+    public string variation;
 
     public override string ToString()
     {
@@ -31,7 +32,7 @@ public struct PlayerAction
 public class Player : MonoBehaviour
 {
 
-    public GameObject sword;
+    public GameObject swordPrefab;
     public Sprite dodgeIcon;
 
     public float acceleration;
@@ -63,7 +64,7 @@ public class Player : MonoBehaviour
     public Vector2 roomEntrance;
 
     public PlayerAction currentAction;
-    public Queue<PlayerAction> actions = new Queue<PlayerAction>();
+    public LinkedList<PlayerAction> actions = new LinkedList<PlayerAction>();
 
     // Items
     [ReadOnly]
@@ -107,15 +108,17 @@ public class Player : MonoBehaviour
             case PlayerState.AttackWindup:
                 gravity.dragModifier = 1;
                 if (action.vector.magnitude > 0)
-                    rb2d.AddForce(action.vector * (combo + 3) / 3f);
+                    rb2d.AddForce(action.vector * (combo+2) / 3f);
                 break;
 
             case PlayerState.Attacking:
                 if (action.vector.magnitude > 0)
                 {
                     Quaternion rotation = Quaternion.LookRotation((combo % 2 == 1 ? Vector3.forward : Vector3.back), action.vector.normalized);
-                    GameObject swordObj = Instantiate(sword, transform.position, rotation, transform);
-                    swordObj.GetComponentInChildren<Sword>().owner = gameObject;
+                    Sword sword = Instantiate(swordPrefab, transform.position, rotation, transform).GetComponentInChildren<Sword>();
+                    sword.owner = gameObject;
+                    if (action.variation == "thrust" || combo > 2)
+                        sword.style = Sword.Style.Thrust;
                 }
                 break;
 
@@ -142,7 +145,7 @@ public class Player : MonoBehaviour
     /// </summary>
     bool CanCancelBackswing()
     {
-        return (3 < remStateFrames && remStateFrames < 11 && combo < maxCombo && currentAction.type != PlayerState.Idle && actions.Count == 0);
+        return (1 < remStateFrames && remStateFrames < 10 && combo < maxCombo && currentAction.type != PlayerState.Idle && actions.Count == 0);
     }
 
     void TryCancelBackswing()
@@ -206,7 +209,8 @@ public class Player : MonoBehaviour
                 actions.Clear();
             if (actions.Count > 0)
             {
-                currentAction = actions.Dequeue();
+                currentAction = actions.First.Value;
+                actions.RemoveFirst();
                 TriggerAction(currentAction);
             }
             else
@@ -221,10 +225,14 @@ public class Player : MonoBehaviour
             currentActionFrames = 0;
         }
 
+        // Allow player to queue up actions if they are acting within 15 frames of being idle
+        if (remStateFrames > 15 || actions.Count > 0)
+            return;
+
         if (Input.GetButtonUp("Roll") && targetMotion.magnitude > 0)
         {
             TryCancelBackswing();
-            actions.Enqueue(new PlayerAction() { type = PlayerState.Rolling, frames = rollFrames, vector = targetMotion.normalized * rollForce, combo = true });
+            actions.AddLast(new PlayerAction() { type = PlayerState.Rolling, frames = rollFrames, vector = targetMotion.normalized * rollForce, combo = true });
 
         }
 
@@ -232,8 +240,11 @@ public class Player : MonoBehaviour
         {
             TryCancelBackswing();
             Vector2 targetDirection = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized;
-            actions.Enqueue(new PlayerAction() { type = PlayerState.AttackWindup, frames = attackWindup, vector = targetDirection * attackForce  });
-            actions.Enqueue(new PlayerAction() { type = PlayerState.Attacking, frames = attackFrames, vector = targetDirection, combo = true });
+            string variation = "";
+            if (actions.Count == 0 && currentAction.type == PlayerState.Rolling || actions.Count > 0 && actions.Last.Value.type == PlayerState.Rolling)
+                variation = "thrust";
+            actions.AddLast(new PlayerAction() { type = PlayerState.AttackWindup, frames = attackWindup, vector = targetDirection * attackForce  });
+            actions.AddLast(new PlayerAction() { type = PlayerState.Attacking, frames = attackFrames, vector = targetDirection, combo = true , variation=variation});
         }
 
         if (Input.GetButtonDown("Use item") && Items.Length >= 1)
@@ -258,7 +269,7 @@ public class Player : MonoBehaviour
             if (i < keybinds.Length)
                 itemSlots[i].slot.text = keybinds[i];
             if (i == 0)
-                itemSlots[i].ItemSprite = sword.GetComponentInChildren<SpriteRenderer>().sprite;
+                itemSlots[i].ItemSprite = swordPrefab.GetComponentInChildren<SpriteRenderer>().sprite;
             else if (i == 1)
                 itemSlots[i].ItemSprite = dodgeIcon;
             else if (i - 2 < Items.Length)

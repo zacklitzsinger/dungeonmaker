@@ -11,6 +11,7 @@ public class TreasureChest : MonoBehaviour, ICustomSerializable
         Key,
         GustItem,
         ShadowCloak,
+        //SpeedBoots
     }
 
     [PlayerEditableEnum("Contents", typeof(ChestItem))]

@@ -72,6 +72,7 @@ MonoBehaviour:
   prefabOptions:
   - {fileID: 1313807820324858, guid: 11884e9f6512f7a41964d8dc081f0054, type: 2}
   - {fileID: 1313807820324858, guid: f65d8d3d11b2d474aaee455224eb95e8, type: 2}
+  - {fileID: 1313807820324858, guid: 24fd0226bbf310249b5f7d6efe6b0b37, type: 2}
 --- !u!114 &114744713971349162
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -85,6 +86,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   createText: Can contain new items for the player to collect. If powered, appears
     when powered and allows power to pass when collected.
+  category: 0
   type: 4
   seeThrough: 1
   ground: 0

@@ -34,15 +34,24 @@ public class Sword : MonoBehaviour
     {
         if (friendly == other.CompareTag("Player") || hits.Contains(other.gameObject))
             return;
-        Vector2 direction = (other.transform.position - transform.position).normalized;
         Health health = other.GetComponentInParent<Health>();
-        if (!health)
+        Shield shield = other.GetComponent<Shield>();
+        if (!health || !shield && other.isTrigger)
             return;
-        health.Damage(damage, owner, direction * knockback);
         hits.Add(other.gameObject);
+        Vector2 direction = (other.transform.position - transform.position).normalized;
+        if (shield)
+        {
+            shield.Block();
+            other.GetComponentInParent<Rigidbody2D>().AddForce(direction * knockback);
+        }
+        else
+            health.Damage(damage, owner, direction * knockback);
         if (ownerRb2d)
             ownerRb2d.AddForce(-direction * knockback);
         Camera.main.GetComponent<AudioSource>().PlayOneShot(swordHitSound);
+        if (shield)
+            Destroy(gameObject.transform.parent);
     }
 
     void OnTriggerStay2D(Collider2D other)

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class Knight : MonoBehaviour
 {
@@ -44,8 +45,6 @@ public class Knight : MonoBehaviour
 
     void SetCurrentState(AIState state)
     {
-        if (currentState == state)
-            return;
         currentState = state;
         wander.enabled = (currentState == AIState.Wander);
         attack.enabled = (currentState == AIState.Attack);
@@ -54,7 +53,7 @@ public class Knight : MonoBehaviour
     void PickRandomState()
     {
         // Don't randomly pick attack state
-        currentState = (AIState)Random.Range(0, System.Enum.GetNames(typeof(AIState)).Length - 1);
+        currentState = (AIState)UnityEngine.Random.Range(0, Enum.GetNames(typeof(AIState)).Length - 1);
         SetCurrentState(currentState);
         remFrames = decisionInterval;
     }

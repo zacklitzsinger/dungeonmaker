@@ -8,8 +8,6 @@ public enum PlayerState
     Rolling,
     AttackWindup,
     Attacking,
-    ChargingDash,
-    Dash,
     // Below are time independent states (not dictated by frame count)
     Shadow,
     Victory
@@ -64,13 +62,12 @@ public class Player : MonoBehaviour
     public Vector2 roomEntrance;
 
     public PlayerAction currentAction;
+    public PlayerAction LastAction { get { return actions.Count > 0 ? actions.Last.Value : currentAction; } }
     public LinkedList<PlayerAction> actions = new LinkedList<PlayerAction>();
 
     // Items
     [ReadOnly]
     public bool shadow = false;
-    [Tooltip("How much force to apply on dash per frame charged")]
-    public float dashForce;
 
     GameObject playerPanel;
     HealthUI healthIndicator;
@@ -81,6 +78,7 @@ public class Player : MonoBehaviour
     Gravity gravity;
     SpriteRenderer spriteRenderer;
     Animator animator;
+    Shield shield;
 
     void Awake()
     {
@@ -88,6 +86,7 @@ public class Player : MonoBehaviour
         health = GetComponentInChildren<Health>();
         gravity = GetComponentInChildren<Gravity>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        shield = GetComponentInChildren<Shield>(true);
         animator = GetComponent<Animator>();
         playerPanel = LevelEditor.main.playerPanel;
         healthIndicator = playerPanel.GetComponentInChildren<HealthUI>(true);
@@ -97,7 +96,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Called the first frame an action becomes active
     /// </summary>
-    void TriggerAction(PlayerAction action)
+    public void TriggerAction(PlayerAction action)
     {
         if (action.combo)
             combo++;
@@ -108,7 +107,7 @@ public class Player : MonoBehaviour
             case PlayerState.AttackWindup:
                 gravity.dragModifier = 1;
                 if (action.vector.magnitude > 0)
-                    rb2d.AddForce(action.vector * (combo+2) / 3f);
+                    rb2d.AddForce(action.vector * (combo + 2) / 3f);
                 break;
 
             case PlayerState.Attacking:
@@ -131,13 +130,14 @@ public class Player : MonoBehaviour
             case PlayerState.Shadow:
                 shadow = !shadow;
                 break;
-            case PlayerState.Dash:
-                if (action.vector.magnitude > 0)
-                    rb2d.AddForce(action.vector * currentActionFrames * 500);
-                break;
         }
         currentActionFrames = 0;
         remStateFrames = action.frames;
+    }
+
+    bool CanQueueActions()
+    {
+        return (remStateFrames < 15 || actions.Count == 0);
     }
 
     /// <summary>
@@ -164,26 +164,28 @@ public class Player : MonoBehaviour
         currentActionFrames++;
         if (currentAction.type == PlayerState.Victory)
             return;
-        LayerMask targetLayer = shadow ? LayerMask.NameToLayer("Shadow") : LayerMask.NameToLayer("Player");
-        gameObject.layer = targetLayer;
-        foreach (Transform t in transform)
-            t.gameObject.layer = targetLayer;
+
+        UpdateLayer();
 
         if (LevelEditor.main.SetCurrentRoom(transform.position))
             roomEntrance = transform.position;
 
+        // Handle floor
         GameObject floor = LevelEditor.main.GetGameObjectAtPointWithType(transform.position, ObjectType.Floor);
         FloorData floorData = null;
         if (floor != null)
             floorData = floor.GetComponent<FloorData>();
         gravity.dragModifier = 1;
 
+        //Handle movement
         float xMotion = Input.GetAxis("Horizontal");
         float yMotion = Input.GetAxis("Vertical");
         Vector2 targetMotion = Vector2.right * xMotion + Vector2.up * yMotion;
         if (currentAction.type == PlayerState.AttackWindup || currentAction.type == PlayerState.Attacking || currentAction.type == PlayerState.Idle)
         {
-            float modifiedAcceleration = (floorData ? floorData.accelerationModifier : 1) * acceleration;
+            float modifiedAcceleration = acceleration;
+            modifiedAcceleration *= (floorData ? floorData.accelerationModifier : 1);
+            modifiedAcceleration *= (shield.enabled ? 0.5f : 1f);
             rb2d.AddForce((targetMotion.magnitude > 1 ? targetMotion.normalized : targetMotion) * modifiedAcceleration);
         }
 
@@ -225,32 +227,45 @@ public class Player : MonoBehaviour
             currentActionFrames = 0;
         }
 
-        // Allow player to queue up actions if they are acting within 15 frames of being idle
-        if (remStateFrames > 15 || actions.Count > 0)
+        shield.gameObject.SetActive(false);
+
+        if (!CanQueueActions())
             return;
 
         if (Input.GetButtonUp("Roll") && targetMotion.magnitude > 0)
         {
             TryCancelBackswing();
             actions.AddLast(new PlayerAction() { type = PlayerState.Rolling, frames = rollFrames, vector = targetMotion.normalized * rollForce, combo = true });
-
         }
 
         if (Input.GetButtonUp("Attack"))
         {
             TryCancelBackswing();
-            Vector2 targetDirection = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized;
             string variation = "";
-            if (actions.Count == 0 && currentAction.type == PlayerState.Rolling || actions.Count > 0 && actions.Last.Value.type == PlayerState.Rolling)
+            if (LastAction.type == PlayerState.Rolling)
                 variation = "thrust";
-            actions.AddLast(new PlayerAction() { type = PlayerState.AttackWindup, frames = attackWindup, vector = targetDirection * attackForce  });
-            actions.AddLast(new PlayerAction() { type = PlayerState.Attacking, frames = attackFrames, vector = targetDirection, combo = true , variation=variation});
+            Vector2 targetDirection = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized;
+            actions.AddLast(new PlayerAction() { type = PlayerState.AttackWindup, frames = attackWindup, vector = targetDirection * attackForce });
+            actions.AddLast(new PlayerAction() { type = PlayerState.Attacking, frames = attackFrames, vector = targetDirection, combo = true, variation = variation });
+        }
+
+        if (Input.GetButton("Shield") && currentAction.type == PlayerState.Idle && currentAction.frames <= 0)
+        {
+            shield.gameObject.SetActive(true);
         }
 
         if (Input.GetButtonDown("Use item") && Items.Length >= 1)
         {
             Items[0].Activate(this);
         }
+    }
+
+    void UpdateLayer()
+    {
+        LayerMask targetLayer = shadow ? LayerMask.NameToLayer("Shadow") : LayerMask.NameToLayer("Player");
+        gameObject.layer = targetLayer;
+        foreach (Transform t in transform)
+            t.gameObject.layer = targetLayer;
     }
 
     void OnGUI()
@@ -271,10 +286,12 @@ public class Player : MonoBehaviour
             if (i == 0)
                 itemSlots[i].ItemSprite = swordPrefab.GetComponentInChildren<SpriteRenderer>().sprite;
             else if (i == 1)
+                itemSlots[i].ItemSprite = shield.GetComponent<SpriteRenderer>().sprite;
+            else if (i == 2)
                 itemSlots[i].ItemSprite = dodgeIcon;
-            else if (i - 2 < Items.Length)
+            else if (i - 3 < Items.Length)
             {
-                itemSlots[i].ItemSprite = Items[i - 2].Icon;
+                itemSlots[i].ItemSprite = Items[i - 3].Icon;
             }
         }
     }

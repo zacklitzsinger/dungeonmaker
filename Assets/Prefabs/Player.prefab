@@ -303,6 +303,8 @@ MonoBehaviour:
   - Right
   - Space
   - E
+  - R
+  - F
   roomEntrance: {x: 0, y: 0}
   shadow: 0
 --- !u!114 &114554694894238124

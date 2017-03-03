@@ -258,6 +258,16 @@ public class Player : MonoBehaviour
         {
             Items[0].Activate(this);
         }
+
+        if (Input.GetButtonDown("Use item 2") && Items.Length >= 2)
+        {
+            Items[1].Activate(this);
+        }
+
+        if (Input.GetButtonDown("Use item 3") && Items.Length >= 3)
+        {
+            Items[2].Activate(this);
+        }
     }
 
     void UpdateLayer()

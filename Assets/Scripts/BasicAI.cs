@@ -54,6 +54,8 @@ public class BasicAI : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!LevelEditor.main.currentRoom.Contains(transform.position.ToGrid()))
+            SetCurrentState(null);
         if (circuit == null)
             circuit = GetComponent<Circuit>();
         if (circuit)

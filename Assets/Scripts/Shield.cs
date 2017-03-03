@@ -5,6 +5,8 @@ public class Shield : MonoBehaviour {
     [Tooltip("How many frames the player must idle after blocking successfully")]
     public int blockStunnedFrames;
 
+    public AudioClip blockSound;
+
     Player player;
 
     void Start()
@@ -16,6 +18,7 @@ public class Shield : MonoBehaviour {
     {
         player.currentAction = new PlayerAction() { type = PlayerState.Idle, frames = blockStunnedFrames };
         player.TriggerAction(player.currentAction);
+        AudioSource.PlayClipAtPoint(blockSound, transform.position);
     }
 
 }

@@ -88,7 +88,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   permanent: 0
   invert: 0
-  active: 0
+  soundPressed: {fileID: 8300000, guid: d613e510b971d174eaef9b20b2dd60ad, type: 3}
+  soundUnpressed: {fileID: 8300000, guid: c9df489258f46e140b5b88225a6657b8, type: 3}
 --- !u!114 &114744713971349162
 MonoBehaviour:
   m_ObjectHideFlags: 1

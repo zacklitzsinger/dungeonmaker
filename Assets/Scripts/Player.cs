@@ -137,7 +137,7 @@ public class Player : MonoBehaviour
 
     bool CanQueueActions()
     {
-        return (remStateFrames < 15 || actions.Count == 0);
+        return (remStateFrames <= 15 && actions.Count == 0);
     }
 
     /// <summary>

@@ -29,10 +29,7 @@ public class Drone : MonoBehaviour
         {
             currentState = (AIState)Random.Range(0, System.Enum.GetNames(typeof(AIState)).Length);
             remFrames = decisionInterval;
-            if (currentState == AIState.Idle)
-                wander.enabled = false;
-            else
-                wander.enabled = true;
+            wander.enabled = (currentState == AIState.Wander);
         }
     }
 }

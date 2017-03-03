@@ -7,6 +7,8 @@ public class VisionCone : MonoBehaviour {
     public Transform target;
     public LayerMask mask;
 
+    public bool alwaysTrackPlayer;
+
     Transform CheckAngle(float checkAngle)
     {
         Vector2 direction = (Quaternion.AngleAxis(checkAngle, Vector3.forward) * (transform.up)).normalized;

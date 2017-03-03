@@ -31,7 +31,7 @@ public class EnemyGate : MonoBehaviour {
             if (goList == null)
                 continue;
             foreach (ObjectData info in goList)
-                if (info.type == ObjectType.Enemy && info.gameObject.activeInHierarchy)
+                if (info && info.type == ObjectType.Enemy && info.gameObject.activeInHierarchy)
                     return false;
         }
         return true;

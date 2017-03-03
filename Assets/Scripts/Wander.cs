@@ -46,6 +46,8 @@ public class Wander : MonoBehaviour
             }
             Vector2 targetDirection = delta.normalized;
             rb2d.AddForce(targetDirection * acceleration);
+            if (path.Count == 0)
+                enabled = false;
         }
     }
 

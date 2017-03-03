@@ -12,10 +12,12 @@ public class Door : MonoBehaviour, ICustomSerializable {
         get { return open; }
         set
         {
-            if (open != value)
-                LevelEditor.main.currentRoomDirty = true;
+            if (open == value)
+                return;
+            LevelEditor.main.currentRoomDirty = true;
             open = value;
             data.seeThrough = open;
+            AudioSource.PlayClipAtPoint(sound, transform.position);
         }
     }
 
@@ -39,7 +41,6 @@ public class Door : MonoBehaviour, ICustomSerializable {
         if (!other.CompareTag("Player") || GetComponent<Circuit>() != null || other.isTrigger || !enabled)
             return;
         Open = true;
-        AudioSource.PlayClipAtPoint(sound, transform.position);
     }
 
     void OnTriggerExit2D(Collider2D other)
@@ -47,7 +48,6 @@ public class Door : MonoBehaviour, ICustomSerializable {
         if (!other.CompareTag("Player") || GetComponent<Circuit>() != null || other.isTrigger || !enabled)
             return;
         Open = false;
-        AudioSource.PlayClipAtPoint(sound, transform.position);
     }
 
     void Update()

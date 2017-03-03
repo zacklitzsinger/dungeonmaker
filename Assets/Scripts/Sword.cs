@@ -51,7 +51,7 @@ public class Sword : MonoBehaviour
             ownerRb2d.AddForce(-direction * knockback);
         Camera.main.GetComponent<AudioSource>().PlayOneShot(swordHitSound);
         if (shield)
-            Destroy(gameObject.transform.parent);
+            Destroy(transform.parent.gameObject);
     }
 
     void OnTriggerStay2D(Collider2D other)
@@ -60,7 +60,7 @@ public class Sword : MonoBehaviour
             return;
         Vector2 direction = (other.transform.position - transform.position).normalized;
         ObjectData otherData = other.GetComponentInParent<ObjectData>();
-        if (otherData.type != ObjectType.Wall)
+        if (!otherData || otherData.type != ObjectType.Wall)
             return;
         //TODO Animation or particle effect when sword bonks against a wall
         Destroy(gameObject);

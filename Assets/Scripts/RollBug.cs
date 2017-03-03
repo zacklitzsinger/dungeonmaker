@@ -31,14 +31,8 @@ public class RollBug : MonoBehaviour
     void SetCurrentState(AIState state)
     {
         currentState = state;
-        if (currentState == AIState.Wander)
-            wander.enabled = true;
-        else
-            wander.enabled = false;
-        if (currentState == AIState.Attack)
-            attack.enabled = true;
-        else
-            attack.enabled = false;
+        wander.enabled = (currentState == AIState.Wander);
+        attack.enabled = (currentState == AIState.Attack);
     }
 
     void PickRandomState()
@@ -47,7 +41,6 @@ public class RollBug : MonoBehaviour
         currentState = (AIState)Random.Range(0, System.Enum.GetNames(typeof(AIState)).Length - 1);
         remFrames = decisionInterval;
         SetCurrentState(currentState);
-        remFrames = decisionInterval;
     }
 
     void FixedUpdate()
@@ -64,7 +57,7 @@ public class RollBug : MonoBehaviour
         if (!other.CompareTag("Player") || currentState == AIState.Attack)
             return;
         SetCurrentState(AIState.Attack);
-        attack.target = other.transform.position;
+        attack.direction = other.transform.position;
     }
 
 }

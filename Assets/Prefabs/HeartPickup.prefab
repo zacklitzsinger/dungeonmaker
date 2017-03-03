@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 4804428829214386}
   - component: {fileID: 212621048473382382}
   - component: {fileID: 61873251953430206}
-  - component: {fileID: 114564483455461388}
   - component: {fileID: 114164378599516890}
   m_Layer: 0
   m_Name: HeartPickup
@@ -68,22 +67,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d191c1c277ca174b8f1ef41b9b60b9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sound: {fileID: 8300000, guid: 58748300c961b7a419c6f0f926b38c56, type: 3}
   amount: 1
---- !u!114 &114564483455461388
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1906677971985918}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b7ee4e40eca2f1241b95124f3997a91c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  type: 4
-  seeThrough: 1
-  ground: 0
-  hideInPlayMode: 0
 --- !u!212 &212621048473382382
 SpriteRenderer:
   m_ObjectHideFlags: 1

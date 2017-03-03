@@ -10,9 +10,23 @@ public class Switch : MonoBehaviour, ICustomSerializable
     public bool permanent = false;
     [PlayerEditable("Invert")]
     public bool invert = false;
-    public bool active = false;
+    private bool active;
+    public bool Active
+    {
+        get { return active; }
+        set
+        {
+            if (active == value)
+                return;
+            active = value;
+            AudioSource.PlayClipAtPoint(active ? soundPressed : soundUnpressed, transform.position);
+        }
+    }
     [ReadOnly]
     public HashSet<ObjectData> touching = new HashSet<ObjectData>();
+
+    public AudioClip soundPressed;
+    public AudioClip soundUnpressed;
 
     Animator animator;
     Circuit circuit;
@@ -27,8 +41,8 @@ public class Switch : MonoBehaviour, ICustomSerializable
         ObjectData data = other.GetComponentInParent<ObjectData>();
         if (data == null || other.isTrigger)
             return;
-        active = true;
         touching.Add(data);
+        Active = true;
     }
 
     void OnTriggerExit2D(Collider2D other)
@@ -40,12 +54,12 @@ public class Switch : MonoBehaviour, ICustomSerializable
             return;
         touching.Remove(data);
         if (touching.Count <= 0)
-            active = false;
+            Active = false;
     }
 
     void Update()
     {
-        animator.SetBool("active", active);
+        animator.SetBool("active", Active);
         if (circuit == null)
         {
             circuit = GetComponent<Circuit>();
@@ -56,7 +70,7 @@ public class Switch : MonoBehaviour, ICustomSerializable
 
     void SetupCircuit()
     {
-        circuit.gateConditions.Add(() => { return active ^ invert; });
+        circuit.gateConditions.Add(() => { return Active ^ invert; });
     }
 
     public void Serialize(BinaryWriter bw)

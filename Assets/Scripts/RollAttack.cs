@@ -13,7 +13,7 @@ public class RollAttack : MonoBehaviour {
     [ReadOnly]
     public State currentState = State.Delay;
 
-    public Vector2 target;
+    public Vector2 direction;
     public float force;
     public float breakSpeed;
 
@@ -29,6 +29,11 @@ public class RollAttack : MonoBehaviour {
         currentState = State.Delay;
     }
 
+    void OnEnable()
+    {
+        direction = transform.up;
+    }
+
     void FixedUpdate()
     {
         if (currentState == State.Delay)
@@ -36,7 +41,7 @@ public class RollAttack : MonoBehaviour {
             if (remFrames-- < 0)
             {
                 currentState = State.Attack;
-                rb2d.AddForce((target - (Vector2)transform.position).normalized * force);
+                rb2d.AddForce(direction * force);
             }
         }
         else if (rb2d.velocity.magnitude < breakSpeed)

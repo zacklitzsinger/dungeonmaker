@@ -77,9 +77,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public NavMap navmap;
     public NavigationCalculator navcalc;
     [ReadOnly]
-    public List<Vector2> previousRoom;
+    public HashSet<Vector2> previousRoom;
     [ReadOnly]
-    public List<Vector2> currentRoom = new List<Vector2>();
+    public HashSet<Vector2> currentRoom = new HashSet<Vector2>();
     public bool currentRoomDirty = false; // Set to true to guarantee the room is recalculated next frame.
     public UnityEvent onRoomChanged;
 
@@ -583,13 +583,13 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         if (currentRoom.Contains(currentNode) && !currentRoomDirty)
             return false;
         previousRoom = currentRoom;
-        currentRoom = navcalc.GetConnectedNodes(currentNode, true, true);
+        currentRoom = new HashSet<Vector2>(navcalc.GetConnectedNodes(currentNode, true, true));
         // Iterate only through the original list.
-        int nodeCount = currentRoom.Count;
-        for (int i = 0; i < nodeCount; i++)
-            foreach (Vector2 node in navmap.GetPotentialNeighbors(currentRoom[i]))
-                if (!currentRoom.Contains(node))
-                    currentRoom.Add(node);
+        HashSet<Vector2> additions = new HashSet<Vector2>();
+        foreach (Vector2 node in currentRoom)
+            foreach (Vector2 neighbor in navmap.GetPotentialNeighbors(node))
+                additions.Add(neighbor);
+        currentRoom.UnionWith(additions);
 
         // Update visibility
         foreach (KeyValuePair<Vector2, List<ObjectData>> pair in tilemap)
@@ -612,6 +612,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         currentRoomDirty = false;
         return true;
     }
+
 
     /// <summary>
     /// Shows or hides a given tile (based on whether it is in the current room).

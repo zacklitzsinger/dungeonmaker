@@ -49,6 +49,9 @@ public class Wall : MonoBehaviour {
                     c.a = targetAlpha;
                 spriteRenderer.color = c;
             }
+        } else
+        {
+            enabled = false;
         }
     }
 

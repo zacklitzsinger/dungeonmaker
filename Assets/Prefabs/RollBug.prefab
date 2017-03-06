@@ -275,6 +275,7 @@ MonoBehaviour:
   mask:
     serializedVersion: 2
     m_Bits: 1024
+  alwaysTrackPlayer: 0
 --- !u!114 &114789258443482190
 MonoBehaviour:
   m_ObjectHideFlags: 1

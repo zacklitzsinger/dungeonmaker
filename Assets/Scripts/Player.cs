@@ -254,7 +254,7 @@ public class Player : MonoBehaviour
             shield.gameObject.SetActive(true);
         }
 
-        if (Input.GetButtonDown("Use item") && Items.Length >= 1)
+        if (Input.GetButtonDown("Use item 1") && Items.Length >= 1)
         {
             Items[0].Activate(this);
         }

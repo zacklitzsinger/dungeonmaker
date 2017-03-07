@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 4238989630657178}
   - component: {fileID: 212390731372897270}
   - component: {fileID: 114744713971349162}
-  - component: {fileID: 114765024785866122}
   - component: {fileID: 61516094206502346}
   m_Layer: 0
   m_Name: Spinner
@@ -40,6 +39,8 @@ GameObject:
   - component: {fileID: 4183898331960342}
   - component: {fileID: 50509060425294512}
   - component: {fileID: 212257462285786454}
+  - component: {fileID: 58774583359060794}
+  - component: {fileID: 114235983544059700}
   m_Layer: 0
   m_Name: SpinnerTop
   m_TagString: Untagged
@@ -94,6 +95,20 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 3
+--- !u!58 &58774583359060794
+CircleCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1256613180420720}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5
 --- !u!61 &61516094206502346
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -108,6 +123,22 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
+--- !u!114 &114235983544059700
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1256613180420720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3bb57976dab1334ca629b9deeb0e9ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  active: 0
+  activationSpeed: 125
+  counter: 0
+  rotationForce: -1
+  gustMultiplier: 4
 --- !u!114 &114744713971349162
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -127,22 +158,6 @@ MonoBehaviour:
   blocksPathing: 0
   sortOrderModifier: 0
   hideInPlayMode: 0
---- !u!114 &114765024785866122
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1002282342740670}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3bb57976dab1334ca629b9deeb0e9ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  active: 0
-  activationSpeed: 125
-  counter: 0
-  rotationForce: -1
-  gustMultiplier: 4
 --- !u!212 &212257462285786454
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -20,7 +20,6 @@ public class Spinner : MonoBehaviour {
     // Handle wind zones
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("+OTHER: " + other.name);
         if (other.gameObject.layer != LayerMask.NameToLayer("Wind"))
             return;
         if (other.GetComponent<Rigidbody2D>())
@@ -43,7 +42,6 @@ public class Spinner : MonoBehaviour {
     // Handle wind zones
     void OnTriggerExit2D(Collider2D other)
     {
-        Debug.Log("-OTHER: " + other.name);
         if (other.gameObject.layer != LayerMask.NameToLayer("Wind"))
             return;
         if (other.GetComponent<Rigidbody2D>())
@@ -57,7 +55,7 @@ public class Spinner : MonoBehaviour {
     {
         if (circuit == null)
         {
-            circuit = GetComponent<Circuit>();
+            circuit = GetComponentInParent<Circuit>();
             if (circuit != null)
                 SetupCircuit();
         }

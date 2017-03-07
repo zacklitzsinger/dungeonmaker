@@ -37,6 +37,11 @@ public class ObjectData : MonoBehaviour, ICustomSerializable
     /// Counts as ground for the purposes of falling.
     /// </summary>
     public bool ground = false;
+    /// <summary>
+    /// Does the tile prevent pathing?
+    /// </summary>
+    public bool blocksPathing = false;
+    public int sortOrderModifier;
     public bool hideInPlayMode = false;
     SpriteRenderer sprite;
 
@@ -49,9 +54,7 @@ public class ObjectData : MonoBehaviour, ICustomSerializable
     void Update()
     {
         if (hideInPlayMode)
-        {
             sprite.enabled = (LevelEditor.main.mode >= EditMode.Create);
-        }
         UpdateSortOrder();
     }
 
@@ -59,7 +62,7 @@ public class ObjectData : MonoBehaviour, ICustomSerializable
     {
         // Sprite draw order is dependent on Y because we are 2.5D. However, we multiple everything by a constant so that 
         // we don't get jumps when rounding. Ties are broken by object type on layer.
-        sprite.sortingOrder = -1 * (int)Math.Floor(transform.position.y * 4) + (int)type;
+        sprite.sortingOrder = sortOrderModifier + -1 * (int)Math.Floor(transform.position.y * 4) + (int)type;
     }
 
     public bool Navigable

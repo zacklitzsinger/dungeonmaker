@@ -35,7 +35,7 @@ public class NavMap
             return false;
         List<ObjectData> goList = map[node];
         foreach (ObjectData info in goList)
-            if (info != null && info.type == ObjectType.Wall)
+            if (info != null && info.blocksPathing)
                 return false;
         return true;
     }

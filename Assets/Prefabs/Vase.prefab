@@ -143,6 +143,8 @@ MonoBehaviour:
   type: 4
   seeThrough: 1
   ground: 0
+  blocksPathing: 1
+  sortOrderModifier: 0
   hideInPlayMode: 0
 --- !u!212 &212390731372897270
 SpriteRenderer:

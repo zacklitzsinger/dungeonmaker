@@ -72,9 +72,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createText: Wall that allows wind and flames to pass through.
+  category: 0
   type: 2
   seeThrough: 1
   ground: 0
+  blocksPathing: 1
+  sortOrderModifier: 2
   hideInPlayMode: 0
 --- !u!212 &212390731372897270
 SpriteRenderer:

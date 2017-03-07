@@ -144,9 +144,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createText: A door that requires a key to open.
+  category: 0
   type: 3
   seeThrough: 0
   ground: 1
+  blocksPathing: 1
+  sortOrderModifier: 0
   hideInPlayMode: 0
 --- !u!114 &114765350761504142
 MonoBehaviour:

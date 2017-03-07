@@ -53,9 +53,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createText: Forms boundaries for rooms.
+  category: 0
   type: 3
   seeThrough: 0
   ground: 0
+  blocksPathing: 1
+  sortOrderModifier: 0
   hideInPlayMode: 1
 --- !u!212 &212390731372897270
 SpriteRenderer:

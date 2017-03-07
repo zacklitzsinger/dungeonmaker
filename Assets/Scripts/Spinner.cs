@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Spinner : MonoBehaviour {
 
@@ -22,6 +20,7 @@ public class Spinner : MonoBehaviour {
     // Handle wind zones
     void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.Log("+OTHER: " + other.name);
         if (other.gameObject.layer != LayerMask.NameToLayer("Wind"))
             return;
         if (other.GetComponent<Rigidbody2D>())
@@ -44,6 +43,7 @@ public class Spinner : MonoBehaviour {
     // Handle wind zones
     void OnTriggerExit2D(Collider2D other)
     {
+        Debug.Log("-OTHER: " + other.name);
         if (other.gameObject.layer != LayerMask.NameToLayer("Wind"))
             return;
         if (other.GetComponent<Rigidbody2D>())

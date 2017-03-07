@@ -67,7 +67,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1002282342740670}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 38.716927, y: -5.8164363, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4183898331960342}
@@ -124,6 +124,8 @@ MonoBehaviour:
   type: 2
   seeThrough: 1
   ground: 0
+  blocksPathing: 0
+  sortOrderModifier: 0
   hideInPlayMode: 0
 --- !u!114 &114765024785866122
 MonoBehaviour:

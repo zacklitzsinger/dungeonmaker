@@ -46,7 +46,7 @@ public class TreasureChest : MonoBehaviour, ICustomSerializable
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag("Player"))
+        if (!other.CompareTag("Player") || other.isTrigger)
             return;
         enabled = false;
         collider2d.enabled = false;

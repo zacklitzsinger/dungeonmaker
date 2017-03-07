@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using UnityEngine;
 
 public class Flamethrower : MonoBehaviour, ICustomSerializable
@@ -33,11 +32,11 @@ public class Flamethrower : MonoBehaviour, ICustomSerializable
         if (circuit)
             active = circuit.Powered ^ invert;
         fire.active = active;
-        float distance = FindDistance();
-        if (distance <= fire.size)
-            fire.size = distance;
+        float currentDistance = FindDistance();
+        if (currentDistance <= fire.size)
+            fire.size = currentDistance;
         else
-            fire.size = Mathf.Min(fire.size + 0.016f, distance);
+            fire.size = Mathf.Min(fire.size + 0.016f, currentDistance);
     }
 
     float FindDistance()

@@ -11,11 +11,14 @@ public class Fan : MonoBehaviour, ICustomSerializable
     public int activationSpeed = 2;
     public float force;
 
+    Wind wind;
     Animator animator;
 
     void Start()
     {
         animator = GetComponentInChildren<Animator>();
+        wind = GetComponentInChildren<Wind>();
+        wind.size = 0;
     }
 
     void Update()
@@ -28,7 +31,6 @@ public class Fan : MonoBehaviour, ICustomSerializable
         Circuit circuit = GetComponent<Circuit>();
         if (circuit)
             active = circuit.Powered;
-        Wind wind = GetComponentInChildren<Wind>();
         wind.active = active;
         wind.force = force;
         float distance = FindDistance();
@@ -54,7 +56,7 @@ public class Fan : MonoBehaviour, ICustomSerializable
         ObjectData info = go.GetComponentInParent<ObjectData>();
         if (!info || info.gameObject == gameObject)
             return false;
-        if (info.type == ObjectType.Wall)
+        if (info.type == ObjectType.Wall || go.GetComponent<Health>() && go.GetComponent<Health>().invulnerableOverride)
             return true;
         return false;
     }

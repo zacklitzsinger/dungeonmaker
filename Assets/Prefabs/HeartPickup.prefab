@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 212621048473382382}
   - component: {fileID: 61873251953430206}
   - component: {fileID: 114164378599516890}
+  - component: {fileID: 114147934609815798}
   m_Layer: 0
   m_Name: HeartPickup
   m_TagString: Untagged
@@ -56,6 +57,25 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Size: {x: 0.2, y: 0.2}
+--- !u!114 &114147934609815798
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1906677971985918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7ee4e40eca2f1241b95124f3997a91c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  createText: 
+  category: 0
+  type: 4
+  seeThrough: 1
+  ground: 0
+  blocksPathing: 0
+  sortOrderModifier: 0
+  hideInPlayMode: 0
 --- !u!114 &114164378599516890
 MonoBehaviour:
   m_ObjectHideFlags: 1

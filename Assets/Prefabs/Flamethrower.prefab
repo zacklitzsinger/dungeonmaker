@@ -217,7 +217,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   active: 1
-  distance: 0
+  distance: 5
   invert: 0
 --- !u!114 &114744713971349162
 MonoBehaviour:
@@ -235,6 +235,8 @@ MonoBehaviour:
   type: 3
   seeThrough: 1
   ground: 0
+  blocksPathing: 0
+  sortOrderModifier: 0
   hideInPlayMode: 0
 --- !u!198 &198164836438612714
 ParticleSystem:

@@ -39,7 +39,7 @@ GameObject:
   - component: {fileID: 4786370944408606}
   - component: {fileID: 199378804856607254}
   - component: {fileID: 198320584946391534}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Particle System
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 4232316040818218}
   - component: {fileID: 61334132668752296}
   - component: {fileID: 114198579171108186}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Wind
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -226,6 +226,8 @@ MonoBehaviour:
   type: 3
   seeThrough: 1
   ground: 0
+  blocksPathing: 0
+  sortOrderModifier: 0
   hideInPlayMode: 0
 --- !u!114 &114962884234067148
 MonoBehaviour:

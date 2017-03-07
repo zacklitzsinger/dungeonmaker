@@ -252,6 +252,8 @@ MonoBehaviour:
   type: 5
   seeThrough: 1
   ground: 0
+  blocksPathing: 0
+  sortOrderModifier: 0
   hideInPlayMode: 0
 --- !u!114 &114683092624723160
 MonoBehaviour:
@@ -288,7 +290,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63493e8285cb7d449b3f3deb5d8ff5c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  acceleration: 3
+  acceleration: 15
   flying: 1
   path: []
 --- !u!114 &114838531033108368

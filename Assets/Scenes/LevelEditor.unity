@@ -286,6 +286,7 @@ GameObject:
   - component: {fileID: 47790082}
   - component: {fileID: 47790083}
   - component: {fileID: 47790084}
+  - component: {fileID: 47790085}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -334,7 +335,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 11.25
+  orthographic size: 13.078125
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -486,6 +487,14 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!45 &47790085
+Skybox:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 47790075}
+  m_Enabled: 1
+  m_CustomSkybox: {fileID: 2100000, guid: b49e9d5823a62dd4789473efd9dd6812, type: 2}
 --- !u!1001 &102411014
 Prefab:
   m_ObjectHideFlags: 0
@@ -3525,7 +3534,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.050048828, y: -0.000030517578}
+  m_AnchoredPosition: {x: -0.050048828, y: 0}
   m_SizeDelta: {x: 235, y: 0}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1305885424

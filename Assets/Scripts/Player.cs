@@ -27,7 +27,7 @@ public struct PlayerAction
     }
 }
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IActionQueue
 {
 
     public GameObject swordPrefab;
@@ -133,6 +133,13 @@ public class Player : MonoBehaviour
         }
         currentActionFrames = 0;
         remStateFrames = action.frames;
+    }
+
+    public void Interrupt(int frames)
+    {
+        currentAction = new PlayerAction() { type = PlayerState.Idle, frames = frames };
+        TriggerAction(currentAction);
+        combo = 0;
     }
 
     bool CanQueueActions()

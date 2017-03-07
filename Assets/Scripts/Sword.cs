@@ -12,6 +12,7 @@ public class Sword : MonoBehaviour
     public Style style;
     public int remainingFrames;
     public int damage;
+    public int stagger;
     public float knockback;
     public bool friendly;
     public GameObject owner;
@@ -42,11 +43,14 @@ public class Sword : MonoBehaviour
         Vector2 direction = (other.transform.position - transform.position).normalized;
         if (shield)
         {
-            shield.Block();
+            shield.Block(GetComponentInParent<IActionQueue>());
             other.GetComponentInParent<Rigidbody2D>().AddForce(direction * knockback);
         }
         else
             health.Damage(damage, owner, direction * knockback);
+        IActionQueue otherAQ = other.GetComponentInParent<IActionQueue>();
+        if (otherAQ != null)
+            otherAQ.Interrupt(stagger);
         if (ownerRb2d)
             ownerRb2d.AddForce(-direction * knockback);
         Camera.main.GetComponent<AudioSource>().PlayOneShot(swordHitSound);

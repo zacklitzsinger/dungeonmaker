@@ -24,6 +24,6 @@ public class DamageOnTouch : MonoBehaviour {
         Vector2 dir = (other.transform.position - transform.position).normalized;
         other.GetComponentInParent<Rigidbody2D>().AddForce(dir * knockback / 5);
         GetComponentInParent<Rigidbody2D>().AddForce(-dir * knockback / 5);
-        shield.Block();
+        shield.Block(GetComponentInParent<IActionQueue>());
     }
 }

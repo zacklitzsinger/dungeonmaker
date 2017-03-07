@@ -117,6 +117,7 @@ MonoBehaviour:
   style: 0
   remainingFrames: 15
   damage: 2
+  stagger: 20
   knockback: 600
   friendly: 1
   owner: {fileID: 0}

@@ -7,17 +7,18 @@ public class Shield : MonoBehaviour {
 
     public AudioClip blockSound;
 
-    Player player;
+    IActionQueue actionQueue;
 
     void Start()
     {
-        player = GetComponentInParent<Player>();
+        actionQueue = GetComponentInParent<IActionQueue>();
     }
 
-    public void Block()
+    public void Block(IActionQueue source)
     {
-        player.currentAction = new PlayerAction() { type = PlayerState.Idle, frames = blockStunnedFrames };
-        player.TriggerAction(player.currentAction);
+        if (source != null)
+            source.Interrupt(blockStunnedFrames);
+        actionQueue.Interrupt(blockStunnedFrames);
         AudioSource.PlayClipAtPoint(blockSound, transform.position);
     }
 

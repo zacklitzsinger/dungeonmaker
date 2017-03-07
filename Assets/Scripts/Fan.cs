@@ -56,7 +56,7 @@ public class Fan : MonoBehaviour, ICustomSerializable
         ObjectData info = go.GetComponentInParent<ObjectData>();
         if (!info || info.gameObject == gameObject)
             return false;
-        if (info.type == ObjectType.Wall || go.GetComponent<Health>() && go.GetComponent<Health>().invulnerableOverride)
+        if (info.type == ObjectType.Wall)
             return true;
         return false;
     }

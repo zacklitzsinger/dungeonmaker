@@ -8,7 +8,7 @@ public struct KnightAction
     public Vector2 direction;
 }
 
-public class KnightAttack : MonoBehaviour
+public class KnightAttack : MonoBehaviour, IActionQueue
 {
 
     public float acceleration;
@@ -18,13 +18,15 @@ public class KnightAttack : MonoBehaviour
     public float attackDistance;
     public float attackMoveForce;
     public GameObject sword;
+    [ReadOnly]
     public int staggerFrames; // can't do anything while stagger frames > 0
 
     public enum State
     {
         Idle,
         Chase,
-        Attack,
+        AttackWindup,
+        Attack
     }
 
     public KnightAction currentAction;
@@ -33,18 +35,24 @@ public class KnightAttack : MonoBehaviour
 
     VisionCone vision;
     Rigidbody2D rb2d;
+    Shield shield;
 
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
         vision = GetComponent<VisionCone>();
+        shield = GetComponentInChildren<Shield>(true);
     }
 
-    void TriggerAction(KnightAction action)
+    public void TriggerAction(KnightAction action)
     {
+        if (shield)
+            shield.gameObject.SetActive(action.type != State.Idle || action.frames == 0);
         switch (action.type)
         {
             case State.Attack:
+                if (shield)
+                    shield.gameObject.SetActive(false);
                 Quaternion rotation = Quaternion.LookRotation(Random.value < 0.5f ? Vector3.forward : Vector3.back, action.direction.normalized);
                 Sword swordInstance = Instantiate(sword, transform.position, rotation, transform).GetComponentInChildren<Sword>();
                 swordInstance.friendly = false;
@@ -56,13 +64,19 @@ public class KnightAttack : MonoBehaviour
         }
     }
 
+    public void Interrupt(int frames)
+    {
+        currentAction = new KnightAction() { type = KnightAttack.State.Idle, frames = frames };
+        TriggerAction(currentAction);
+    }
+
     KnightAction DecideNextAction()
     {
         if (vision.target)
         {
             if ((vision.target.position - transform.position).magnitude < attackDistance)
             {
-                actions.Enqueue(new KnightAction() { type = State.Idle, frames = Random.Range(minAttackDelay, maxAttackDelay) });
+                actions.Enqueue(new KnightAction() { type = State.AttackWindup, frames = Random.Range(minAttackDelay, maxAttackDelay) });
                 actions.Enqueue(new KnightAction() { type = State.Attack, frames = attackFrames, direction = (vision.target.position - transform.position) });
             }
             else
@@ -77,7 +91,7 @@ public class KnightAttack : MonoBehaviour
                     actions.Enqueue(new KnightAction() { type = State.Chase });
             }
         }
-        return currentAction = new KnightAction(); 
+        return currentAction = new KnightAction();
     }
 
     void RecalcPath()

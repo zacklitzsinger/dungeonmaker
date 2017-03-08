@@ -27,8 +27,9 @@ GameObject:
   - component: {fileID: 114273653508190260}
   - component: {fileID: 114013204344090042}
   - component: {fileID: 114683092624723160}
+  - component: {fileID: 114974350140587408}
   m_Layer: 0
-  m_Name: Drone
+  m_Name: BulletDrone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -77,7 +78,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1147360471527010}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -1.7255166, y: 1.1174755, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4605985993970130}
@@ -224,12 +225,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   invulnerableOverride: 0
-  maxHealth: 4
+  maxHealth: 6
   invulnFrames: 0
   currentHealth: 0
   remInvulnFrames: 0
   deathRespawnPoint: {fileID: 0}
-  itemChanceDropOnDeath: 0.3
+  itemChanceDropOnDeath: 0.25
   itemChoices:
   - {fileID: 1906677971985918, guid: 18988c1a83705c645be824996fdde668, type: 2}
   damageParticles: {fileID: 198637271435436188, guid: 3203b49ec00b44246bc810d433c37f3c,
@@ -247,7 +248,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ee4e40eca2f1241b95124f3997a91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  createText: A simple flying enemy.
+  createText: A simple flying enemy that shoots bullets in a plus pattern every so
+    often.
   category: 3
   type: 5
   seeThrough: 1
@@ -304,6 +306,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d08b0162c2fcca499881b2d15b6b0e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114974350140587408
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147360471527010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fa4fe2630489044e8c0cb998c3cbbc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  freqency: 180
+  directions:
+  - {x: 1, y: 0}
+  - {x: 0, y: 1}
+  - {x: -1, y: 0}
+  - {x: 0, y: -1}
+  bulletPrefab: {fileID: 114536522912404158, guid: 0861409d57b6f1e458ad8ffefb4c1d96,
+    type: 2}
 --- !u!212 &212282930908111948
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -335,7 +356,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 0e0d2c235181cdd41aa11063458b2d5b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8c72961376e1b2f41a05c17bc9cf17ba, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

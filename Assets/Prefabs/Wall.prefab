@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 114744713971349162}
   - component: {fileID: 68843267525364834}
   - component: {fileID: 114412806498859704}
+  - component: {fileID: 61149953772362690}
   m_Layer: 12
   m_Name: Wall
   m_TagString: Untagged
@@ -43,13 +44,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &61149953772362690
+BoxCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1002282342740670}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
 --- !u!68 &68843267525364834
 EdgeCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1002282342740670}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 6200000, guid: bc9f1f72ce5eaa34b987f7d06f8c3cfd, type: 2}
   m_IsTrigger: 0

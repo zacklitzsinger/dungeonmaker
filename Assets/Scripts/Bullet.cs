@@ -5,6 +5,7 @@ public class Bullet : MonoBehaviour
 
     public float velocity;
     public int lifetime;
+    public bool friendly;
 
     void Start()
     {
@@ -16,12 +17,14 @@ public class Bullet : MonoBehaviour
         if (other.isTrigger)
             return;
         ObjectData otherData = other.GetComponentInParent<ObjectData>();
-        if (!other.CompareTag("Player") && otherData != null && (otherData.type == ObjectType.Wall || otherData.type == ObjectType.Enemy))
+        Health otherHealth = other.GetComponent<Health>();
+        if (otherData == null)
+            return;
+        if (otherData.CompareTag("Player") != friendly || otherData.type == ObjectType.Wall)
         {
             Destroy(gameObject);
-            Health otherHealth = other.GetComponent<Health>();
             if (otherHealth)
-                otherHealth.Damage(1, gameObject, Vector2.zero);
+                otherHealth.Damage(1, gameObject, transform.up * velocity);
         }
     }
 

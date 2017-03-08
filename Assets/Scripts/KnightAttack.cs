@@ -74,7 +74,7 @@ public class KnightAttack : MonoBehaviour, IActionQueue
     {
         if (vision.target)
         {
-            if ((vision.target.position - transform.position).magnitude < attackDistance)
+            if (sword && (vision.target.position - transform.position).magnitude < attackDistance)
             {
                 actions.Enqueue(new KnightAction() { type = State.AttackWindup, frames = Random.Range(minAttackDelay, maxAttackDelay) });
                 actions.Enqueue(new KnightAction() { type = State.Attack, frames = attackFrames, direction = (vision.target.position - transform.position) });

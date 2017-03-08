@@ -14,17 +14,21 @@ public class Bullet : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.isTrigger)
-            return;
         ObjectData otherData = other.GetComponentInParent<ObjectData>();
-        Health otherHealth = other.GetComponent<Health>();
-        if (otherData == null)
+        Health otherHealth = other.GetComponentInParent<Health>();
+        Shield shield = other.GetComponent<Shield>();
+        if (other.isTrigger && !shield || otherData == null)
             return;
         if (otherData.CompareTag("Player") != friendly || otherData.type == ObjectType.Wall)
         {
             Destroy(gameObject);
             if (otherHealth)
-                otherHealth.Damage(1, gameObject, transform.up * velocity);
+            {
+                if (shield)
+                    shield.Block(null);
+                else
+                    otherHealth.Damage(1, gameObject, transform.up * velocity * 50);
+            }
         }
     }
 

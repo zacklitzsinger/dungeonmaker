@@ -26,7 +26,6 @@ GameObject:
   - component: {fileID: 114789258443482190}
   - component: {fileID: 114273653508190260}
   - component: {fileID: 114013204344090042}
-  - component: {fileID: 114683092624723160}
   - component: {fileID: 114974350140587408}
   m_Layer: 0
   m_Name: BulletDrone
@@ -64,6 +63,7 @@ GameObject:
   - component: {fileID: 212282930908111948}
   - component: {fileID: 61550973897250896}
   - component: {fileID: 114838531033108368}
+  - component: {fileID: 114606488264750754}
   m_Layer: 0
   m_Name: Collider
   m_TagString: Untagged
@@ -248,6 +248,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ee4e40eca2f1241b95124f3997a91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiName: Bullet Drone
   createText: A simple flying enemy that shoots bullets in a plus pattern every so
     often.
   category: 3
@@ -257,12 +258,12 @@ MonoBehaviour:
   blocksPathing: 0
   sortOrderModifier: 0
   hideInPlayMode: 0
---- !u!114 &114683092624723160
+--- !u!114 &114606488264750754
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1147360471527010}
+  m_GameObject: {fileID: 1599157843222470}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b3c7349317724424eb285151a2abc252, type: 3}

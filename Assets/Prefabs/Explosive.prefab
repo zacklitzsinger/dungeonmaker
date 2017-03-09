@@ -20,11 +20,15 @@ GameObject:
   m_Component:
   - component: {fileID: 4238989630657178}
   - component: {fileID: 212390731372897270}
-  - component: {fileID: 114744713971349162}
-  - component: {fileID: 114412806498859704}
-  - component: {fileID: 61149953772362690}
-  m_Layer: 12
-  m_Name: Wall
+  - component: {fileID: 114923516325275864}
+  - component: {fileID: 50610769941585446}
+  - component: {fileID: 114539856944044160}
+  - component: {fileID: 61025913196949640}
+  - component: {fileID: 114023323705220298}
+  - component: {fileID: 114379229927955460}
+  - component: {fileID: 114515717278919840}
+  m_Layer: 0
+  m_Name: Explosive
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43,7 +47,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &61149953772362690
+--- !u!50 &50610769941585446
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1002282342740670}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 8
+  m_LinearDrag: 1
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4
+--- !u!61 &61025913196949640
 BoxCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -56,8 +80,8 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
---- !u!114 &114412806498859704
+  m_Size: {x: 0.5, y: 0.5}
+--- !u!114 &114023323705220298
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -65,11 +89,60 @@ MonoBehaviour:
   m_GameObject: {fileID: 1002282342740670}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5a2d6a6fc5d3414b950540008644950, type: 3}
+  m_Script: {fileID: 11500000, guid: bc38bfe7b7a66124590035e44e1fff73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  active: 0
---- !u!114 &114744713971349162
+  reset: 1
+--- !u!114 &114379229927955460
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1002282342740670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8449060781c08b43be701b18c3a9c22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dragModifier: 1
+--- !u!114 &114515717278919840
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1002282342740670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca79f91a826bce94084e76754c6d0f01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 1.5
+  knockback: 2000
+  damage: 2
+--- !u!114 &114539856944044160
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1002282342740670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6389aa04a6ae654fbe3575aa65009f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  invulnerableOverride: 0
+  maxHealth: 1
+  invulnFrames: 0
+  currentHealth: 0
+  remInvulnFrames: 0
+  deathRespawnPoint: {fileID: 0}
+  itemChanceDropOnDeath: 0
+  itemChoices: []
+  damageParticles: {fileID: 198736298119686088, guid: a28470c3a7a222248bd4732c4f80a583,
+    type: 2}
+  hitSound: {fileID: 0}
+  deathSound: {fileID: 8300000, guid: 35f3f2907306ce64b8552b2cad8e2fde, type: 3}
+--- !u!114 &114923516325275864
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -80,11 +153,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ee4e40eca2f1241b95124f3997a91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiName: Wall
-  createText: Simple dungeon wall. Can be powered to disappear.
-  category: 0
-  type: 3
-  seeThrough: 0
+  uiName: Explosive
+  createText: Explodes when damaged or when powered.
+  category: 1
+  type: 4
+  seeThrough: 1
   ground: 0
   blocksPathing: 1
   sortOrderModifier: 0
@@ -120,7 +193,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 48dd739245e70c44aa2afcd6797a633c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 096c74b73aebd844693ed82ec8c740b9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

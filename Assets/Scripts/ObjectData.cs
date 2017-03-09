@@ -25,6 +25,7 @@ public enum Category
 
 public class ObjectData : MonoBehaviour, ICustomSerializable
 {
+    public string uiName;
     // Tooltip text
     [TextArea]
     public string createText;

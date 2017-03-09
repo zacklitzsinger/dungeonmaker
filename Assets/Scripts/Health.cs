@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -29,14 +28,18 @@ public class Health : MonoBehaviour, ICustomSerializable
     public delegate void OnDamagedDelegate(GameObject source);
     public event OnDamagedDelegate onDamaged;
 
+    ObjectData data;
     Rigidbody2D rb2d;
     Player player;
+    SpriteRenderer spriteRenderer;
 
     void Start()
     {
         currentHealth = maxHealth;
+        data = GetComponentInParent<ObjectData>();
         rb2d = GetComponentInParent<Rigidbody2D>();
         player = GetComponentInParent<Player>();
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
     public void Heal(int amt)
@@ -48,13 +51,13 @@ public class Health : MonoBehaviour, ICustomSerializable
     {
         if (remInvulnFrames > 0 || invulnerableOverride)
             dmg = 0;
-        currentHealth -= dmg;
-        if (dmg > 0)
+        if (currentHealth > 0 && dmg > 0)
         {
+            currentHealth -= dmg;
             remInvulnFrames = invulnFrames;
             if (invulnFrames > 0)
-                StartCoroutine(Flash(GetComponentInChildren<SpriteRenderer>(), invulnFrames));
-            if (damageParticles && knockback.magnitude > 0)
+                StartCoroutine(Flash(spriteRenderer, invulnFrames));
+            if (damageParticles)
             {
                 Instantiate(damageParticles, transform.position, Quaternion.LookRotation(knockback, Vector3.forward));
                 rb2d.AddForce(knockback);
@@ -77,7 +80,7 @@ public class Health : MonoBehaviour, ICustomSerializable
                     GameObject itemChoice = itemChoices[UnityEngine.Random.Range(0, itemChoices.Count)];
                     LevelEditor.main.CreateObjectAtGrid(transform.position, itemChoice);
                 }
-                GetComponentInParent<ObjectData>().gameObject.SetActive(false);
+                data.gameObject.SetActive(false);
             }
         }
         else if (fall && player)

@@ -103,11 +103,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ee4e40eca2f1241b95124f3997a91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiName: Spikes
   createText: Deadly spike trap. Automatically pops up at an interval. Can be powered.
   category: 1
   type: 2
   seeThrough: 1
   ground: 0
+  blocksPathing: 0
+  sortOrderModifier: 0
   hideInPlayMode: 0
 --- !u!212 &212390731372897270
 SpriteRenderer:

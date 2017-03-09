@@ -81,10 +81,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ee4e40eca2f1241b95124f3997a91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiName: Floor
   createText: Basic dungeon floor.
+  category: 0
   type: 1
   seeThrough: 1
   ground: 1
+  blocksPathing: 0
+  sortOrderModifier: 0
   hideInPlayMode: 0
 --- !u!212 &212390731372897270
 SpriteRenderer:

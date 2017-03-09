@@ -164,7 +164,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 if (option.GetComponent<ObjectData>().category != (Category)Enum.Parse(typeof(Category), groupName))
                     continue;
                 GameObject button = Instantiate(prefabButton, sidebarContent.transform);
-                button.name = option.name;
+                button.name = option.GetComponent<ObjectData>().uiName;
                 RectTransform rectTransform = button.GetComponent<RectTransform>();
                 rectTransform.offsetMin = Vector2.zero;
                 rectTransform.offsetMax = Vector2.zero;
@@ -235,10 +235,10 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 SetHelpPanelText("Place new objects into the level. Left click to place the selected object. Right click to remove objects.");
                 break;
             case EditMode.Edit:
-                SetHelpPanelText("Edit properties of objects. Left click to select an object to edit.");
+                SetHelpPanelText("Edit properties of objects. Left click to select an object to edit, then modify the fields in the sidebar.");
                 break;
             case EditMode.Circuit:
-                SetHelpPanelText("Connect elements via wires. Left click on a input and then an output to place a wire. Right click an object to remove all wires connected to it.");
+                SetHelpPanelText("Connect elements via wires. Left click on a input and then an output to place a wire. Right click an object to remove all wires connected to it. Objects that start a chain of connections are automatically powered.");
                 break;
             case EditMode.Victory:
                 SetHelpPanelText();

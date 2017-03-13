@@ -27,21 +27,27 @@ public class TreasureChest : MonoBehaviour, ICustomSerializable
     {
         collider2d = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        SetupCircuit();
     }
 
     void FixedUpdate()
     {
-        if (circuit == null)
-        {
-            circuit = GetComponent<Circuit>();
-            if (circuit)
-                circuit.gateConditions.Add(() => { return !enabled; });
-        }
+        SetupCircuit();
         if (circuit)
         {
             collider2d.enabled = circuit.Powered;
             spriteRenderer.enabled = circuit.Powered;
         }   
+    }
+
+    void SetupCircuit()
+    {
+        if (circuit != null)
+            return;
+        circuit = GetComponent<Circuit>();
+        if (circuit == null)
+            return;
+        circuit.gateConditions.Add(() => { return !enabled; });
     }
 
     void OnTriggerEnter2D(Collider2D other)

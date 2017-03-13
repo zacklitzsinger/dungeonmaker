@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -16,7 +15,9 @@ public class Circuit : MonoBehaviour, ICustomSerializable
         }
     }
     // Test conditions last frame
+    [ReadOnly]
     public bool lastGateTest = false;
+    [ReadOnly]
     public bool lastPowerTest = false;
 
 
@@ -35,7 +36,7 @@ public class Circuit : MonoBehaviour, ICustomSerializable
     [ReadOnly]
     public List<Circuit> outputs = new List<Circuit>();
 
-    void Start()
+    void Awake()
     {
         powerConditions.Add(() =>
         {

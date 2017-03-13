@@ -15,6 +15,7 @@ public class Spinner : MonoBehaviour {
     void Start()
     {
         rb2d = GetComponentInChildren<Rigidbody2D>();
+        SetupCircuit();
     }
 
     // Handle wind zones
@@ -53,16 +54,16 @@ public class Spinner : MonoBehaviour {
 
     void Update()
     {
-        if (circuit == null)
-        {
-            circuit = GetComponentInParent<Circuit>();
-            if (circuit != null)
-                SetupCircuit();
-        }
+        SetupCircuit();
     }
 
     void SetupCircuit()
     {
+        if (circuit != null)
+            return;
+        circuit = GetComponent<Circuit>();
+        if (circuit == null)
+            return;
         circuit.gateConditions.Add(() => { return (Mathf.Abs(rb2d.angularVelocity) >= activationSpeed); });
     }
 

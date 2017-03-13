@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Key : MonoBehaviour {
 
@@ -14,16 +12,12 @@ public class Key : MonoBehaviour {
     {
         collider2d = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        SetupCircuit();
     }
 
     void FixedUpdate()
     {
-        if (circuit == null)
-        {
-            circuit = GetComponent<Circuit>();
-            if (circuit)
-                circuit.gateConditions.Add(() => { return !enabled; });
-        }
+        SetupCircuit();
         if (circuit)
         {
             collider2d.enabled = circuit.Powered;
@@ -31,9 +25,19 @@ public class Key : MonoBehaviour {
         }
     }
 
+    void SetupCircuit()
+    {
+        if (circuit != null)
+            return;
+        circuit = GetComponent<Circuit>();
+        if (circuit == null)
+            return;
+        circuit.gateConditions.Add(() => { return !enabled; });
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !other.isTrigger)
         {
             enabled = false;
             collider2d.enabled = false;

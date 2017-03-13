@@ -17,14 +17,14 @@ public class Delay : MonoBehaviour, ICustomSerializable
     Circuit circuit;
     Queue<bool> history = new Queue<bool>();
 
+    void Start()
+    {
+        SetupCircuit();
+    }
+
     void Update()
     {
-        if (circuit == null)
-        {
-            circuit = GetComponent<Circuit>();
-            if (circuit != null)
-                SetupCircuit();
-        }
+        SetupCircuit();
     }
 
     void FixedUpdate()
@@ -39,6 +39,11 @@ public class Delay : MonoBehaviour, ICustomSerializable
 
     void SetupCircuit()
     {
+        if (circuit != null)
+            return;
+        circuit = GetComponent<Circuit>();
+        if (circuit == null)
+            return;
         circuit.gateConditions.Add(() => { return DelayFrames == 0 || history.Count >= DelayFrames && history.Peek(); });
         circuit.powerConditions.Add(() => { return true; });
     }

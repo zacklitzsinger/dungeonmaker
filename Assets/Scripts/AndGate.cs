@@ -1,23 +1,30 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class AndGate : MonoBehaviour {
+public class AndGate : MonoBehaviour
+{
 
     Circuit circuit;
 
+    void Start()
+    {
+        SetupCircuit();
+    }
+
     void Update()
     {
-        if (circuit == null)
-        {
-            circuit = GetComponent<Circuit>();
-            if (circuit != null)
-                SetupCircuit();
-        }
+        SetupCircuit();
     }
 
     void SetupCircuit()
     {
-        circuit.gateConditions.Add(() => { return circuit.powerAmount >= circuit.inputs.Count; });
+        if (circuit != null)
+            return;
+        circuit = GetComponent<Circuit>();
+        if (circuit == null)
+            return;
+        circuit.gateConditions.Add(() =>
+        {
+            return circuit.powerAmount >= circuit.inputs.Count;
+        });
     }
 }

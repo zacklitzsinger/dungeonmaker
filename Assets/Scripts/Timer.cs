@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using UnityEngine;
 
 public class Timer : MonoBehaviour, ICustomSerializable {
@@ -16,18 +13,24 @@ public class Timer : MonoBehaviour, ICustomSerializable {
 
     Circuit circuit;
 
+    void Start()
+    {
+        SetupCircuit();
+    }
+
     void Update()
     {
-        if (circuit == null)
-        {
-            circuit = GetComponent<Circuit>();
-            if (circuit != null)
-                SetupCircuit();
-        }
+        SetupCircuit();
     }
 
     void SetupCircuit()
     {
+        if (circuit == null)
+        {
+            circuit = GetComponent<Circuit>();
+            if (circuit == null)
+                return;
+        }
         circuit.gateConditions.Add(() => { return on; });
     }
 

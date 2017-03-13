@@ -36,6 +36,11 @@ public class Switch : MonoBehaviour, ICustomSerializable
         animator = GetComponent<Animator>();
     }
 
+    void Start()
+    {
+        SetupCircuit();
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
         ObjectData data = other.GetComponentInParent<ObjectData>();
@@ -60,16 +65,17 @@ public class Switch : MonoBehaviour, ICustomSerializable
     void Update()
     {
         animator.SetBool("active", Active);
-        if (circuit == null)
-        {
-            circuit = GetComponent<Circuit>();
-            if (circuit != null)
-                SetupCircuit();
-        }
+
+        SetupCircuit();
     }
 
     void SetupCircuit()
     {
+        if (circuit != null)
+            return;
+        circuit = GetComponent<Circuit>();
+        if (circuit == null)
+            return;
         circuit.gateConditions.Add(() => { return Active ^ invert; });
     }
 

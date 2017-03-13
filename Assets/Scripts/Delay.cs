@@ -8,7 +8,7 @@ public class Delay : MonoBehaviour, ICustomSerializable
     /// <summary>
     /// Number of seconds to delay inputs.
     /// </summary>
-    [PlayerEditableRange("Delay", 0, 10)]
+    [PlayerEditableRange("Delay", 0, 30)]
     public int delaySeconds = 1;
     /// <summary>
     /// Number of frames to delay inputs.

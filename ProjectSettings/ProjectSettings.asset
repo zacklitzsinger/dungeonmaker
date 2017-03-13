@@ -461,8 +461,12 @@ PlayerSettings:
   XboxOnePersistentLocalStorageSize: 0
   vrEditorSettings: {}
   cloudServicesEnabled:
+    Build: 0
+    Collab: 0
+    ErrorHub: 0
+    Hub: 0
     UNet: 1
-  cloudProjectId: be93d8ca-bf92-4c3a-834c-2911f3e23591
+  cloudProjectId: c4c73642-c33c-4275-90c1-91e1d3cfc9b6
   projectName: DungeonMaker
   organizationId: crunch-798046
   cloudEnabled: 0

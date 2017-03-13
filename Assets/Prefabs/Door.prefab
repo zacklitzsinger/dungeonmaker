@@ -146,7 +146,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiName: Door
-  createText: Separates rooms - allows the player to pass when near.
+  createText: Separates rooms - allows the player to pass when near. If connect by
+    circuit, it prevents passage when unpowered and allows it when powered.
   category: 0
   type: 3
   seeThrough: 0

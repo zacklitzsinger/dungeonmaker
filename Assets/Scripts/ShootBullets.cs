@@ -15,6 +15,8 @@ public class ShootBullets : MonoBehaviour {
 
     void FixedUpdate()
     {
+        if (!LevelEditor.main.currentRoom.Contains(transform.position.ToGrid()))
+            return;
         if (remFrames-- <= 0)
         {
             foreach(Vector2 dir in directions)

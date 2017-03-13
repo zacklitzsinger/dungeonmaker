@@ -47,7 +47,7 @@ public class Sword : MonoBehaviour
             other.GetComponentInParent<Rigidbody2D>().AddForce(direction * knockback);
         }
         else
-            health.Damage(damage, owner, direction * knockback);
+            health.Damage(damage, owner, direction * knockback, DamageType.Slash);
         IActionQueue otherAQ = other.GetComponentInParent<IActionQueue>();
         if (otherAQ != null)
             otherAQ.Interrupt(stagger);

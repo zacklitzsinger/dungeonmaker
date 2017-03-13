@@ -1,13 +1,26 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+
+[Flags]
+public enum DamageType
+{
+    Generic = 1,
+    Slash = 2,
+    Explosive = 4,
+    Ground = 8
+}
 
 public class Health : MonoBehaviour, ICustomSerializable
 {
     [PlayerEditable("Invulnerable")]
     [ReadOnly]
     public bool invulnerableOverride = false; // Invulnerability, set by some effects
+
+    [EnumFlag]
+    public DamageType vulnerableTo = DamageType.Generic | DamageType.Slash | DamageType.Explosive | DamageType.Ground;
 
     public int maxHealth;
     public int invulnFrames;
@@ -47,9 +60,9 @@ public class Health : MonoBehaviour, ICustomSerializable
         currentHealth = Mathf.Min(maxHealth, amt + currentHealth);
     }
 
-    public int Damage(int dmg, GameObject source, Vector2 knockback, bool fall = false)
+    public int Damage(int dmg, GameObject source, Vector2 knockback, DamageType damageType = DamageType.Generic, bool fall = false)
     {
-        if (remInvulnFrames > 0 || invulnerableOverride)
+        if (remInvulnFrames > 0 || invulnerableOverride || (damageType | vulnerableTo) != vulnerableTo)
             dmg = 0;
         if (currentHealth > 0 && dmg > 0)
         {
@@ -57,7 +70,7 @@ public class Health : MonoBehaviour, ICustomSerializable
             remInvulnFrames = invulnFrames;
             if (invulnFrames > 0)
                 StartCoroutine(Flash(spriteRenderer, invulnFrames));
-            if (damageParticles)
+            if (damageParticles && !fall)
             {
                 Instantiate(damageParticles, transform.position, Quaternion.LookRotation(knockback, Vector3.forward));
                 rb2d.AddForce(knockback);

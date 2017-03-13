@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
-public class Shield : MonoBehaviour {
+public class Shield : MonoBehaviour
+{
 
     [Tooltip("How many frames the player must idle after blocking successfully")]
     public int blockStunnedFrames;
@@ -18,7 +19,8 @@ public class Shield : MonoBehaviour {
     {
         if (source != null)
             source.Interrupt(blockStunnedFrames);
-        actionQueue.Interrupt(blockStunnedFrames);
+        if (actionQueue != null)
+            actionQueue.Interrupt(blockStunnedFrames);
         AudioSource.PlayClipAtPoint(blockSound, transform.position);
     }
 

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Wall : MonoBehaviour {
 
@@ -22,13 +20,24 @@ public class Wall : MonoBehaviour {
     SpriteRenderer spriteRenderer;
     ObjectData data;
     Circuit circuit;
+    Health health;
 
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         data = GetComponent<ObjectData>();
+        health = GetComponent<Health>();
     }
 
+    void OnDisable()
+    {
+        if (!gameObject.activeSelf)
+        {
+            data.seeThrough = true;
+            LevelEditor.main.currentRoomDirty = true;
+        }
+    }
+    
     void FixedUpdate()
     {
         if (circuit == null)
@@ -49,7 +58,7 @@ public class Wall : MonoBehaviour {
                     c.a = targetAlpha;
                 spriteRenderer.color = c;
             }
-        } else
+        } else if (!health)
         {
             enabled = false;
         }

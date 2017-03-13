@@ -189,7 +189,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         {
             bool active = Array.Exists(ObjectMasterList.main.options, (go) =>
             {
-                return go.name == child.name && go.GetComponent<ObjectData>().category == category;
+                return go.GetComponent<ObjectData>().uiName == child.name && go.GetComponent<ObjectData>().category == category;
             });
             child.gameObject.SetActive(active);
         }

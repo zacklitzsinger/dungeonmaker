@@ -116,6 +116,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   invulnerableOverride: 0
+  vulnerableTo: 7
   maxHealth: 1
   invulnFrames: 0
   currentHealth: 0
@@ -138,7 +139,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiName: Box
-  createText: A breakable, movable object.
+  createText: A breakable, movable box that can press switches.
   category: 1
   type: 4
   seeThrough: 1

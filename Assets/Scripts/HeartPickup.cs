@@ -7,7 +7,7 @@ public class HeartPickup : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !other.isTrigger)
         {
             Health health = other.GetComponentInParent<Health>();
             if (health.currentHealth < health.maxHealth)

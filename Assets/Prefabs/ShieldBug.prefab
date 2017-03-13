@@ -24,14 +24,12 @@ GameObject:
   - component: {fileID: 114043181614006576}
   - component: {fileID: 114789258443482190}
   - component: {fileID: 114879424544061262}
-  - component: {fileID: 114400208640650866}
   - component: {fileID: 114081175117869926}
   - component: {fileID: 114918477643818858}
   - component: {fileID: 114610941385884982}
-  - component: {fileID: 114689978433671992}
   - component: {fileID: 114870140566026070}
   m_Layer: 0
-  m_Name: RollBug
+  m_Name: ShieldBug
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -49,6 +47,23 @@ GameObject:
   - component: {fileID: 61297572645366790}
   m_Layer: 0
   m_Name: Collider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1345177809687524
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4400147658172830}
+  - component: {fileID: 114556573130155796}
+  - component: {fileID: 61854407580441916}
+  m_Layer: 0
+  m_Name: Shield
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -84,6 +99,7 @@ Transform:
   m_Children:
   - {fileID: 4445055096168218}
   - {fileID: 4063422540780022}
+  - {fileID: 4400147658172830}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -100,6 +116,19 @@ Transform:
   m_Father: {fileID: 4023337709139090}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4400147658172830
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1345177809687524}
+  m_LocalRotation: {x: -0, y: -0, z: -1, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4023337709139090}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -180}
 --- !u!4 &4445055096168218
 Transform:
   m_ObjectHideFlags: 1
@@ -144,9 +173,9 @@ BoxCollider2D:
   m_Material: {fileID: 6200000, guid: bc9f1f72ce5eaa34b987f7d06f8c3cfd, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.25}
   serializedVersion: 2
-  m_Size: {x: 0.6, y: 0.75}
+  m_Size: {x: 0.6, y: 0.4}
 --- !u!61 &61727154494134090
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -161,6 +190,20 @@ BoxCollider2D:
   m_Offset: {x: 0, y: -0.75}
   serializedVersion: 2
   m_Size: {x: 1.2, y: 1}
+--- !u!61 &61854407580441916
+BoxCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1345177809687524}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_Offset: {x: 0, y: -0.2}
+  serializedVersion: 2
+  m_Size: {x: 0.8, y: 0.5}
 --- !u!114 &114043181614006576
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -178,7 +221,7 @@ MonoBehaviour:
   randomStates:
   - {fileID: 114879424544061262}
   - {fileID: 114789258443482190}
-  attack: {fileID: 114400208640650866}
+  attack: {fileID: 0}
 --- !u!114 &114043723279324714
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -213,22 +256,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f371417c52363548a779879588ea96a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114400208640650866
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1147360471527010}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 189b9e8c995627b4f85ac83b28c35031, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentState: 0
-  direction: {x: 0, y: 0}
-  force: 4000
-  breakSpeed: 1
-  frameDelay: 30
 --- !u!114 &114554694894238124
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -240,8 +267,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ee4e40eca2f1241b95124f3997a91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiName: Roll Bug
-  createText: A slow enemy that dashes at the player when in line of sight.
+  uiName: Shield Bug
+  createText: A slow enemy with a large shield protecting its front.
   category: 3
   type: 5
   seeThrough: 1
@@ -249,6 +276,19 @@ MonoBehaviour:
   blocksPathing: 0
   sortOrderModifier: 0
   hideInPlayMode: 0
+--- !u!114 &114556573130155796
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1345177809687524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67041d7f4c96dc947a4c36597441b93f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blockStunnedFrames: 45
+  blockSound: {fileID: 8300000, guid: 96b9310ba50992441af8b946b2df905a, type: 3}
 --- !u!114 &114610941385884982
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -261,24 +301,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dragModifier: 1
---- !u!114 &114689978433671992
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1147360471527010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0bdb03a3b0525f04d8b2b1de6470976a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  angle: 45
-  distance: 3
-  target: {fileID: 0}
-  mask:
-    serializedVersion: 2
-    m_Bits: 1024
-  alwaysTrackPlayer: 0
 --- !u!114 &114789258443482190
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -331,7 +353,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   invulnerableOverride: 0
   vulnerableTo: 15
-  maxHealth: 6
+  maxHealth: 8
   invulnFrames: 0
   currentHealth: 0
   remInvulnFrames: 0
@@ -374,7 +396,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 0facc9ffcf5ca004bb5f4ba194370bce, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ec43c2afd626c79468b181636caeb841, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

@@ -72,7 +72,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiName: Basin
-  createText: Decoration.
+  createText: Small water-filled basin.
   category: 4
   type: 3
   seeThrough: 1

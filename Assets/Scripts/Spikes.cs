@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Spikes : MonoBehaviour {
 
@@ -24,7 +22,7 @@ public class Spikes : MonoBehaviour {
         Health health = other.GetComponentInParent<Health>();
         if (health == null)
             return;
-        health.Damage(damage, gameObject, (other.transform.position - transform.position).normalized * knockback);
+        health.Damage(damage, gameObject, (other.transform.position - transform.position).normalized * knockback, DamageType.Ground);
     }
 
     void FixedUpdate()

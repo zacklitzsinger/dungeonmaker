@@ -29,7 +29,7 @@ public class Explosive : MonoBehaviour
             if (!hitHealth || hitHealth.gameObject == gameObject)
                 continue;
             Vector2 dir = (hitHealth.transform.position - transform.position).normalized;
-            hitHealth.Damage(damage, gameObject, dir * knockback);
+            hitHealth.Damage(damage, gameObject, dir * knockback, DamageType.Explosive);
 
         }
     }

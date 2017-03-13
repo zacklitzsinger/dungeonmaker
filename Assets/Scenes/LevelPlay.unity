@@ -1107,7 +1107,7 @@ MonoBehaviour:
   uploadNameInput: {fileID: 0}
   uploadDescInput: {fileID: 0}
   uploadProgress: {fileID: 0}
-  playerPanel: {fileID: 0}
+  playerPanel: {fileID: 2075946850}
   helpPanel: {fileID: 0}
   circuitColor: {r: 0.86764705, g: 0.12759517, b: 0.12759517, a: 1}
   selectedCircuitInputColor: {r: 0.48417848, g: 0.9117647, b: 0, a: 1}

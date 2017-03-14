@@ -2,13 +2,27 @@
 
 Hi [name],
 
-I am in the process of making a game about creating, sharing, and playing small action-adventure levels (ala Zelda). If you are receiving this email, it's because I thought you might be interested in testing it out. Making a game is a challenging, iterative process, so I would really appreciate your feedback. Note that this game is in extremely early stages (pre-alpha), so I'm keeping the group of testers very small. Consider yourself lucky!
+I am making a game about creating, sharing, and playing small action-adventure levels with a mix of combat and puzzle-solving. Making a game is a challenging, iterative process, so I am hoping you would be willing to try the game out and give me feedback. I currently need feedback to help steer the direction of the game's development as well as ensure that the game is fun. The feedback I get will determine if I decide to continue working on the project, so it would help me immensely to get honest and detailed information about your play experience.
 
-We will be using Discord to communicate about the game. If you aren't familiar with Discord, it is a chat app similar to Skype and Slack. New builds will show up there on a regular basis. The Discord channel is here: https://discord.gg/7ByVx8R
+If you are interested in regular testing, we will be using Discord to communicate about the game. If you aren't familiar with Discord, it is a chat app similar to Skype and Slack. New builds will show up there on a regular basis. The Discord channel is here: https://discord.gg/7ByVx8R Alternatively, I would also appreciate any feedback to this email address.
 
 NOTE: PLEASE DO NOT SHARE ANY BUILDS, SCREENSHOTS, OR DETAILS ABOUT THE GAME ONLINE OUTSIDE OF THE DISCORD.
 
-I hope you join us!
+Thanks for your time, and I hope you join us!
 
-Thanks,
 Zack Litzsinger
+
+Quickstart
+On Windows, levels are stored in %APPDATA%/../LocalLow/DungeonMaker/DungeonMaker
+Controls:
+  Gameplay:
+    WASD for movement
+    Left click for sword attack
+    Right click for shield
+    Space for roll
+    E to use item once chest is acquired
+  Editor:
+    F1-F4 to switch between modes
+    WASD to move camera (shift to go faster)
+    Left click to place, right click to remove
+    Q/E to rotate pieces

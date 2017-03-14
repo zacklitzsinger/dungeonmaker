@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 199995558501267600}
   - component: {fileID: 114486336935885120}
   m_Layer: 0
-  m_Name: Hit
+  m_Name: Block
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -113,7 +113,7 @@ ParticleSystem:
     serializedVersion: 3
     enabled: 1
     startLifetime:
-      scalar: 1.2
+      scalar: 0.7
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -131,7 +131,7 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 2
           time: 0
-          value: 0.5833333
+          value: 0.42857146
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -140,7 +140,7 @@ ParticleSystem:
         m_RotationOrder: 0
       minMaxState: 3
     startSpeed:
-      scalar: 35
+      scalar: 45
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -158,7 +158,7 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 2
           time: 0
-          value: 0.71428573
+          value: 0.33333334
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -171,10 +171,10 @@ ParticleSystem:
       maxGradient:
         key0:
           serializedVersion: 2
-          rgba: 4282406143
+          rgba: 4284401151
         key1:
           serializedVersion: 2
-          rgba: 4294796244
+          rgba: 4289133537
         key2:
           serializedVersion: 2
           rgba: 16606126
@@ -194,7 +194,7 @@ ParticleSystem:
           serializedVersion: 2
           rgba: 0
         ctime0: 0
-        ctime1: 65535
+        ctime1: 65342
         ctime2: 65535
         ctime3: 65535
         ctime4: 0
@@ -260,7 +260,7 @@ ParticleSystem:
       maxColor: {r: 0.77254903, g: 0.34117648, b: 0.54509807, a: 1}
       minMaxState: 4
     startSize:
-      scalar: 0.3
+      scalar: 0.15
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -568,11 +568,11 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
       minMaxState: 0
-    cnt0: 60
+    cnt0: 10
     cnt1: 30
     cnt2: 30
     cnt3: 30
-    cntmax0: 60
+    cntmax0: 15
     cntmax1: 30
     cntmax2: 30
     cntmax3: 30
@@ -795,13 +795,13 @@ ParticleSystem:
           rgba: 4294967295
         key1:
           serializedVersion: 2
-          rgba: 4288454121
+          rgba: 4278946256
         key2:
           serializedVersion: 2
-          rgba: 13470674
+          rgba: 4280308888
         key3:
           serializedVersion: 2
-          rgba: 8013438
+          rgba: 4280033334
         key4:
           serializedVersion: 2
           rgba: 0
@@ -1409,7 +1409,7 @@ ParticleSystem:
       minMaxState: 1
     separateAxis: 0
     inWorldSpace: 0
-    dampen: 0.3
+    dampen: 0.5
   NoiseModule:
     enabled: 0
     strength:

@@ -18,6 +18,7 @@ public class Sword : MonoBehaviour
     public GameObject owner;
     public AudioClip swordSwingSound;
     public AudioClip swordHitSound;
+    public ParticleSystem blockParticles;
 
     HashSet<GameObject> hits = new HashSet<GameObject>();
 
@@ -52,12 +53,17 @@ public class Sword : MonoBehaviour
         if (otherAQ != null)
             otherAQ.Interrupt(stagger);
         if (ownerRb2d)
+        {
             ownerRb2d.AddForce(-direction * knockback);
+            Instantiate(blockParticles, transform.position, Quaternion.LookRotation(direction, Vector3.forward));
+        }
         Camera.main.GetComponent<AudioSource>().PlayOneShot(swordHitSound);
         if (shield)
             Destroy(transform.parent.gameObject);
     }
 
+    // For hitting walls
+    // TODO: Handle sword hitting multiple walls in a single frame.
     void OnTriggerStay2D(Collider2D other)
     {
         if (remainingFrames > 8 || friendly == other.CompareTag("Player") || hits.Contains(other.gameObject))
@@ -66,11 +72,12 @@ public class Sword : MonoBehaviour
         ObjectData otherData = other.GetComponentInParent<ObjectData>();
         if (!otherData || otherData.type != ObjectType.Wall)
             return;
-        //TODO Animation or particle effect when sword bonks against a wall
-        Destroy(gameObject);
+        Destroy(transform.parent.gameObject);
         if (ownerRb2d)
+        {
+            Instantiate(blockParticles, transform.position, Quaternion.LookRotation(direction, Vector3.forward));
             ownerRb2d.AddForce(-direction * knockback);
-        return;
+        }
     }
 
     void Update()

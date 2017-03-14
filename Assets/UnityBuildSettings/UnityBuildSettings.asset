@@ -1,0 +1,165 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d5886119a5c7b34d8872ab527ca3e1b, type: 3}
+  m_Name: UnityBuildSettings
+  m_EditorClassIdentifier: 
+  _basicSettings:
+    baseBuildFolder: Builds
+    buildPath: DMv$VERSION/$PLATFORM
+    openFolderPostBuild: 1
+  _productParameters:
+    buildCounter: 6
+    lastGeneratedVersion: 0.1.6
+    version: 0.1.$BUILD
+    autoGenerate: 1
+  _releaseTypeList:
+    releaseTypes:
+    - typeName: Release
+      bundleIndentifier: 
+      productName: DungeonMaker
+      developmentBuild: 0
+      allowDebugging: 0
+      customDefines: 
+      sceneList:
+        enabledScenes:
+        - filePath: Assets/Scenes/MainMenu.unity
+        - filePath: Assets/Scenes/LevelPlay.unity
+        - filePath: Assets/Scenes/LevelEditor.unity
+  _platformList:
+    platforms:
+    - enabled: 0
+      distributionList:
+        distributions: []
+      architectures:
+      - target: 25
+        name: Linux Universal
+        enabled: 1
+      - target: 17
+        name: Linux x86
+        enabled: 0
+      - target: 24
+        name: Linux x64
+        enabled: 0
+      variants: []
+      platformName: Linux
+      binaryNameFormat: '{0}.x86'
+      dataDirNameFormat: '{0}_Data'
+      targetGroup: 1
+    - enabled: 0
+      distributionList:
+        distributions: []
+      architectures:
+      - target: 2
+        name: OSX Universal
+        enabled: 1
+      - target: 4
+        name: OSX Intel
+        enabled: 0
+      - target: 27
+        name: OSX Intel64
+        enabled: 0
+      variants: []
+      platformName: OSX
+      binaryNameFormat: '{0}.app'
+      dataDirNameFormat: '{0}.app/Contents'
+      targetGroup: 1
+    - enabled: 1
+      distributionList:
+        distributions: []
+      architectures:
+      - target: 5
+        name: Windows x86
+        enabled: 1
+      - target: 19
+        name: Windows x64
+        enabled: 0
+      variants: []
+      platformName: PC
+      binaryNameFormat: '{0}.exe'
+      dataDirNameFormat: '{0}_Data'
+      targetGroup: 1
+  _projectConfigurations:
+    configSet:
+      _Buckets: 00000000ffffffff02000000
+      _HashCodes: 45cfcd621b9d631ce7bf3924
+      _Next: ffffffffffffffff01000000
+      _Count: 3
+      _Version: 3
+      _FreeList: -1
+      _FreeCount: 0
+      _Keys:
+      - Release/PC/Windows x86
+      - Release/PC
+      - Release
+      _Values:
+      - enabled: 1
+        childKeys: []
+      - enabled: 1
+        childKeys:
+        - Release/PC/Windows x86
+      - enabled: 1
+        childKeys:
+        - Release/PC
+    showViewOptions: 0
+    showConfigs: 0
+    showBuildInfo: 0
+    hideDisabled: 0
+    treeView: 0
+    selectedKeyChain: 
+  _preBuildActions:
+    buildActions: []
+  _postBuildActions:
+    buildActions:
+    - {fileID: 114823264170562340}
+    - {fileID: 114687615279765694}
+--- !u!114 &114687615279765694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97d88f7d353534a4fbdeb11196057db7, type: 3}
+  m_Name: UploadItch
+  m_EditorClassIdentifier: 
+  actionType: 1
+  actionName: UploadItch
+  note: 
+  filter:
+    condition: 0
+    clauses: []
+  pathToButlerExe: C:\Users\zelit\AppData\Roaming\itch\bin\butler.exe
+  nameOfItchUser: Crvnch
+  nameOfItchGame: dungeon-maker
+  useGeneratedBuildVersion: 1
+  showUploadProgress: 0
+  itchChannelOverride: 
+--- !u!114 &114823264170562340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de0f7a04940394844a505e73c3eb8cec, type: 3}
+  m_Name: ZipFileOperation
+  m_EditorClassIdentifier: 
+  actionType: 1
+  actionName: ZipFileOperation
+  note: 
+  filter:
+    condition: 0
+    clauses: []
+  inputPath: $BUILDPATH
+  outputPath: $BUILDPATH
+  outputFileName: $PRODUCT_NAME-$RELEASE_TYPE-$VERSION.zip

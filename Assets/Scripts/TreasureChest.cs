@@ -10,8 +10,7 @@ public class TreasureChest : MonoBehaviour, ICustomSerializable
         None,
         Key,
         GustItem,
-        ShadowCloak,
-        //SpeedBoots
+        ShadowCloak
     }
 
     [PlayerEditableEnum("Contents", typeof(ChestItem))]

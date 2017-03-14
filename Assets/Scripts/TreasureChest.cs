@@ -17,6 +17,7 @@ public class TreasureChest : MonoBehaviour, ICustomSerializable
     public ChestItem contents;
 
     public GameObject[] prefabOptions;
+    public AudioClip collectSound;
 
     Collider2D collider2d;
     SpriteRenderer spriteRenderer;
@@ -56,6 +57,8 @@ public class TreasureChest : MonoBehaviour, ICustomSerializable
         enabled = false;
         collider2d.enabled = false;
         spriteRenderer.enabled = false;
+        if (collectSound)
+            AudioSource.PlayClipAtPoint(collectSound, transform.position);
         if (contents == ChestItem.None)
             return;
         if (contents == ChestItem.Key)

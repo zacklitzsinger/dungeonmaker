@@ -76,6 +76,7 @@ GameObject:
   - component: {fileID: 212854648292242774}
   - component: {fileID: 114201570659321438}
   - component: {fileID: 58561508751203992}
+  - component: {fileID: 114250035270361940}
   m_Layer: 10
   m_Name: Shield
   m_TagString: Player
@@ -123,7 +124,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1218966084832412}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.4, z: 0}
+  m_LocalPosition: {x: 0, y: 0.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4976762380479224}
@@ -261,6 +262,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockStunnedFrames: 30
   blockSound: {fileID: 8300000, guid: 96b9310ba50992441af8b946b2df905a, type: 3}
+--- !u!114 &114250035270361940
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1218966084832412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d08b0162c2fcca499881b2d15b6b0e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114297423789516132
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -286,12 +298,12 @@ MonoBehaviour:
   swordPrefab: {fileID: 1002282342740670, guid: 440d7f478f067ab44b2b58da49e7d917,
     type: 2}
   dodgeIcon: {fileID: 21300000, guid: af8cf2bd83ed29747b03cbf2619d8150, type: 3}
-  acceleration: 200
+  acceleration: 450
   rollFrames: 20
-  rollForce: 2600
+  rollForce: 6000
   attackWindup: 8
   attackFrames: 22
-  attackForce: 1200
+  attackForce: 3000
   maxCombo: 3
   combo: 0
   postComboCooldown: 15
@@ -361,6 +373,7 @@ MonoBehaviour:
   itemChoices: []
   damageParticles: {fileID: 198637271435436188, guid: 3203b49ec00b44246bc810d433c37f3c,
     type: 2}
+  deathParticles: {fileID: 0}
   hitSound: {fileID: 8300000, guid: 87e372e39fc06b14794ec2523cb17664, type: 3}
   deathSound: {fileID: 0}
 --- !u!114 &114965935551178052

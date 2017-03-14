@@ -11,7 +11,7 @@ For now, this is just a collection of random thoughts.
   - [ ] Maneuvers
   - [ ] Items
   - [x] Enemies
-- [ ] Level layouting (connecting various rooms together)
+- [x] Level layouting (connecting various rooms together)
 - [ ] World layouting (connecting various dungeons together as a 'campaign')
 - [ ] Multiplayer?
 
@@ -27,6 +27,9 @@ This is a list of potential game objects to include.
 - Water (swimming)
 - Lights (torches, overhead lighting, lanterns, etc.)
 - Mine carts with track (follow a specific track)
+- Damagable switch that toggles on and off
+- Magnets
+- Turrets
 
 ## Item ideas
 List of items to find in chests. Items should always have multiple puzzle/combat applications.

@@ -35,6 +35,7 @@ public class Health : MonoBehaviour, ICustomSerializable
     public List<GameObject> itemChoices = new List<GameObject>();
 
     public ParticleSystem damageParticles;
+    public ParticleSystem deathParticles;
     public AudioClip hitSound;
     public AudioClip deathSound;
 
@@ -82,6 +83,8 @@ public class Health : MonoBehaviour, ICustomSerializable
         }
         if (currentHealth <= 0)
         {
+            if (deathParticles)
+                Instantiate(deathParticles, transform.position, Quaternion.identity);
             if (deathSound)
                 Camera.main.GetComponent<AudioSource>().PlayOneShot(deathSound);
             if (deathRespawnPoint != null)

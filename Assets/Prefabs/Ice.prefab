@@ -88,8 +88,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 157d01588e8da544492c9225e35ff3cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  accelerationModifier: 0.2
-  linearDrag: 0.5
+  accelerationModifier: 0.08
+  linearDrag: 1
 --- !u!212 &212390731372897270
 SpriteRenderer:
   m_ObjectHideFlags: 1

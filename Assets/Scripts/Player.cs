@@ -239,13 +239,13 @@ public class Player : MonoBehaviour, IActionQueue
         if (!CanQueueActions())
             return;
 
-        if (Input.GetButtonUp("Roll") && targetMotion.magnitude > 0)
+        if (Input.GetButtonDown("Roll") && targetMotion.magnitude > 0)
         {
             TryCancelBackswing();
             actions.AddLast(new PlayerAction() { type = PlayerState.Rolling, frames = rollFrames, vector = targetMotion.normalized * rollForce, combo = true });
         }
 
-        if (Input.GetButtonUp("Attack"))
+        if (Input.GetButtonDown("Attack"))
         {
             TryCancelBackswing();
             string variation = "";

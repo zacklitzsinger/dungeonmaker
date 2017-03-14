@@ -69,7 +69,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   accelerationModifier: 1
-  linearDrag: 10
+  linearDrag: 20
 --- !u!114 &114573107872536282
 MonoBehaviour:
   m_ObjectHideFlags: 1

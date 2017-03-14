@@ -66,7 +66,7 @@ public class Sword : MonoBehaviour
     // TODO: Handle sword hitting multiple walls in a single frame.
     void OnTriggerStay2D(Collider2D other)
     {
-        if (remainingFrames > 8 || friendly == other.CompareTag("Player") || hits.Contains(other.gameObject))
+        if (remainingFrames > 8 || friendly == other.CompareTag("Player") || other.isTrigger || hits.Contains(other.gameObject))
             return;
         Vector2 direction = (other.transform.position - transform.position).normalized;
         ObjectData otherData = other.GetComponentInParent<ObjectData>();

@@ -10,6 +10,7 @@ public class Gravity : MonoBehaviour {
     [ReadOnly]
     public HashSet<Collider2D> touching = new HashSet<Collider2D>();
 
+    float baseDrag = 1f;
     public float dragModifier = 1;
 
     Health health;
@@ -47,7 +48,6 @@ public class Gravity : MonoBehaviour {
     {
         GameObject floor = LevelEditor.main.GetGameObjectAtPointWithType(transform.position, ObjectType.Floor);
         FloorData floorData = null;
-        float baseDrag = 1f;
         if (floor != null)
         {
             floorData = floor.GetComponent<FloorData>();

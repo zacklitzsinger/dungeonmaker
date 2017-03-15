@@ -87,7 +87,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     /// When testing, save to a temporary file beforehand so we can reload the level after finishing
     /// </summary>
     private string tempFilename;
-    Vector2 lastMousePosition;
+    Vector3 lastMousePosition;
     /// <summary>
     /// Was the app focused last frame? If false, app just became focused, so we should ignore many UI inputs.
     /// </summary>
@@ -169,7 +169,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 rectTransform.offsetMin = Vector2.zero;
                 rectTransform.offsetMax = Vector2.zero;
                 var textComponent = button.GetComponentInChildren<Text>();
-                textComponent.text = option.gameObject.name;
+                textComponent.text = option.GetComponent<ObjectData>().uiName;
                 button.GetComponent<Button>().onClick.AddListener(() =>
                 {
                     rotation = 0f;
@@ -434,18 +434,18 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     /// <summary>
     /// Gets points in the grid along a line.
     /// </summary>
-    List<Vector2> GetGridPointsAlongLine(Vector2 from, Vector2 to, int pxFreq = 8)
+    List<Vector2> GetGridPointsAlongLine(Vector3 from, Vector3 to, int pxFreq = 1)
     {
-        List<Vector2> list = new List<Vector2>();
+        List<Vector3> list = new List<Vector3>();
         list.Add(from);
         int count = (int)Math.Floor((to - from).magnitude / pxFreq);
         for (int i = 1; i <= count; i++)
             list.Add(from + (to - from).normalized * i * pxFreq);
         list.Add(to);
         List<Vector2> gridPoints = new List<Vector2>();
-        foreach (Vector2 item in list)
+        foreach (Vector3 item in list)
         {
-            Vector2 point = ConvertPositionToGrid(Camera.main.ScreenToWorldPoint(item));
+            Vector2 point = GetScreenGridPosition(item);
             if (!gridPoints.Contains(point))
                 gridPoints.Add(point);
         }
@@ -508,7 +508,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     }
 
     /// <summary>
-    /// Returns the grid position under the mouse.
+    /// Returns the 2D position under the mouse.
     /// </summary>
     /// <returns></returns>
     Vector2 GetGridMousePosition()
@@ -516,12 +516,22 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         return GetScreenGridPosition(Input.mousePosition);
     }
 
+    public Vector2 GetXYPlanePosition(Vector3 pos)
+    {
+        Plane plane = new Plane(Vector3.forward, Vector3.zero);
+        Ray ray = Camera.main.ScreenPointToRay(pos);
+        float dist;
+        if (plane.Raycast(ray, out dist))
+            return ray.GetPoint(dist);
+        return Vector2.zero;
+    }
+
     /// <summary>
     /// Returns the grid position under the given screen coordinates.
     /// </summary>
-    Vector2 GetScreenGridPosition(Vector2 pos)
+    Vector2 GetScreenGridPosition(Vector3 pos)
     {
-        return ConvertPositionToGrid(Camera.main.ScreenToWorldPoint(pos));
+        return ConvertPositionToGrid(GetXYPlanePosition(pos));
     }
 
     /// <summary>
@@ -739,13 +749,13 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 if (EventSystem.current.IsPointerOverGameObject() || PauseMenu.main.Open)
                     return;
                 // Draw currently selected grid square
-                Vector2 gridPos = ConvertPositionToGrid(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                Vector2 gridPos = GetGridMousePosition();
                 gridPos += Vector2.up;
                 Vector2 screenPos = Camera.main.WorldToScreenPoint(gridPos);
                 screenPos.y = Screen.height - screenPos.y;
                 screenPos -= Vector2.one * Constants.GRID_SIZE / 2;
                 GUI.DrawTexture(new Rect(screenPos, new Vector2(selectionBox.width, selectionBox.height)), selectionBox);
-                if (selectedPrefab)
+                if (selectedPrefab && selectedPrefab.GetComponentInChildren<SpriteRenderer>())
                 {
                     Sprite sprite = selectedPrefab.GetComponentInChildren<SpriteRenderer>().sprite;
                     Vector2 pos = Input.mousePosition;

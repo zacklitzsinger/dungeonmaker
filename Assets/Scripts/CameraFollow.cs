@@ -38,21 +38,23 @@ public class CameraFollow : MonoBehaviour
     /// </summary>
     public void SetTarget(Vector2 target)
     {
-        StartCoroutine(EaseTowardsTarget(target, 0.5f));
+        Plane cameraPlane = new Plane(Vector3.forward, transform.position);
+        Ray ray = new Ray(target, -transform.forward);
+        float dist;
+        cameraPlane.Raycast(ray, out dist);
+        StartCoroutine(EaseTowardsTarget(ray.GetPoint(dist), 0.5f));
     }
 
-    IEnumerator EaseTowardsTarget(Vector2 targetPos, float duration)
+    IEnumerator EaseTowardsTarget(Vector3 targetPos, float duration)
     {
-        Vector2 startPos = transform.position;
+        Vector3 startPos = transform.position;
         float startTime = Time.time;
         float time = 0;
         while (time < duration)
         {
             yield return new WaitForEndOfFrame();
             time = Time.time - startTime;
-            Vector3 newPosition = QuadEaseInOut(time, startPos, targetPos - startPos, duration);
-            newPosition.z = transform.position.z;
-            transform.position = newPosition;
+            transform.position = QuadEaseInOut(time, startPos, targetPos - startPos, duration);
         }
     }
 
@@ -64,7 +66,7 @@ public class CameraFollow : MonoBehaviour
     /// <param name="c">Change in value</param>
     /// <param name="d">Duration</param>
     /// <returns></returns>
-    Vector2 QuadEaseInOut (float t, Vector2 b, Vector2 c, float d)
+    Vector3 QuadEaseInOut (float t, Vector3 b, Vector3 c, float d)
     {
         t /= d / 2;
         if (t < 1) return c / 2 * t * t + b;

@@ -9,6 +9,6 @@ public class ObjectMasterList : MonoBehaviour {
 
 	void Awake () {
         main = this;
-        Array.Sort(options, (a, b) => { return a.name.CompareTo(b.name); });
+        Array.Sort(options, (a, b) => { return a.GetComponent<ObjectData>().uiName.CompareTo(b.GetComponent<ObjectData>().uiName); });
 	}
 }

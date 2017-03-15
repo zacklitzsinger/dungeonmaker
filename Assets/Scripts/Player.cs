@@ -163,7 +163,8 @@ public class Player : MonoBehaviour, IActionQueue
 
     void Update()
     {
-        animator.SetBool("shadow", shadow);
+        if (animator)
+            animator.SetBool("shadow", shadow);
     }
 
     void FixedUpdate()
@@ -196,7 +197,8 @@ public class Player : MonoBehaviour, IActionQueue
             rb2d.AddForce((targetMotion.magnitude > 1 ? targetMotion.normalized : targetMotion) * modifiedAcceleration);
         }
 
-        spriteRenderer.color = Color.white;
+        if (spriteRenderer)
+            spriteRenderer.color = Color.white;
         if (remStateFrames > 0)
         {
             remStateFrames--;
@@ -207,7 +209,7 @@ public class Player : MonoBehaviour, IActionQueue
                         gravity.dragModifier = 5;
                     break;
             }
-            if (CanCancelBackswing())
+            if (CanCancelBackswing() && spriteRenderer)
                 // Visual effect for combo opportunity
                 spriteRenderer.color = new Color(.95f, .9f, 1f);
         }
@@ -251,7 +253,7 @@ public class Player : MonoBehaviour, IActionQueue
             string variation = "";
             if (LastAction.type == PlayerState.Rolling)
                 variation = "thrust";
-            Vector2 targetDirection = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized;
+            Vector2 targetDirection = (LevelEditor.main.GetXYPlanePosition(Input.mousePosition) - (Vector2)transform.position).normalized;
             actions.AddLast(new PlayerAction() { type = PlayerState.AttackWindup, frames = attackWindup, vector = targetDirection * attackForce });
             actions.AddLast(new PlayerAction() { type = PlayerState.Attacking, frames = attackFrames, vector = targetDirection, combo = true, variation = variation });
         }

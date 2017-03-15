@@ -69,7 +69,7 @@ public class Health : MonoBehaviour, ICustomSerializable
         {
             currentHealth -= dmg;
             remInvulnFrames = invulnFrames;
-            if (invulnFrames > 0)
+            if (invulnFrames > 0 && spriteRenderer)
                 StartCoroutine(Flash(spriteRenderer, invulnFrames));
             if (damageParticles && !fall)
             {

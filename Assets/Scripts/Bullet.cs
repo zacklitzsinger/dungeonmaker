@@ -5,14 +5,19 @@ public class Bullet : MonoBehaviour
 
     public float velocity;
     public int lifetime;
+    public int damage;
     public float knockbackModifier;
     public bool friendly;
+    public float charge;
+    public float chargeVelocityModifier;
+    public float chargeSizeModifier;
+    public float chargeDamageModifier;
 
     ParticleSystem ps;
 
     void Start()
     {
-        GetComponent<Rigidbody2D>().AddForce(velocity * transform.up, ForceMode2D.Impulse);
+        GetComponent<Rigidbody2D>().AddForce(Mathf.Lerp(velocity, velocity * chargeVelocityModifier, charge) * transform.up, ForceMode2D.Impulse);
         ps = GetComponentInChildren<ParticleSystem>();
     }
 
@@ -31,13 +36,18 @@ public class Bullet : MonoBehaviour
                 if (shield)
                     shield.Block(null);
                 else
-                    otherHealth.Damage(1, gameObject, transform.up * velocity * knockbackModifier);
+                {
+                    int dmg = Mathf.FloorToInt(Mathf.Lerp(damage, damage * chargeDamageModifier, charge));
+                    otherHealth.Damage(dmg, gameObject, transform.up * velocity * knockbackModifier);
+                }
             }
         }
     }
 
     void FixedUpdate()
     {
+        if (ps)
+            ps.gameObject.transform.localScale = Vector3.Lerp(Vector3.one, Vector3.one * chargeSizeModifier, charge);
         if (lifetime-- <= 0)
             Stop();
     }

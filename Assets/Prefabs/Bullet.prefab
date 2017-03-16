@@ -132,8 +132,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   velocity: 45
   lifetime: 300
+  damage: 1
   knockbackModifier: 3
   friendly: 0
+  charge: 0
+  chargeVelocityModifier: 1.5
+  chargeSizeModifier: 3
+  chargeDamageModifier: 5
 --- !u!198 &198746851483222450
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -194,7 +199,7 @@ ParticleSystem:
     serializedVersion: 3
     enabled: 1
     startLifetime:
-      scalar: 0.12
+      scalar: 0.09
       maxCurve:
         serializedVersion: 2
         m_Curve:

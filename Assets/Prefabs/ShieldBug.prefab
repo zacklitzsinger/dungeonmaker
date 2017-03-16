@@ -353,7 +353,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   invulnerableOverride: 0
   vulnerableTo: 15
-  maxHealth: 8
+  maxHealth: 15
   invulnFrames: 0
   currentHealth: 0
   remInvulnFrames: 0

@@ -328,11 +328,13 @@ MonoBehaviour:
   currentEnergy: 0
   energyRechargeRate: 1
   attackWindup: 6
-  attackFrames: 0
+  attackFrames: 4
   attackForce: 200
   energyPerShot: 5
   scatterAngle: 12
   attackMovementModifier: 0.2
+  energyPerCharge: 0.4
+  maxChargeFrames: 120
   aiming: 0
   aimingMovementModifier: 0.5
   aimingScatterModifier: 0.15
@@ -394,7 +396,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   invulnerableOverride: 0
   vulnerableTo: 15
-  maxHealth: 5
+  maxHealth: 0
   invulnFrames: 90
   currentHealth: 0
   remInvulnFrames: 0

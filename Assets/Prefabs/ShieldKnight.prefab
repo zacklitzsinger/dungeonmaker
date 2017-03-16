@@ -284,6 +284,7 @@ MonoBehaviour:
   - {fileID: 1906677971985918, guid: 18988c1a83705c645be824996fdde668, type: 2}
   damageParticles: {fileID: 198637271435436188, guid: 3203b49ec00b44246bc810d433c37f3c,
     type: 2}
+  deathParticles: {fileID: 0}
   hitSound: {fileID: 8300000, guid: 87e372e39fc06b14794ec2523cb17664, type: 3}
   deathSound: {fileID: 8300000, guid: 3816d71a485e3bf439d56a5f6d93f6ba, type: 3}
 --- !u!114 &114157490817871520
@@ -346,6 +347,7 @@ MonoBehaviour:
   attackFrames: 30
   attackDistance: 2.25
   attackMoveForce: 175
+  postAttackDelay: 0
   sword: {fileID: 1002282342740670, guid: 05e94e4be2872ea4b9c33c51b7f2b372, type: 2}
   staggerFrames: 0
 --- !u!114 &114655743549238610

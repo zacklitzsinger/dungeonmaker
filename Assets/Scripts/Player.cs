@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum PlayerState
@@ -12,11 +13,12 @@ public enum PlayerState
     Victory
 }
 
-public struct PlayerAction
+public class PlayerAction
 {
     public PlayerState type;
     public int frames;
     public Vector2 vector;
+    public bool sticky; // Should action stay around even when frames == 0?
 
     public override string ToString()
     {
@@ -50,12 +52,16 @@ public class Player : MonoBehaviour, IActionQueue
     public float attackForce; // Force to apply when attacking
     public float energyPerShot; // Energy to consume per shot
     public float scatterAngle; // Degrees by which to randomly scatter shots
-    public float attackMovementModifier;
+    public float attackMovementModifier; // % modifier on movement while attacking
+
+    // Charging attack
+    public float energyPerCharge; // energy consumed per frame by charging up an attack
+    public int maxChargeFrames; // max frames to charge
 
     [ReadOnly]
     public bool aiming = false;
-    public float aimingMovementModifier = 0.5f;
-    public float aimingScatterModifier = 0.2f;
+    public float aimingMovementModifier = 0.5f; // % modifier on movement while aiming
+    public float aimingScatterModifier = 0.2f; // % modifier on bullet scatter range while aiming
 
     [ReadOnly]
     public int remStateFrames; // Remaining frames to continue current state; 0 when in idle
@@ -71,8 +77,8 @@ public class Player : MonoBehaviour, IActionQueue
     public Vector2 roomEntrance;
 
     public PlayerAction currentAction;
-    public PlayerAction LastAction { get { return actions.Count > 0 ? actions.Last.Value : currentAction; } }
-    public LinkedList<PlayerAction> actions = new LinkedList<PlayerAction>();
+    public PlayerAction LastAction { get { return actions.Count > 0 ? actions[actions.Count - 1] : currentAction; } }
+    public List<PlayerAction> actions = new List<PlayerAction>();
 
     // State
     [ReadOnly]
@@ -101,6 +107,7 @@ public class Player : MonoBehaviour, IActionQueue
         keyIndicator = playerPanel.GetComponentInChildren<KeyUI>(true);
         energyIndicator = playerPanel.GetComponentInChildren<ProgressBar>(true);
         currentEnergy = maxEnergy;
+        currentAction = new PlayerAction();
     }
 
     /// <summary>
@@ -108,7 +115,6 @@ public class Player : MonoBehaviour, IActionQueue
     /// </summary>
     public void TriggerAction(PlayerAction action)
     {
-        currentActionFrames = 0;
         remStateFrames = action.frames;
         if (action.type != PlayerState.Shadow)
             shadow = false;
@@ -121,15 +127,14 @@ public class Player : MonoBehaviour, IActionQueue
                 break;
 
             case PlayerState.Attacking:
-                if (action.vector.magnitude > 0)
-                {
-                    Quaternion rotation = Quaternion.LookRotation(Vector3.forward, action.vector.normalized);
-                    // Hacky way of doing a bell curve
-                    float angle = GetScatter() / 2 + GetScatter() / 2;
-                    Quaternion scatter = Quaternion.AngleAxis(angle, Vector3.forward);
-                    Bullet bullet = Instantiate(bulletPrefab, transform.position, rotation * scatter, transform).GetComponentInChildren<Bullet>();
-                    bullet.friendly = true;
-                }
+                Vector2 targetDirection = (LevelEditor.main.GetXYPlanePosition(Input.mousePosition) - (Vector2)transform.position).normalized;
+                Quaternion rotation = Quaternion.LookRotation(Vector3.forward, targetDirection);
+                // Hacky way of doing a bell curve
+                float angle = GetScatter() / 2 + GetScatter() / 2;
+                Quaternion scatter = Quaternion.AngleAxis(angle, Vector3.forward);
+                Bullet bullet = Instantiate(bulletPrefab, transform.position, rotation * scatter, transform).GetComponentInChildren<Bullet>();
+                bullet.friendly = true;
+                bullet.charge = Mathf.Clamp01((currentActionFrames - attackWindup) / (float)maxChargeFrames);
                 UseEnergy(energyPerShot);
                 break;
 
@@ -144,11 +149,12 @@ public class Player : MonoBehaviour, IActionQueue
                 shadow = !shadow;
                 break;
         }
+        currentActionFrames = 0;
     }
 
     float GetScatter()
     {
-        return Random.Range(-scatterAngle / 2, scatterAngle / 2) * (aiming ? aimingScatterModifier : 1f);
+        return UnityEngine.Random.Range(-scatterAngle / 2, scatterAngle / 2) * (aiming ? aimingScatterModifier : 1f);
     }
 
     public void Interrupt(int frames)
@@ -248,13 +254,13 @@ public class Player : MonoBehaviour, IActionQueue
                 // Visual effect for combo opportunity
                 spriteRenderer.color = new Color(.95f, .9f, 1f);
         }
-        else
+        else if (!currentAction.sticky)
         {
             remStateFrames = 0;
             if (actions.Count > 0)
             {
-                currentAction = actions.First.Value;
-                actions.RemoveFirst();
+                currentAction = actions[0];
+                actions.RemoveAt(0);
                 TriggerAction(currentAction);
             }
             else
@@ -263,6 +269,27 @@ public class Player : MonoBehaviour, IActionQueue
             }
             currentActionFrames = 0;
         }
+        else
+        {
+            if (currentAction.type == PlayerState.AttackWindup)
+            {
+                if (currentEnergy <= energyPerCharge || currentActionFrames - attackWindup >= maxChargeFrames)
+                    currentAction.sticky = false;
+                else
+                    UseEnergy(energyPerCharge);
+            }
+        }
+
+        if (Input.GetButtonUp("Attack"))
+        {
+            PlayerAction firstAttackWindup;
+            if (currentAction.sticky && currentAction.type == PlayerState.AttackWindup)
+                firstAttackWindup = currentAction;
+            else
+                firstAttackWindup = actions.Find((action) => { return action.sticky && action.type == PlayerState.AttackWindup; });
+            if (firstAttackWindup != null)
+                firstAttackWindup.sticky = false;
+        }
 
         if (!CanQueueActions())
             return;
@@ -270,15 +297,15 @@ public class Player : MonoBehaviour, IActionQueue
         if (Input.GetButtonDown("Roll") && targetMotion.magnitude > 0)
         {
             TryCancelBackswing();
-            actions.AddLast(new PlayerAction() { type = PlayerState.Rolling, frames = rollFrames, vector = targetMotion.normalized * rollForce});
+            actions.Add(new PlayerAction() { type = PlayerState.Rolling, frames = rollFrames, vector = targetMotion.normalized * rollForce });
         }
 
         if (Input.GetButtonDown("Attack"))
         {
             TryCancelBackswing();
             Vector2 targetDirection = (LevelEditor.main.GetXYPlanePosition(Input.mousePosition) - (Vector2)transform.position).normalized;
-            actions.AddLast(new PlayerAction() { type = PlayerState.AttackWindup, frames = attackWindup, vector = -targetDirection * attackForce });
-            actions.AddLast(new PlayerAction() { type = PlayerState.Attacking, frames = attackFrames, vector = targetDirection});
+            actions.Add(new PlayerAction() { type = PlayerState.AttackWindup, frames = attackWindup, vector = -targetDirection * attackForce, sticky = true });
+            actions.Add(new PlayerAction() { type = PlayerState.Attacking, frames = attackFrames });
         }
 
         aiming = Input.GetButton("Aim");
@@ -315,7 +342,7 @@ public class Player : MonoBehaviour, IActionQueue
             return;
         }
         playerPanel.SetActive(true);
-        healthIndicator.Amount = health.currentHealth;
+        healthIndicator.Amount = (int)health.currentHealth;
         keyIndicator.Amount = keys;
         ItemSlot[] itemSlots = playerPanel.GetComponentsInChildren<ItemSlot>();
         for (int i = 0; i < itemSlots.Length; i++)

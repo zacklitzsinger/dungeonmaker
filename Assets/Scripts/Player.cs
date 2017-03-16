@@ -1,34 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-
-public enum PlayerState
-{
-    Idle,
-    Rolling,
-    AttackWindup,
-    Attacking,
-    // Below are time independent states (not dictated by frame count)
-    Shadow,
-    Victory
-}
-
-public class PlayerAction
-{
-    public PlayerState type;
-    public int frames;
-    public Vector2 vector;
-    public bool sticky; // Should action stay around even when frames == 0?
-
-    public override string ToString()
-    {
-        return "[" + type + "|" + frames + "|" + vector + "]";
-    }
-}
 
 public class Player : MonoBehaviour, IActionQueue
 {
+    public enum State
+    {
+        Idle,
+        Rolling,
+        AttackWindup,
+        Attack,
+        ShootWindup,
+        Shoot,
+        // Below are time independent states (not dictated by frame count)
+        Shadow,
+        Victory
+    }
 
+    // This could be an enum, but we want to preserve null as a value.
+    public class Action
+    {
+        public State type;
+        public int frames;
+        public Vector2 vector;
+        public bool sticky; // Should action stay around even when frames == 0?
+
+        public override string ToString()
+        {
+            return "[" + type + "|" + frames + "|" + vector + "]";
+        }
+    }
+
+    public GameObject swordPrefab;
     public GameObject bulletPrefab;
     public Sprite dodgeIcon;
 
@@ -40,16 +42,19 @@ public class Player : MonoBehaviour, IActionQueue
     public float energyPerRoll;
     public float rollGravityModifier;
 
-    // Energy
-    public float maxEnergy;
-    [ReadOnly]
-    public float currentEnergy;
-    public float energyRechargeRate;
-
     // Combat
-    public int attackWindup; // Max number of frames to actually start attacking
-    public int attackFrames; // Number of frames after attack starts before player can take another action.
-    public float attackForce; // Force to apply when attacking
+    public int attackWindupFrames;
+    public int attackFrames;
+    public int attackForce;
+    public int energyPerAttack;
+    public float energyMovementModifier;
+    public int overdrawPenaltyFrames;
+    public AudioClip overdrawSound;
+
+    //Gunplay
+    public int shootWindupFrames; // Max number of frames to actually start attacking
+    public int shootFrames; // Number of frames after attack starts before player can take another action.
+    public float shootKnockback; // Force to apply when attacking
     public float energyPerShot; // Energy to consume per shot
     public float scatterAngle; // Degrees by which to randomly scatter shots
     public float attackMovementModifier; // % modifier on movement while attacking
@@ -59,16 +64,9 @@ public class Player : MonoBehaviour, IActionQueue
     public int maxChargeFrames; // max frames to charge
 
     [ReadOnly]
-    public bool aiming = false;
-    public float aimingMovementModifier = 0.5f; // % modifier on movement while aiming
-    public float aimingScatterModifier = 0.2f; // % modifier on bullet scatter range while aiming
-
-    [ReadOnly]
     public int remStateFrames; // Remaining frames to continue current state; 0 when in idle
     [ReadOnly]
     public int currentActionFrames; // How many frames have passed under the current action
-    [ReadOnly]
-    public int framesSinceEnergyUsed;
 
     public int keys = 0;
     public IItem[] Items { get { return GetComponentsInChildren<IItem>(); } }
@@ -76,76 +74,91 @@ public class Player : MonoBehaviour, IActionQueue
 
     public Vector2 roomEntrance;
 
-    public PlayerAction currentAction;
-    public PlayerAction LastAction { get { return actions.Count > 0 ? actions[actions.Count - 1] : currentAction; } }
-    public List<PlayerAction> actions = new List<PlayerAction>();
+    public Action currentAction;
+    public Action LastAction { get { return actions.Count > 0 ? actions[actions.Count - 1] : currentAction; } }
+    public List<Action> actions = new List<Action>();
 
     // State
     [ReadOnly]
     public bool shadow = false;
 
     GameObject playerPanel;
-    HealthUI healthIndicator;
     KeyUI keyIndicator;
-    ProgressBar energyIndicator;
 
     Rigidbody2D rb2d;
-    Health health;
     Gravity gravity;
     SpriteRenderer spriteRenderer;
     Animator animator;
+    Energy energy;
 
     void Awake()
     {
         rb2d = GetComponent<Rigidbody2D>();
-        health = GetComponentInChildren<Health>();
         gravity = GetComponentInChildren<Gravity>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         playerPanel = LevelEditor.main.playerPanel;
-        healthIndicator = playerPanel.GetComponentInChildren<HealthUI>(true);
         keyIndicator = playerPanel.GetComponentInChildren<KeyUI>(true);
-        energyIndicator = playerPanel.GetComponentInChildren<ProgressBar>(true);
-        currentEnergy = maxEnergy;
-        currentAction = new PlayerAction();
+        energy = GetComponent<Energy>();
+        energy.indicator = playerPanel.GetComponentInChildren<EnergyIndicator>(true);
+        currentAction = new Action();
     }
 
     /// <summary>
     /// Called the first frame an action becomes active
     /// </summary>
-    public void TriggerAction(PlayerAction action)
+    public void TriggerAction(Action action)
     {
+        Quaternion rotation;
         remStateFrames = action.frames;
-        if (action.type != PlayerState.Shadow)
+        if (action.type != State.Shadow)
             shadow = false;
         switch (action.type)
         {
-            case PlayerState.AttackWindup:
+            case State.AttackWindup:
                 gravity.dragModifier = 1;
                 if (action.vector.magnitude > 0)
                     rb2d.AddForce(action.vector);
                 break;
 
-            case PlayerState.Attacking:
+            case State.Attack:
+                if (action.vector.magnitude > 0)
+                {
+                    rotation = Quaternion.LookRotation((Random.value > 0.5 ? Vector3.forward : Vector3.back), action.vector.normalized);
+                    Sword sword = Instantiate(swordPrefab, transform.position, rotation, transform).GetComponentInChildren<Sword>();
+                    sword.owner = gameObject;
+                    UseEnergy(energyPerAttack);
+                    //if (action.variation == "thrust" || combo > 2)
+                    //    sword.style = Sword.Style.Thrust;
+                }
+                break;
+
+            case State.ShootWindup:
+                gravity.dragModifier = 1;
+                if (action.vector.magnitude > 0)
+                    rb2d.AddForce(action.vector);
+                break;
+
+            case State.Shoot:
                 Vector2 targetDirection = (LevelEditor.main.GetXYPlanePosition(Input.mousePosition) - (Vector2)transform.position).normalized;
-                Quaternion rotation = Quaternion.LookRotation(Vector3.forward, targetDirection);
+                rotation = Quaternion.LookRotation(Vector3.forward, targetDirection);
                 // Hacky way of doing a bell curve
                 float angle = GetScatter() / 2 + GetScatter() / 2;
                 Quaternion scatter = Quaternion.AngleAxis(angle, Vector3.forward);
                 Bullet bullet = Instantiate(bulletPrefab, transform.position, rotation * scatter, transform).GetComponentInChildren<Bullet>();
                 bullet.friendly = true;
-                bullet.charge = Mathf.Clamp01((currentActionFrames - attackWindup) / (float)maxChargeFrames);
+                bullet.charge = Mathf.Clamp01((currentActionFrames - shootWindupFrames) / (float)maxChargeFrames);
                 UseEnergy(energyPerShot);
                 break;
 
-            case PlayerState.Rolling:
+            case State.Rolling:
                 gravity.dragModifier = rollGravityModifier;
                 if (action.vector.magnitude > 0)
                     rb2d.AddForce(action.vector);
                 UseEnergy(energyPerRoll);
                 break;
 
-            case PlayerState.Shadow:
+            case State.Shadow:
                 shadow = !shadow;
                 break;
         }
@@ -154,13 +167,19 @@ public class Player : MonoBehaviour, IActionQueue
 
     float GetScatter()
     {
-        return UnityEngine.Random.Range(-scatterAngle / 2, scatterAngle / 2) * (aiming ? aimingScatterModifier : 1f);
+        return Random.Range(-scatterAngle / 2, scatterAngle / 2);
     }
 
     public void Interrupt(int frames)
     {
-        currentAction = new PlayerAction() { type = PlayerState.Idle, frames = frames };
+        currentAction = new Action() { type = State.Idle, frames = frames };
         TriggerAction(currentAction);
+    }
+
+    public void InterruptAfterCurrent(int frames)
+    {
+        actions.Clear();
+        actions.Add(new Action() { type = State.Idle, frames = frames });
     }
 
     bool CanQueueActions()
@@ -174,7 +193,7 @@ public class Player : MonoBehaviour, IActionQueue
     bool CanCancelBackswing()
     {
         return false;
-        //return (1 < remStateFrames && remStateFrames < 10 && currentAction.type != PlayerState.Idle && actions.Count == 0);
+        //return (1 < remStateFrames && remStateFrames < 10 && currentAction.type != State.Idle && actions.Count == 0);
     }
 
     void TryCancelBackswing()
@@ -184,17 +203,20 @@ public class Player : MonoBehaviour, IActionQueue
     }
 
     // Consumes a certain amount of energy. Can trigger overdraw inactivity period.
-    void UseEnergy(float amt)
+    float UseEnergy(float amt)
     {
-        framesSinceEnergyUsed = 0;
-        currentEnergy = Mathf.Max(0, currentEnergy - amt);
-        if (currentEnergy == 0)
+        float actual = energy.UseEnergy(amt);
+        if (actual == 0)
             TriggerOverdraw();
+        return actual;
     }
 
     void TriggerOverdraw()
     {
-        Interrupt(Mathf.CeilToInt(maxEnergy / energyRechargeRate));
+        if (overdrawSound)
+            Camera.main.GetComponent<AudioSource>().PlayOneShot(overdrawSound);
+        energy.Damage(1, gameObject, Vector2.zero);
+        InterruptAfterCurrent(overdrawPenaltyFrames);
     }
 
     void Update()
@@ -205,11 +227,8 @@ public class Player : MonoBehaviour, IActionQueue
 
     void FixedUpdate()
     {
-        currentEnergy = Mathf.Min(currentEnergy + energyRechargeRate * framesSinceEnergyUsed / 60f, maxEnergy);
-        framesSinceEnergyUsed++;
-        energyIndicator.percentage = currentEnergy / maxEnergy;
         currentActionFrames++;
-        if (currentAction.type == PlayerState.Victory)
+        if (currentAction.type == State.Victory)
             return;
 
         UpdateLayer();
@@ -227,12 +246,12 @@ public class Player : MonoBehaviour, IActionQueue
         float xMotion = Input.GetAxis("Horizontal");
         float yMotion = Input.GetAxis("Vertical");
         Vector2 targetMotion = Vector2.right * xMotion + Vector2.up * yMotion;
-        if (currentAction.type == PlayerState.AttackWindup || currentAction.type == PlayerState.Attacking || currentAction.type == PlayerState.Idle)
+        if (currentAction.type == State.ShootWindup || currentAction.type == State.Shoot || currentAction.type == State.Idle)
         {
             float modifiedAcceleration = acceleration;
             modifiedAcceleration *= (floorData ? floorData.accelerationModifier : 1f);
-            modifiedAcceleration *= (aiming ? aimingMovementModifier : 1f);
-            modifiedAcceleration *= (currentAction.type == PlayerState.AttackWindup ? attackMovementModifier : 1f);
+            modifiedAcceleration *= Mathf.Lerp(energyMovementModifier, 1f, energy.Current / energy.max);
+            modifiedAcceleration *= (currentAction.type == State.ShootWindup ? attackMovementModifier : 1f);
             rb2d.AddForce((targetMotion.magnitude > 1 ? targetMotion.normalized : targetMotion) * modifiedAcceleration);
         }
 
@@ -243,7 +262,7 @@ public class Player : MonoBehaviour, IActionQueue
             remStateFrames--;
             switch (currentAction.type)
             {
-                case PlayerState.Rolling:
+                case State.Rolling:
                     if (remStateFrames == 0)
                         gravity.dragModifier = 1;
                     else if (remStateFrames < rollFrames / 5)
@@ -265,28 +284,30 @@ public class Player : MonoBehaviour, IActionQueue
             }
             else
             {
-                currentAction = new PlayerAction();
+                currentAction = new Action();
             }
             currentActionFrames = 0;
         }
         else
         {
-            if (currentAction.type == PlayerState.AttackWindup)
+            if (currentAction.type == State.ShootWindup)
             {
-                if (currentEnergy <= energyPerCharge || currentActionFrames - attackWindup >= maxChargeFrames)
+                if (currentActionFrames - shootWindupFrames >= maxChargeFrames)
+                    currentAction.sticky = false;
+                else if (energy.Current < energyPerShot / 2)
                     currentAction.sticky = false;
                 else
                     UseEnergy(energyPerCharge);
             }
         }
 
-        if (Input.GetButtonUp("Attack"))
+        if (Input.GetButtonUp("Shoot"))
         {
-            PlayerAction firstAttackWindup;
-            if (currentAction.sticky && currentAction.type == PlayerState.AttackWindup)
+            Action firstAttackWindup;
+            if (currentAction.sticky && currentAction.type == State.ShootWindup)
                 firstAttackWindup = currentAction;
             else
-                firstAttackWindup = actions.Find((action) => { return action.sticky && action.type == PlayerState.AttackWindup; });
+                firstAttackWindup = actions.Find((action) => { return action.sticky && action.type == State.ShootWindup; });
             if (firstAttackWindup != null)
                 firstAttackWindup.sticky = false;
         }
@@ -297,18 +318,27 @@ public class Player : MonoBehaviour, IActionQueue
         if (Input.GetButtonDown("Roll") && targetMotion.magnitude > 0)
         {
             TryCancelBackswing();
-            actions.Add(new PlayerAction() { type = PlayerState.Rolling, frames = rollFrames, vector = targetMotion.normalized * rollForce });
+            actions.Add(new Action() { type = State.Rolling, frames = rollFrames, vector = targetMotion.normalized * rollForce });
+        }
+
+        if (Input.GetButtonDown("Shoot"))
+        {
+            TryCancelBackswing();
+            Vector2 targetDirection = (LevelEditor.main.GetXYPlanePosition(Input.mousePosition) - (Vector2)transform.position).normalized;
+            actions.Add(new Action() { type = State.ShootWindup, frames = shootWindupFrames, vector = -targetDirection * shootKnockback, sticky = true });
+            actions.Add(new Action() { type = State.Shoot, frames = shootFrames });
         }
 
         if (Input.GetButtonDown("Attack"))
         {
             TryCancelBackswing();
+            //string variation = "";
+            //if (LastAction.type == State.Rolling)
+            //    variation = "thrust";
             Vector2 targetDirection = (LevelEditor.main.GetXYPlanePosition(Input.mousePosition) - (Vector2)transform.position).normalized;
-            actions.Add(new PlayerAction() { type = PlayerState.AttackWindup, frames = attackWindup, vector = -targetDirection * attackForce, sticky = true });
-            actions.Add(new PlayerAction() { type = PlayerState.Attacking, frames = attackFrames });
+            actions.Add(new Action() { type = State.AttackWindup, frames = attackWindupFrames, vector = targetDirection * attackForce });
+            actions.Add(new Action() { type = State.Attack, frames = attackFrames, vector = targetDirection });
         }
-
-        aiming = Input.GetButton("Aim");
 
         if (Input.GetButtonDown("Use item 1") && Items.Length >= 1)
         {
@@ -342,7 +372,6 @@ public class Player : MonoBehaviour, IActionQueue
             return;
         }
         playerPanel.SetActive(true);
-        healthIndicator.Amount = (int)health.currentHealth;
         keyIndicator.Amount = keys;
         ItemSlot[] itemSlots = playerPanel.GetComponentsInChildren<ItemSlot>();
         for (int i = 0; i < itemSlots.Length; i++)

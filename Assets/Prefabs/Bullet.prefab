@@ -139,6 +139,7 @@ MonoBehaviour:
   chargeVelocityModifier: 1.5
   chargeSizeModifier: 3
   chargeDamageModifier: 5
+  sound: {fileID: 8300000, guid: d2a65324da3af35468cffe8c751f02dc, type: 3}
 --- !u!198 &198746851483222450
 ParticleSystem:
   m_ObjectHideFlags: 1

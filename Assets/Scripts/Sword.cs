@@ -36,9 +36,9 @@ public class Sword : MonoBehaviour
     {
         if (friendly == other.CompareTag("Player") || hits.Contains(other.gameObject))
             return;
-        Health health = other.GetComponentInParent<Health>();
+        IDamageable health = other.GetComponentInParent<IDamageable>();
         Shield shield = other.GetComponent<Shield>();
-        if (!health || !shield && other.isTrigger)
+        if (health == null || !shield && other.isTrigger)
             return;
         hits.Add(other.gameObject);
         Vector2 direction = (other.transform.position - transform.position).normalized;

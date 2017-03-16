@@ -8,7 +8,7 @@ public class RoomReset : MonoBehaviour, ICustomSerializable
     public bool reset;
 
     Vector2 initialPosition;
-    Health health;
+    IDamageable health;
 
     // Use this for initialization
     void Start()
@@ -23,14 +23,14 @@ public class RoomReset : MonoBehaviour, ICustomSerializable
                 ResetSelf();
         });
 
-        health = GetComponentInChildren<Health>();
+        health = GetComponentInChildren<IDamageable>();
     }
 
     void ResetSelf()
     {
         gameObject.SetActive(true);
         transform.position = initialPosition;
-        health.currentHealth = health.maxHealth;
+        health.FullHeal();
     }
 
     public void Serialize(BinaryWriter bw)

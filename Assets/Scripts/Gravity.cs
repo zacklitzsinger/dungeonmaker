@@ -13,13 +13,13 @@ public class Gravity : MonoBehaviour {
     float baseDrag = 1f;
     public float dragModifier = 1;
 
-    Health health;
+    IDamageable health;
     Rigidbody2D rb2d;
 
     void Start()
     {
         // Currently assumes the object will have health - not necessarily a valid assumption
-        health = GetComponentInParent<Health>();
+        health = GetComponentInParent<IDamageable>();
         rb2d = GetComponentInParent<Rigidbody2D>();
     }
 
@@ -41,7 +41,7 @@ public class Gravity : MonoBehaviour {
     void CheckForDeath()
     {
         if (touching.Count <= 0)
-            health.Damage(1, gameObject, Vector2.zero, fall: true);
+            health.Damage(1, gameObject, Vector2.zero, DamageType.Fall);
     }
 
     void FixedUpdate()

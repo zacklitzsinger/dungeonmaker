@@ -14,6 +14,6 @@ public class ShadowCloak : MonoBehaviour, IItem {
 
     public void Activate(Player player)
     {
-        player.actions.Add(new PlayerAction() { type = PlayerState.Shadow });
+        player.actions.Add(new Player.Action() { type = Player.State.Shadow });
     }
 }

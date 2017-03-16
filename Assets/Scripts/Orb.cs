@@ -38,7 +38,7 @@ public class Orb : MonoBehaviour
             return;
 
         Player player = other.GetComponentInParent<Player>();
-        player.actions.Add(new PlayerAction() { type = PlayerState.Victory });
+        player.actions.Add(new Player.Action() { type = Player.State.Victory });
         LevelEditor.main.ChangeMode(EditMode.Victory);
         Destroy(gameObject);
     }

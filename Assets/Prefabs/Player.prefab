@@ -39,9 +39,9 @@ GameObject:
   - component: {fileID: 114357101590825330}
   - component: {fileID: 50582811179672188}
   - component: {fileID: 114554694894238124}
-  - component: {fileID: 114899060306880196}
   - component: {fileID: 33901930591371906}
   - component: {fileID: 23049979150220000}
+  - component: {fileID: 114589298458961086}
   m_Layer: 10
   m_Name: Player
   m_TagString: Player
@@ -108,7 +108,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1147360471527010}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.0813869, y: 1.3771247, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4508309996000950}
@@ -316,6 +316,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e259a2142481a24fb4e514b505fb1bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  swordPrefab: {fileID: 1002282342740670, guid: 440d7f478f067ab44b2b58da49e7d917,
+    type: 2}
   bulletPrefab: {fileID: 1738082771738544, guid: 0861409d57b6f1e458ad8ffefb4c1d96,
     type: 2}
   dodgeIcon: {fileID: 21300000, guid: af8cf2bd83ed29747b03cbf2619d8150, type: 3}
@@ -324,23 +326,23 @@ MonoBehaviour:
   rollForce: 5000
   energyPerRoll: 20
   rollGravityModifier: 0.4
-  maxEnergy: 100
-  currentEnergy: 0
-  energyRechargeRate: 1
-  attackWindup: 6
-  attackFrames: 4
-  attackForce: 200
-  energyPerShot: 5
-  scatterAngle: 12
+  attackWindupFrames: 5
+  attackFrames: 15
+  attackForce: 300
+  energyPerAttack: 25
+  energyMovementModifier: 0.75
+  overdrawPenaltyFrames: 180
+  overdrawSound: {fileID: 8300000, guid: 64b2139150ca8ac4398257423d0d362e, type: 3}
+  shootWindupFrames: 6
+  shootFrames: 4
+  shootKnockback: 200
+  energyPerShot: 10
+  scatterAngle: 5
   attackMovementModifier: 0.2
-  energyPerCharge: 0.4
-  maxChargeFrames: 120
-  aiming: 0
-  aimingMovementModifier: 0.5
-  aimingScatterModifier: 0.15
+  energyPerCharge: 0.25
+  maxChargeFrames: 90
   remStateFrames: 0
   currentActionFrames: 0
-  framesSinceEnergyUsed: 0
   keys: 0
   keybinds:
   - Left
@@ -371,6 +373,35 @@ MonoBehaviour:
   blocksPathing: 0
   sortOrderModifier: 0
   hideInPlayMode: 0
+--- !u!114 &114589298458961086
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147360471527010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1035f0196280c4a4fabd6d6aa5db3cc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  max: 100
+  framesUntilRechargeBegins: 45
+  rechargeRate: 0.5
+  damageToEnergy: 40
+  damageToLimit: 10
+  vulnerableTo: 63
+  framesSinceEnergyUsed: 0
+  framesSinceLastPulse: 0
+  pulseThreshold: 0.5
+  indicator: {fileID: 0}
+  deathRespawnPoint: {fileID: 0}
+  damageParticles: {fileID: 198637271435436188, guid: 3203b49ec00b44246bc810d433c37f3c,
+    type: 2}
+  deathParticles: {fileID: 198977816518499610, guid: 59fc8ce2bd8b7c643a73e3c731fd27ee,
+    type: 2}
+  hitSound: {fileID: 8300000, guid: 87e372e39fc06b14794ec2523cb17664, type: 3}
+  deathSound: {fileID: 8300000, guid: 3816d71a485e3bf439d56a5f6d93f6ba, type: 3}
+  pulseSound: {fileID: 8300000, guid: 41925ee8ac56b104eb6ac7cfc32959e9, type: 3}
 --- !u!114 &114626465262783684
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -383,31 +414,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dragModifier: 1
---- !u!114 &114899060306880196
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1147360471527010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6389aa04a6ae654fbe3575aa65009f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  invulnerableOverride: 0
-  vulnerableTo: 15
-  maxHealth: 0
-  invulnFrames: 90
-  currentHealth: 0
-  remInvulnFrames: 0
-  deathRespawnPoint: {fileID: 0}
-  itemChanceDropOnDeath: 0
-  itemChoices: []
-  damageParticles: {fileID: 198637271435436188, guid: 3203b49ec00b44246bc810d433c37f3c,
-    type: 2}
-  deathParticles: {fileID: 0}
-  hitSound: {fileID: 8300000, guid: 87e372e39fc06b14794ec2523cb17664, type: 3}
-  deathSound: {fileID: 0}
 --- !u!114 &114965935551178052
 MonoBehaviour:
   m_ObjectHideFlags: 1

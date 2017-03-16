@@ -13,25 +13,29 @@ public class Bullet : MonoBehaviour
     public float chargeSizeModifier;
     public float chargeDamageModifier;
 
+    public AudioClip sound;
+
     ParticleSystem ps;
 
     void Start()
     {
         GetComponent<Rigidbody2D>().AddForce(Mathf.Lerp(velocity, velocity * chargeVelocityModifier, charge) * transform.up, ForceMode2D.Impulse);
         ps = GetComponentInChildren<ParticleSystem>();
+        if (sound)
+            AudioSource.PlayClipAtPoint(sound, transform.position);
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         ObjectData otherData = other.GetComponentInParent<ObjectData>();
-        Health otherHealth = other.GetComponentInParent<Health>();
+        IDamageable otherHealth = other.GetComponentInParent<IDamageable>();
         Shield shield = other.GetComponent<Shield>();
         if (other.isTrigger && !shield || otherData == null)
             return;
         if (otherData.CompareTag("Player") != friendly || otherData.type == ObjectType.Wall)
         {
             Stop();
-            if (otherHealth)
+            if (otherHealth != null)
             {
                 if (shield)
                     shield.Block(null);

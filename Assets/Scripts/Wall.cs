@@ -20,13 +20,13 @@ public class Wall : MonoBehaviour {
     SpriteRenderer spriteRenderer;
     ObjectData data;
     Circuit circuit;
-    Health health;
+    IDamageable health;
 
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         data = GetComponent<ObjectData>();
-        health = GetComponent<Health>();
+        health = GetComponent<IDamageable>();
     }
 
     void OnDisable()
@@ -58,7 +58,7 @@ public class Wall : MonoBehaviour {
                     c.a = targetAlpha;
                 spriteRenderer.color = c;
             }
-        } else if (!health)
+        } else if (health == null)
         {
             enabled = false;
         }

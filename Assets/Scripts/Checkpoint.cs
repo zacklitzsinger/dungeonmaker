@@ -17,10 +17,10 @@ public class Checkpoint : MonoBehaviour {
     {
         if (!other.CompareTag("Player") || other.isTrigger)
             return;
-        Health health = other.GetComponentInParent<Health>();
-        if (health == null)
+        IRespawnable respawn = other.GetComponentInParent<IRespawnable>();
+        if (respawn == null)
             return;
-        health.SetDeathRespawnPoint(this);
+        respawn.SetDeathRespawnPoint(this);
         active = true;
     }
 

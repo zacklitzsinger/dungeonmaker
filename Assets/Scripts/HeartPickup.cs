@@ -9,10 +9,9 @@ public class HeartPickup : MonoBehaviour {
     {
         if (other.CompareTag("Player") && !other.isTrigger)
         {
-            Health health = other.GetComponentInParent<Health>();
-            if (health.currentHealth < health.maxHealth)
+            IDamageable health = other.GetComponentInParent<IDamageable>();
+            if (health.Heal(amount))
             {
-                health.Heal(amount);
                 Camera.main.GetComponent<AudioSource>().PlayOneShot(sound);
                 Destroy(gameObject);
             }

@@ -1,19 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-[Flags]
-public enum DamageType
-{
-    Generic = 1,
-    Slash = 2,
-    Explosive = 4,
-    Ground = 8
-}
-
-public class Health : MonoBehaviour, ICustomSerializable
+public class Health : MonoBehaviour, ICustomSerializable, IDamageable
 {
     [PlayerEditable("Invulnerable")]
     [ReadOnly]
@@ -56,12 +46,20 @@ public class Health : MonoBehaviour, ICustomSerializable
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
-    public void Heal(int amt)
+    public bool Heal(int amt)
     {
+        if (amt == 0 || currentHealth >= maxHealth)
+            return false;
         currentHealth = Mathf.Min(maxHealth, amt + currentHealth);
+        return true;
     }
 
-    public int Damage(int dmg, GameObject source, Vector2 knockback, DamageType damageType = DamageType.Generic, bool fall = false)
+    public void FullHeal()
+    {
+        Heal(maxHealth - currentHealth);
+    }
+
+    public int Damage(int dmg, GameObject source, Vector2 knockback, DamageType damageType = DamageType.Generic)
     {
         if (remInvulnFrames > 0 || invulnerableOverride || (damageType | vulnerableTo) != vulnerableTo)
             dmg = 0;
@@ -71,7 +69,7 @@ public class Health : MonoBehaviour, ICustomSerializable
             remInvulnFrames = invulnFrames;
             if (invulnFrames > 0 && spriteRenderer)
                 StartCoroutine(Flash(spriteRenderer, invulnFrames));
-            if (damageParticles && !fall)
+            if (damageParticles && (damageType | DamageType.Fall) != damageType)
             {
                 Instantiate(damageParticles, transform.position, Quaternion.LookRotation(knockback, Vector3.forward));
                 rb2d.AddForce(knockback);
@@ -91,7 +89,7 @@ public class Health : MonoBehaviour, ICustomSerializable
                 Respawn();
             else
             {
-                if (UnityEngine.Random.value <= itemChanceDropOnDeath && itemChoices.Count > 0)
+                if (Random.value <= itemChanceDropOnDeath && itemChoices.Count > 0)
                 {
                     GameObject itemChoice = itemChoices[UnityEngine.Random.Range(0, itemChoices.Count)];
                     LevelEditor.main.CreateObjectAtGrid(transform.position, itemChoice);
@@ -99,7 +97,7 @@ public class Health : MonoBehaviour, ICustomSerializable
                 data.gameObject.SetActive(false);
             }
         }
-        else if (fall && player)
+        else if ((damageType & DamageType.Fall) == DamageType.Fall && player)
         {
             RespawnAtRoomEntrance();
         }

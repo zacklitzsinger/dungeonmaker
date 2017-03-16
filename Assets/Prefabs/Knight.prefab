@@ -213,7 +213,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentState: {fileID: 0}
   decisionInterval: 120
-  hitStagger: 15
+  hitStagger: 2
   randomStates:
   - {fileID: 114436679227108570}
   - {fileID: 114789258443482190}
@@ -309,7 +309,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   angle: 60
-  distance: 4.5
+  distance: 8
   target: {fileID: 0}
   mask:
     serializedVersion: 2
@@ -337,7 +337,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63493e8285cb7d449b3f3deb5d8ff5c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  acceleration: 30
+  acceleration: 100
   flying: 0
   path: []
 --- !u!114 &114904661763868058
@@ -351,12 +351,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cab804a2f8937146a0e75745e76034b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  acceleration: 65
-  minAttackDelay: 10
-  maxAttackDelay: 30
-  attackFrames: 30
-  attackDistance: 2.5
-  attackMoveForce: 200
+  acceleration: 270
+  minAttackDelay: 6
+  maxAttackDelay: 15
+  attackFrames: 15
+  attackDistance: 3
+  attackMoveForce: 1200
+  postAttackDelay: 5
   sword: {fileID: 1002282342740670, guid: 05e94e4be2872ea4b9c33c51b7f2b372, type: 2}
   staggerFrames: 0
 --- !u!114 &114918477643818858

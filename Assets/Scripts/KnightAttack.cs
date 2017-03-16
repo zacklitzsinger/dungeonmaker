@@ -17,6 +17,7 @@ public class KnightAttack : MonoBehaviour, IActionQueue
     public int attackFrames;
     public float attackDistance;
     public float attackMoveForce;
+    public int postAttackDelay;
     public GameObject sword;
     [ReadOnly]
     public int staggerFrames; // can't do anything while stagger frames > 0
@@ -59,7 +60,7 @@ public class KnightAttack : MonoBehaviour, IActionQueue
                 swordInstance.owner = gameObject;
                 rb2d.AddForce(action.direction * attackMoveForce);
                 // After attacking, force a waiting period
-                actions.Enqueue(new KnightAction() { type = State.Idle, frames = 60 });
+                actions.Enqueue(new KnightAction() { type = State.Idle, frames = postAttackDelay });
                 break;
         }
     }

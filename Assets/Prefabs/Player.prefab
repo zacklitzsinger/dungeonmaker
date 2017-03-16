@@ -316,20 +316,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e259a2142481a24fb4e514b505fb1bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  swordPrefab: {fileID: 1002282342740670, guid: 440d7f478f067ab44b2b58da49e7d917,
+  bulletPrefab: {fileID: 1738082771738544, guid: 0861409d57b6f1e458ad8ffefb4c1d96,
     type: 2}
   dodgeIcon: {fileID: 21300000, guid: af8cf2bd83ed29747b03cbf2619d8150, type: 3}
-  acceleration: 450
+  acceleration: 400
   rollFrames: 20
-  rollForce: 6000
-  attackWindup: 8
-  attackFrames: 22
-  attackForce: 3000
-  maxCombo: 3
-  combo: 0
-  postComboCooldown: 15
+  rollForce: 5000
+  energyPerRoll: 20
+  rollGravityModifier: 0.4
+  maxEnergy: 100
+  currentEnergy: 0
+  energyRechargeRate: 1
+  attackWindup: 6
+  attackFrames: 0
+  attackForce: 200
+  energyPerShot: 5
+  scatterAngle: 12
+  attackMovementModifier: 0.2
+  aiming: 0
+  aimingMovementModifier: 0.5
+  aimingScatterModifier: 0.15
   remStateFrames: 0
   currentActionFrames: 0
+  framesSinceEnergyUsed: 0
   keys: 0
   keybinds:
   - Left

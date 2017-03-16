@@ -631,14 +631,14 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     {
         if (go == null)
             return;
-        foreach (SpriteRenderer renderer in go.GetComponentsInChildren<SpriteRenderer>())
+        foreach (Renderer renderer in go.GetComponentsInChildren<Renderer>())
         {
             float targetAlpha = active ? 1f : 0f;
             if (immediate)
             {
-                Color c = renderer.color;
+                Color c = renderer.material.color;
                 c.a = targetAlpha;
-                renderer.color = c;
+                renderer.material.color = c;
             }
             // This is a hack - we want to skip doors and walls that have become see through.
             else if (go.layer != LayerMask.NameToLayer("CollisionDisabled") || go.GetComponent<ObjectData>().type != ObjectType.Wall)
@@ -651,17 +651,17 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             ps.gameObject.SetActive(active);
     }
 
-    public IEnumerator ControlAlpha(SpriteRenderer r, float targetAlpha)
+    public IEnumerator ControlAlpha(Renderer r, float targetAlpha)
     {
-        float alpha = r.color.a;
+        float alpha = r.material.color.a;
         while (alpha != targetAlpha && r != null)
         {
             alpha = Mathf.Lerp(alpha, targetAlpha, 0.15f);
             if (Mathf.Abs(alpha - targetAlpha) < 0.05f)
                 alpha = targetAlpha;
-            Color c = r.color;
+            Color c = r.material.color;
             c.a = alpha;
-            r.color = c;
+            r.material.color = c;
             yield return new WaitForFixedUpdate();
         }
     }

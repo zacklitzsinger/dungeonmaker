@@ -23,7 +23,8 @@ public class Flamethrower : MonoBehaviour, ICustomSerializable
 
     void Update()
     {
-        animator.SetBool("active", active);
+        if (animator)
+            animator.SetBool("active", active);
     }
 
     void FixedUpdate()

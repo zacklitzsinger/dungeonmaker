@@ -332,6 +332,7 @@ MonoBehaviour:
   energyPerAttack: 25
   energyMovementModifier: 0.75
   overdrawPenaltyFrames: 180
+  overdrawDamage: 1
   overdrawSound: {fileID: 8300000, guid: 64b2139150ca8ac4398257423d0d362e, type: 3}
   shootWindupFrames: 6
   shootFrames: 4
@@ -384,6 +385,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1035f0196280c4a4fabd6d6aa5db3cc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  invulnFrames: 120
   max: 100
   framesUntilRechargeBegins: 45
   rechargeRate: 0.5
@@ -391,6 +393,7 @@ MonoBehaviour:
   damageToLimit: 10
   vulnerableTo: 63
   framesSinceEnergyUsed: 0
+  remInvulnFrames: 0
   framesSinceLastPulse: 0
   pulseThreshold: 0.5
   indicator: {fileID: 0}

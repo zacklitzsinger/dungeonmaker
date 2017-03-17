@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -40,8 +39,15 @@ public class Gravity : MonoBehaviour {
 
     void CheckForDeath()
     {
-        if (touching.Count <= 0)
+        if (touching.Count > 0)
+            return;
             health.Damage(1, gameObject, Vector2.zero, DamageType.Fall);
+        Player player = GetComponentInParent<Player>();
+        if (player)
+        {
+            player.transform.position = player.roomEntrance;
+            rb2d.velocity = Vector2.zero;
+        }
     }
 
     void FixedUpdate()

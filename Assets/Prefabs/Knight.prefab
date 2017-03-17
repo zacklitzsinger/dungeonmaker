@@ -357,7 +357,7 @@ MonoBehaviour:
   attackFrames: 15
   attackDistance: 3
   attackMoveForce: 1200
-  postAttackDelay: 5
+  postAttackDelay: 60
   sword: {fileID: 1002282342740670, guid: 05e94e4be2872ea4b9c33c51b7f2b372, type: 2}
   staggerFrames: 0
 --- !u!114 &114918477643818858
@@ -372,7 +372,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   invulnerableOverride: 0
-  vulnerableTo: 15
+  vulnerableTo: 31
   maxHealth: 12
   invulnFrames: 0
   currentHealth: 0

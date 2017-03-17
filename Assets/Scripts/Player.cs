@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.ImageEffects;
 
 public class Player : MonoBehaviour, IActionQueue
 {
@@ -49,6 +50,7 @@ public class Player : MonoBehaviour, IActionQueue
     public int energyPerAttack;
     public float energyMovementModifier;
     public int overdrawPenaltyFrames;
+    public int overdrawDamage;
     public AudioClip overdrawSound;
 
     //Gunplay
@@ -84,6 +86,7 @@ public class Player : MonoBehaviour, IActionQueue
 
     GameObject playerPanel;
     KeyUI keyIndicator;
+    ColorCorrectionCurves colorCorrection;
 
     Rigidbody2D rb2d;
     Gravity gravity;
@@ -101,6 +104,7 @@ public class Player : MonoBehaviour, IActionQueue
         keyIndicator = playerPanel.GetComponentInChildren<KeyUI>(true);
         energy = GetComponent<Energy>();
         energy.indicator = playerPanel.GetComponentInChildren<EnergyIndicator>(true);
+        colorCorrection = Camera.main.GetComponent<ColorCorrectionCurves>();
         currentAction = new Action();
     }
 
@@ -205,7 +209,10 @@ public class Player : MonoBehaviour, IActionQueue
     // Consumes a certain amount of energy. Can trigger overdraw inactivity period.
     float UseEnergy(float amt)
     {
+        // Don't allow player to overdraw by queueing actions
         float actual = energy.UseEnergy(amt);
+        if (energy.Current == 0)
+            actions.Clear();
         if (actual == 0)
             TriggerOverdraw();
         return actual;
@@ -215,7 +222,7 @@ public class Player : MonoBehaviour, IActionQueue
     {
         if (overdrawSound)
             Camera.main.GetComponent<AudioSource>().PlayOneShot(overdrawSound);
-        energy.Damage(1, gameObject, Vector2.zero);
+        energy.Damage(overdrawDamage, gameObject, Vector2.zero);
         InterruptAfterCurrent(overdrawPenaltyFrames);
     }
 
@@ -223,6 +230,7 @@ public class Player : MonoBehaviour, IActionQueue
     {
         if (animator)
             animator.SetBool("shadow", shadow);
+        colorCorrection.saturation = energy.Current / energy.Limit;
     }
 
     void FixedUpdate()

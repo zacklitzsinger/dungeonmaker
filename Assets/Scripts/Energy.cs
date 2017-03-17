@@ -2,6 +2,7 @@
 
 public class Energy : MonoBehaviour, IDamageable, IRespawnable
 {
+    public int invulnFrames;
 
     private float current;
     public float Current { get { return current; } set { current = Mathf.Clamp(value, 0, limit); } }
@@ -16,6 +17,8 @@ public class Energy : MonoBehaviour, IDamageable, IRespawnable
     public DamageType vulnerableTo = DamageType.Generic | DamageType.Slash | DamageType.Explosive | DamageType.Ground;
     [ReadOnly]
     public int framesSinceEnergyUsed;
+    [ReadOnly]
+    public int remInvulnFrames;
 
     [ReadOnly]
     public int framesSinceLastPulse;
@@ -35,7 +38,6 @@ public class Energy : MonoBehaviour, IDamageable, IRespawnable
 
     ObjectData data;
     Rigidbody2D rb2d;
-
 
     void Start()
     {
@@ -57,10 +59,12 @@ public class Energy : MonoBehaviour, IDamageable, IRespawnable
 
     void FixedUpdate()
     {
+        if (remInvulnFrames > 0)
+            remInvulnFrames--;
         if (pulseSound)
         {
             framesSinceLastPulse++;
-            if (current/max < pulseThreshold && framesSinceLastPulse >= Mathf.FloorToInt(current / max * 50 + 8))
+            if (current / max < pulseThreshold && framesSinceLastPulse >= Mathf.FloorToInt(current / max * 50 + 8))
             {
                 framesSinceLastPulse = 0;
                 AudioSource.PlayClipAtPoint(pulseSound, transform.position);
@@ -92,12 +96,18 @@ public class Energy : MonoBehaviour, IDamageable, IRespawnable
 
     public int Damage(int dmg, GameObject source, Vector2 knockback, DamageType damageType = DamageType.Generic)
     {
-        if ((damageType | vulnerableTo) != vulnerableTo)
+        if (remInvulnFrames > 0 || (damageType | vulnerableTo) != vulnerableTo)
             dmg = 0;
         float actualEnergyDamage = ConvertDamageToEnergy(dmg);
         framesSinceEnergyUsed = 0;
         if (actualEnergyDamage > 0)
         {
+            remInvulnFrames = invulnFrames;
+            if (damageParticles && knockback.magnitude > 0 && (damageType | DamageType.Fall) != damageType)
+            {
+                Instantiate(damageParticles, transform.position, Quaternion.LookRotation(knockback, Vector3.forward));
+                rb2d.AddForce(knockback);
+            }
             CheckDeath();
         }
         return dmg;
@@ -119,6 +129,9 @@ public class Energy : MonoBehaviour, IDamageable, IRespawnable
         }
     }
 
+    /// <summary>
+    /// Does damage to energy, converting it into permanent damage if necessary. Returns the actual permanent damage dealt to energy.
+    /// </summary>
     float ConvertDamageToEnergy(int dmg)
     {
         float energy = dmg * damageToEnergy;

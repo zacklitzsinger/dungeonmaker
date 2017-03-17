@@ -44,18 +44,19 @@ public class ObjectData : MonoBehaviour, ICustomSerializable
     public bool blocksPathing = false;
     public int sortOrderModifier;
     public bool hideInPlayMode = false;
-    SpriteRenderer sprite;
+
+    new Renderer renderer;
 
     void Start()
     {
-        sprite = GetComponentInChildren<SpriteRenderer>();
+        renderer = GetComponentInChildren<Renderer>();
         UpdateSortOrder();
     }
 
     void Update()
     {
         if (hideInPlayMode)
-            sprite.enabled = (LevelEditor.main.mode >= EditMode.Create);
+            renderer.enabled = (LevelEditor.main.mode >= EditMode.Create);
         UpdateSortOrder();
     }
 
@@ -63,8 +64,8 @@ public class ObjectData : MonoBehaviour, ICustomSerializable
     {
         // Sprite draw order is dependent on Y because we are 2.5D. However, we multiple everything by a constant so that 
         // we don't get jumps when rounding. Ties are broken by object type on layer.
-        if (sprite)
-            sprite.sortingOrder = sortOrderModifier + -1 * (int)Math.Floor(transform.position.y * 4) + (int)type;
+        if (renderer as SpriteRenderer != null)
+            (renderer as SpriteRenderer).sortingOrder = sortOrderModifier + -1 * (int)Math.Floor(transform.position.y * 4) + (int)type;
     }
 
     public bool Navigable

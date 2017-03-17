@@ -184,6 +184,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     void SidebarSelectGroup(Category category)
     {
+        selectedPrefab = null;
         foreach (Transform child in sidebarContent.transform)
         {
             bool active = Array.Exists(ObjectMasterList.main.options, (go) =>
@@ -661,6 +662,10 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             Color c = r.material.color;
             c.a = alpha;
             r.material.color = c;
+            if (alpha == 0)
+                r.enabled = false;
+            else if (alpha == 1)
+                r.enabled = true;
             yield return new WaitForFixedUpdate();
         }
     }

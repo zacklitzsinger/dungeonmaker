@@ -328,7 +328,7 @@ MonoBehaviour:
   rollGravityModifier: 0.4
   attackWindupFrames: 5
   attackFrames: 15
-  attackForce: 300
+  attackForce: 1000
   energyPerAttack: 25
   energyMovementModifier: 0.75
   overdrawPenaltyFrames: 180
@@ -344,6 +344,7 @@ MonoBehaviour:
   maxChargeFrames: 90
   remStateFrames: 0
   currentActionFrames: 0
+  combo: 0
   keys: 0
   keybinds:
   - Left

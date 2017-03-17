@@ -17,14 +17,14 @@ public class Wall : MonoBehaviour {
         }
     }
 
-    SpriteRenderer spriteRenderer;
+    MeshRenderer meshRenderer;
     ObjectData data;
     Circuit circuit;
     IDamageable health;
 
     void Start()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        meshRenderer = GetComponent<MeshRenderer>();
         data = GetComponent<ObjectData>();
         health = GetComponent<IDamageable>();
     }
@@ -52,11 +52,11 @@ public class Wall : MonoBehaviour {
             if (LevelEditor.main.currentRoom.Contains(transform.position))
             {
                 float targetAlpha = Active ? 1 : 0;
-                Color c = spriteRenderer.color;
+                Color c = meshRenderer.material.color;
                 c.a = Mathf.Lerp(c.a, targetAlpha, 0.15f);
                 if (Mathf.Abs(c.a - targetAlpha) < 0.05f)
                     c.a = targetAlpha;
-                spriteRenderer.color = c;
+                meshRenderer.material.color = c;
             }
         } else if (health == null)
         {

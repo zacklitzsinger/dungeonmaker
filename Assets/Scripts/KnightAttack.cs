@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-public struct KnightAction
+public class KnightAttack : MonoBehaviour, IActionQueue, IAttack
 {
-    public KnightAttack.State type;
-    public int frames;
-    public Vector2 direction;
-}
-
-public class KnightAttack : MonoBehaviour, IActionQueue
-{
+    [Serializable]
+    public class Action
+    {
+        public State type;
+        public int frames;
+        public Vector2 direction;
+    }
 
     public float acceleration;
     public int minAttackDelay;
@@ -19,8 +20,7 @@ public class KnightAttack : MonoBehaviour, IActionQueue
     public float attackMoveForce;
     public int postAttackDelay;
     public GameObject sword;
-    [ReadOnly]
-    public int staggerFrames; // can't do anything while stagger frames > 0
+    public Transform target;
 
     public enum State
     {
@@ -30,8 +30,8 @@ public class KnightAttack : MonoBehaviour, IActionQueue
         Attack
     }
 
-    public KnightAction currentAction;
-    public Queue<KnightAction> actions = new Queue<KnightAction>();
+    public Action currentAction;
+    public Queue<Action> actions = new Queue<Action>();
     List<Vector2> path;
 
     VisionCone vision;
@@ -45,7 +45,7 @@ public class KnightAttack : MonoBehaviour, IActionQueue
         shield = GetComponentInChildren<Shield>(true);
     }
 
-    public void TriggerAction(KnightAction action)
+    public void TriggerAction(Action action)
     {
         if (shield)
             shield.gameObject.SetActive(action.type != State.Idle || action.frames == 0);
@@ -54,31 +54,31 @@ public class KnightAttack : MonoBehaviour, IActionQueue
             case State.Attack:
                 if (shield)
                     shield.gameObject.SetActive(false);
-                Quaternion rotation = Quaternion.LookRotation(Random.value < 0.5f ? Vector3.forward : Vector3.back, action.direction.normalized);
+                Quaternion rotation = Quaternion.LookRotation(UnityEngine.Random.value < 0.5f ? Vector3.forward : Vector3.back, action.direction.normalized);
                 Sword swordInstance = Instantiate(sword, transform.position, rotation, transform).GetComponentInChildren<Sword>();
                 swordInstance.friendly = false;
                 swordInstance.owner = gameObject;
                 rb2d.AddForce(action.direction * attackMoveForce);
                 // After attacking, force a waiting period
-                actions.Enqueue(new KnightAction() { type = State.Idle, frames = postAttackDelay });
+                actions.Enqueue(new Action() { type = State.Idle, frames = postAttackDelay });
                 break;
         }
     }
 
     public void Interrupt(int frames)
     {
-        currentAction = new KnightAction() { type = KnightAttack.State.Idle, frames = frames };
+        currentAction = new Action() { type = KnightAttack.State.Idle, frames = frames };
         TriggerAction(currentAction);
     }
 
-    KnightAction DecideNextAction()
+    Action DecideNextAction()
     {
-        if (vision.target)
+        if (target)
         {
-            if (sword && (vision.target.position - transform.position).magnitude < attackDistance)
+            if (sword && (target.position - transform.position).magnitude < attackDistance)
             {
-                actions.Enqueue(new KnightAction() { type = State.AttackWindup, frames = Random.Range(minAttackDelay, maxAttackDelay) });
-                actions.Enqueue(new KnightAction() { type = State.Attack, frames = attackFrames, direction = (vision.target.position - transform.position) });
+                actions.Enqueue(new Action() { type = State.AttackWindup, frames = UnityEngine.Random.Range(minAttackDelay, maxAttackDelay) });
+                actions.Enqueue(new Action() { type = State.Attack, frames = attackFrames, direction = (target.position - transform.position) });
             }
             else
             {
@@ -89,35 +89,32 @@ public class KnightAttack : MonoBehaviour, IActionQueue
                     enabled = false;
                 }
                 else
-                    actions.Enqueue(new KnightAction() { type = State.Chase });
+                    actions.Enqueue(new Action() { type = State.Chase });
             }
         }
-        return currentAction = new KnightAction();
+        return currentAction = new Action();
     }
 
     void RecalcPath()
     {
-        path = LevelEditor.main.navcalc.CalculatePath(transform.position, vision.target.position);
+        path = LevelEditor.main.navcalc.CalculatePath(transform.position, target.position);
     }
 
     void FixedUpdate()
     {
-        if (vision.target)
-            Debug.DrawLine(transform.position, vision.target.transform.position, Color.yellow);
-        if (staggerFrames > 0)
+        if (vision)
+            target = target ?? vision.target;
+        if (target)
+            Debug.DrawLine(transform.position, target.transform.position, Color.yellow);
+        if (currentAction != null && currentAction.type == State.Chase && path != null && path.Count > 0)
         {
-            staggerFrames--;
-            return;
-        }
-        if (currentAction.type == State.Chase && path != null && path.Count > 0)
-        {
-            if (vision.target && (vision.target.position - transform.position).magnitude < attackDistance)
+            if (target && (target.position - transform.position).magnitude < attackDistance)
             {
                 TriggerAction(DecideNextAction());
                 return;
             }
             // TODO: Do some movement prediction
-            if (vision.target != null && Vector2.Distance(path[path.Count - 1], vision.target.position) > 1)
+            if (target != null && Vector2.Distance(path[path.Count - 1], target.position) > 1)
                 RecalcPath();
             Debug.DrawLine(transform.position, path[0], Color.blue);
             Vector2 delta = path[0] - (Vector2)transform.position;
@@ -130,7 +127,7 @@ public class KnightAttack : MonoBehaviour, IActionQueue
             Vector2 targetDirection = delta.normalized;
             rb2d.AddForce(targetDirection * acceleration);
         }
-        else if (currentAction.frames-- <= 0)
+        else if (currentAction == null || currentAction.frames-- <= 0)
         {
             if (actions.Count == 0)
                 actions.Enqueue(DecideNextAction());
@@ -140,6 +137,11 @@ public class KnightAttack : MonoBehaviour, IActionQueue
                 TriggerAction(currentAction);
             }
         }
+    }
+
+    public void SetTarget(Transform target)
+    {
+        this.target = target;
     }
 
 }

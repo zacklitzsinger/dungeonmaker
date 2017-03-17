@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BasicAI : MonoBehaviour
 {
+    public MonoBehaviour previousState;
     [ReadOnly]
     public MonoBehaviour currentState;
     [Tooltip("How frequently to make decisions between random states")]
@@ -11,6 +12,8 @@ public class BasicAI : MonoBehaviour
     int remFrames;
     [Tooltip("How many frames to stagger per instance of damage")]
     public int hitStagger;
+    [ReadOnly]
+    public int staggerFrames;
 
     public List<MonoBehaviour> randomStates = new List<MonoBehaviour>();
     public MonoBehaviour attack;
@@ -29,15 +32,22 @@ public class BasicAI : MonoBehaviour
         // because they are in various states of enabled/disabled.
         health.onDamaged += (go) =>
         {
-            if (go.CompareTag("Player") && vision)
-                vision.target = go.transform;
-            if (attack as KnightAttack)
-                (attack as KnightAttack).staggerFrames += hitStagger;
+            if (go.CompareTag("Player") && vision && attack as IAttack != null)
+            {
+                (attack as IAttack).SetTarget(go.transform);
+                SetCurrentState(attack);
+            }
+            staggerFrames += hitStagger;
         };
     }
 
-    void SetCurrentState(MonoBehaviour state)
+    public void SetCurrentState(MonoBehaviour state)
     {
+        if (currentState != state)
+        {
+            previousState = currentState;
+            currentState = state;
+        }
         foreach (MonoBehaviour behavior in randomStates)
             behavior.enabled = (state == behavior);
         if (attack)
@@ -47,16 +57,25 @@ public class BasicAI : MonoBehaviour
     void PickRandomState()
     {
         // Don't randomly pick attack state
-        currentState = randomStates[UnityEngine.Random.Range(0, randomStates.Count)];
-        SetCurrentState(currentState);
+        SetCurrentState(randomStates[UnityEngine.Random.Range(0, randomStates.Count)]);
         remFrames = decisionInterval;
     }
 
     void FixedUpdate()
     {
+        if (staggerFrames > 0)
+        {
+            SetCurrentState(null);
+            staggerFrames--;
+        }
+        else if (staggerFrames == 0 && currentState == null)
+        {
+            SetCurrentState(previousState);
+        }
         if (!LevelEditor.main.currentRoom.Contains(transform.position.ToGrid()))
         {
             SetCurrentState(null);
+            previousState = null;
             return;
         }
         if (circuit == null)

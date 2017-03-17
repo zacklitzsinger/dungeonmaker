@@ -8,6 +8,7 @@ public class Bullet : MonoBehaviour
     public int damage;
     public float knockbackModifier;
     public bool friendly;
+    public GameObject owner;
     public float charge;
     public float chargeVelocityModifier;
     public float chargeSizeModifier;
@@ -42,7 +43,7 @@ public class Bullet : MonoBehaviour
                 else
                 {
                     int dmg = Mathf.FloorToInt(Mathf.Lerp(damage, damage * chargeDamageModifier, charge));
-                    otherHealth.Damage(dmg, gameObject, transform.up * velocity * knockbackModifier);
+                    otherHealth.Damage(dmg, owner, transform.up * velocity * knockbackModifier);
                 }
             }
         }

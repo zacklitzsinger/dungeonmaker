@@ -24,6 +24,7 @@ public class Player : MonoBehaviour, IActionQueue
         public int frames;
         public Vector2 vector;
         public bool sticky; // Should action stay around even when frames == 0?
+        public bool combo; // Count this as part of the combo?
 
         public override string ToString()
         {
@@ -69,6 +70,7 @@ public class Player : MonoBehaviour, IActionQueue
     public int remStateFrames; // Remaining frames to continue current state; 0 when in idle
     [ReadOnly]
     public int currentActionFrames; // How many frames have passed under the current action
+    public int combo; // Current number of actions in a row
 
     public int keys = 0;
     public IItem[] Items { get { return GetComponentsInChildren<IItem>(); } }
@@ -115,6 +117,10 @@ public class Player : MonoBehaviour, IActionQueue
     {
         Quaternion rotation;
         remStateFrames = action.frames;
+        if (action.combo)
+            combo++;
+        if (action.type == State.Idle)
+            combo = 0;
         if (action.type != State.Shadow)
             shadow = false;
         switch (action.type)
@@ -128,12 +134,12 @@ public class Player : MonoBehaviour, IActionQueue
             case State.Attack:
                 if (action.vector.magnitude > 0)
                 {
-                    rotation = Quaternion.LookRotation((Random.value > 0.5 ? Vector3.forward : Vector3.back), action.vector.normalized);
+                    rotation = Quaternion.LookRotation((combo % 2 == 0 ? Vector3.forward : Vector3.back), action.vector.normalized);
                     Sword sword = Instantiate(swordPrefab, transform.position, rotation, transform).GetComponentInChildren<Sword>();
                     sword.owner = gameObject;
                     UseEnergy(energyPerAttack);
-                    //if (action.variation == "thrust" || combo > 2)
-                    //    sword.style = Sword.Style.Thrust;
+                    if (combo % 3 == 0)
+                        sword.style = Sword.Style.Thrust;
                 }
                 break;
 
@@ -151,6 +157,7 @@ public class Player : MonoBehaviour, IActionQueue
                 Quaternion scatter = Quaternion.AngleAxis(angle, Vector3.forward);
                 Bullet bullet = Instantiate(bulletPrefab, transform.position, rotation * scatter, transform).GetComponentInChildren<Bullet>();
                 bullet.friendly = true;
+                bullet.owner = gameObject;
                 bullet.charge = Mathf.Clamp01((currentActionFrames - shootWindupFrames) / (float)maxChargeFrames);
                 UseEnergy(energyPerShot);
                 break;
@@ -326,7 +333,7 @@ public class Player : MonoBehaviour, IActionQueue
         if (Input.GetButtonDown("Roll") && targetMotion.magnitude > 0)
         {
             TryCancelBackswing();
-            actions.Add(new Action() { type = State.Rolling, frames = rollFrames, vector = targetMotion.normalized * rollForce });
+            actions.Add(new Action() { type = State.Rolling, frames = rollFrames, vector = targetMotion.normalized * rollForce, combo=true });
         }
 
         if (Input.GetButtonDown("Shoot"))
@@ -345,7 +352,7 @@ public class Player : MonoBehaviour, IActionQueue
             //    variation = "thrust";
             Vector2 targetDirection = (LevelEditor.main.GetXYPlanePosition(Input.mousePosition) - (Vector2)transform.position).normalized;
             actions.Add(new Action() { type = State.AttackWindup, frames = attackWindupFrames, vector = targetDirection * attackForce });
-            actions.Add(new Action() { type = State.Attack, frames = attackFrames, vector = targetDirection });
+            actions.Add(new Action() { type = State.Attack, frames = attackFrames, vector = targetDirection, combo=true });
         }
 
         if (Input.GetButtonDown("Use item 1") && Items.Length >= 1)

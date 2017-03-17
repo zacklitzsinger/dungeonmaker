@@ -29,6 +29,7 @@ GameObject:
   - component: {fileID: 114610941385884982}
   - component: {fileID: 114689978433671992}
   - component: {fileID: 114436679227108570}
+  - component: {fileID: 114381196152444296}
   m_Layer: 0
   m_Name: Knight
   m_TagString: Untagged
@@ -211,9 +212,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 662e72fd0985a894c9f0b637c77cc490, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  previousState: {fileID: 0}
   currentState: {fileID: 0}
   decisionInterval: 120
   hitStagger: 2
+  staggerFrames: 0
   randomStates:
   - {fileID: 114436679227108570}
   - {fileID: 114789258443482190}
@@ -252,6 +255,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f371417c52363548a779879588ea96a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114381196152444296
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147360471527010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 189442010847fcc4385d0e9c3385aae3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  state: {fileID: 114904661763868058}
 --- !u!114 &114436679227108570
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -359,7 +374,11 @@ MonoBehaviour:
   attackMoveForce: 1200
   postAttackDelay: 60
   sword: {fileID: 1002282342740670, guid: 05e94e4be2872ea4b9c33c51b7f2b372, type: 2}
-  staggerFrames: 0
+  target: {fileID: 0}
+  currentAction:
+    type: 0
+    frames: 0
+    direction: {x: 0, y: 0}
 --- !u!114 &114918477643818858
 MonoBehaviour:
   m_ObjectHideFlags: 1

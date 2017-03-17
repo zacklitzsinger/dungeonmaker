@@ -331,13 +331,12 @@ MonoBehaviour:
   attackForce: 1000
   energyPerAttack: 25
   energyMovementModifier: 0.75
-  overdrawPenaltyFrames: 180
-  overdrawDamage: 1
+  overdrawPenaltyFrames: 60
   overdrawSound: {fileID: 8300000, guid: 64b2139150ca8ac4398257423d0d362e, type: 3}
   shootWindupFrames: 6
   shootFrames: 4
   shootKnockback: 200
-  energyPerShot: 10
+  energyPerShot: 12
   scatterAngle: 5
   attackMovementModifier: 0.2
   energyPerCharge: 0.25
@@ -355,6 +354,7 @@ MonoBehaviour:
   - F
   roomEntrance: {x: 0, y: 0}
   shadow: 0
+  smoke: {fileID: 0}
 --- !u!114 &114554694894238124
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -388,7 +388,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   invulnFrames: 120
   max: 100
-  framesUntilRechargeBegins: 45
+  framesUntilRechargeBegins: 30
   rechargeRate: 0.5
   damageToEnergy: 40
   damageToLimit: 10

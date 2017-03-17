@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 198736298119686088}
   - component: {fileID: 199645982707075318}
   - component: {fileID: 114064632587530062}
+  - component: {fileID: 114646735326241496}
   m_Layer: 0
   m_Name: Explosion
   m_TagString: Untagged
@@ -53,6 +54,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b08fd6aa4a796d049984a7a7c00d6045, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114646735326241496
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1632743929217994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6036f415321a16a499eb5927efc3a7cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 0
+  damage: 0
+  knockback: 0
 --- !u!198 &198736298119686088
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -108,7 +123,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 2066648003
+  randomSeed: 110915735
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -2615,7 +2630,7 @@ ParticleSystemRenderer:
   m_ReflectionProbeUsage: 0
   m_Materials:
   - {fileID: 2100000, guid: 8caffac0846189f438878784df961237, type: 2}
-  - {fileID: 2100000, guid: 5695da136c867684295e9b7aa0add5cc, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

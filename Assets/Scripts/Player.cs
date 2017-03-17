@@ -7,6 +7,7 @@ public class Player : MonoBehaviour, IActionQueue
     public enum State
     {
         Idle,
+        Stun,
         Rolling,
         AttackWindup,
         Attack,
@@ -51,7 +52,6 @@ public class Player : MonoBehaviour, IActionQueue
     public int energyPerAttack;
     public float energyMovementModifier;
     public int overdrawPenaltyFrames;
-    public int overdrawDamage;
     public AudioClip overdrawSound;
 
     //Gunplay
@@ -89,6 +89,7 @@ public class Player : MonoBehaviour, IActionQueue
     GameObject playerPanel;
     KeyUI keyIndicator;
     ColorCorrectionCurves colorCorrection;
+    NoiseAndGrain noiseAndGrain;
 
     Rigidbody2D rb2d;
     Gravity gravity;
@@ -107,6 +108,7 @@ public class Player : MonoBehaviour, IActionQueue
         energy = GetComponent<Energy>();
         energy.indicator = playerPanel.GetComponentInChildren<EnergyIndicator>(true);
         colorCorrection = Camera.main.GetComponent<ColorCorrectionCurves>();
+        noiseAndGrain = Camera.main.GetComponent<NoiseAndGrain>();
         currentAction = new Action();
     }
 
@@ -172,6 +174,10 @@ public class Player : MonoBehaviour, IActionQueue
             case State.Shadow:
                 shadow = !shadow;
                 break;
+            case State.Idle:
+            case State.Stun:
+                combo = 0;
+                break;
         }
         currentActionFrames = 0;
     }
@@ -181,16 +187,21 @@ public class Player : MonoBehaviour, IActionQueue
         return Random.Range(-scatterAngle / 2, scatterAngle / 2);
     }
 
-    public void Interrupt(int frames)
+    public void Interrupt(int frames, State type)
     {
-        currentAction = new Action() { type = State.Idle, frames = frames };
+        currentAction = new Action() { type = type, frames = frames };
         TriggerAction(currentAction);
     }
 
-    public void InterruptAfterCurrent(int frames)
+    public void Interrupt(int frames)
+    {
+        Interrupt(frames, State.Idle);
+    }
+
+    public void InterruptAfterCurrent(int frames, State type = State.Idle)
     {
         actions.Clear();
-        actions.Add(new Action() { type = State.Idle, frames = frames });
+        actions.Add(new Action() { type = type, frames = frames });
     }
 
     bool CanQueueActions()
@@ -229,15 +240,16 @@ public class Player : MonoBehaviour, IActionQueue
     {
         if (overdrawSound)
             Camera.main.GetComponent<AudioSource>().PlayOneShot(overdrawSound);
-        energy.Damage(overdrawDamage, gameObject, Vector2.zero);
-        InterruptAfterCurrent(overdrawPenaltyFrames);
+        //energy.Damage(overdrawDamage, gameObject, Vector2.zero);
+        InterruptAfterCurrent(overdrawPenaltyFrames, State.Stun);
     }
 
     void Update()
     {
         if (animator)
             animator.SetBool("shadow", shadow);
-        colorCorrection.saturation = energy.Current / energy.Limit * .95f + 0.05f;
+        colorCorrection.saturation = energy.Current / energy.Limit * .75f + 0.25f;
+        noiseAndGrain.intensityMultiplier = 2 * (1 - energy.Current / energy.Limit);
     }
 
     void FixedUpdate()
@@ -309,6 +321,7 @@ public class Player : MonoBehaviour, IActionQueue
             {
                 if (currentActionFrames - shootWindupFrames >= maxChargeFrames)
                     currentAction.sticky = false;
+                // Must release early because the shot takes energy too, so it shouldn't always trigger overdraw.
                 else if (energy.Current < energyPerShot / 2)
                     currentAction.sticky = false;
                 else
@@ -326,7 +339,7 @@ public class Player : MonoBehaviour, IActionQueue
             if (firstAttackWindup != null)
                 firstAttackWindup.sticky = false;
         }
-        if (currentAction  != null && currentAction.type == State.ShootWindup && currentAction.sticky && !Input.GetButton("Shoot"))
+        if (currentAction != null && currentAction.type == State.ShootWindup && currentAction.sticky && !Input.GetButton("Shoot"))
             currentAction.sticky = false;
 
         if (!CanQueueActions())
@@ -335,7 +348,7 @@ public class Player : MonoBehaviour, IActionQueue
         if (Input.GetButtonDown("Roll") && targetMotion.magnitude > 0)
         {
             TryCancelBackswing();
-            actions.Add(new Action() { type = State.Rolling, frames = rollFrames, vector = targetMotion.normalized * rollForce, combo=true });
+            actions.Add(new Action() { type = State.Rolling, frames = rollFrames, vector = targetMotion.normalized * rollForce, combo = true });
         }
 
         if (Input.GetButtonDown("Shoot"))
@@ -354,7 +367,7 @@ public class Player : MonoBehaviour, IActionQueue
             //    variation = "thrust";
             Vector2 targetDirection = (LevelEditor.main.GetXYPlanePosition(Input.mousePosition) - (Vector2)transform.position).normalized;
             actions.Add(new Action() { type = State.AttackWindup, frames = attackWindupFrames, vector = targetDirection * attackForce });
-            actions.Add(new Action() { type = State.Attack, frames = attackFrames, vector = targetDirection, combo=true });
+            actions.Add(new Action() { type = State.Attack, frames = attackFrames, vector = targetDirection, combo = true });
         }
 
         if (Input.GetButtonDown("Use item 1") && Items.Length >= 1)

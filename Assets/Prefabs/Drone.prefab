@@ -26,6 +26,9 @@ GameObject:
   - component: {fileID: 114789258443482190}
   - component: {fileID: 114273653508190260}
   - component: {fileID: 114013204344090042}
+  - component: {fileID: 114847706686761482}
+  - component: {fileID: 114636135643018124}
+  - component: {fileID: 114616683600302002}
   m_Layer: 0
   m_Name: Drone
   m_TagString: Untagged
@@ -213,7 +216,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
-  knockback: 1200
+  knockback: 2400
 --- !u!114 &114269511763007934
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -236,13 +239,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 662e72fd0985a894c9f0b637c77cc490, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  previousState: {fileID: 0}
   currentState: {fileID: 0}
   decisionInterval: 60
   hitStagger: 0
+  staggerFrames: 0
   randomStates:
   - {fileID: 114273653508190260}
   - {fileID: 114789258443482190}
-  attack: {fileID: 0}
+  attack: {fileID: 114847706686761482}
 --- !u!114 &114273653508190260
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -313,6 +318,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d08b0162c2fcca499881b2d15b6b0e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114616683600302002
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147360471527010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca79f91a826bce94084e76754c6d0f01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 3
+  knockback: 3000
+  damage: 2
+  explosionPrefab: {fileID: 114646735326241496, guid: a28470c3a7a222248bd4732c4f80a583,
+    type: 2}
+--- !u!114 &114636135643018124
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147360471527010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 189442010847fcc4385d0e9c3385aae3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  state: {fileID: 114847706686761482}
 --- !u!114 &114783886964798618
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -349,6 +382,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d08b0162c2fcca499881b2d15b6b0e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114847706686761482
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147360471527010}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cab804a2f8937146a0e75745e76034b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  acceleration: 30
+  minAttackDelay: 0
+  maxAttackDelay: 0
+  attackFrames: 0
+  attackDistance: 0
+  attackMoveForce: 0
+  postAttackDelay: 0
+  sword: {fileID: 0}
+  target: {fileID: 0}
+  currentAction:
+    type: 0
+    frames: 0
+    direction: {x: 0, y: 0}
+  framesBetweenPathRecalc: 30
 --- !u!212 &212040312689115882
 SpriteRenderer:
   m_ObjectHideFlags: 1

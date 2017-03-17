@@ -32,6 +32,9 @@ public class Health : MonoBehaviour, ICustomSerializable, IDamageable
     public delegate void OnDamagedDelegate(GameObject source);
     public event OnDamagedDelegate onDamaged;
 
+    public delegate void OnDeathDelegate(GameObject source);
+    public event OnDeathDelegate onDeath;
+
     ObjectData data;
     Rigidbody2D rb2d;
     Player player;
@@ -61,9 +64,11 @@ public class Health : MonoBehaviour, ICustomSerializable, IDamageable
 
     public int Damage(int dmg, GameObject source, Vector2 knockback, DamageType damageType = DamageType.Generic)
     {
-        if (remInvulnFrames > 0 || invulnerableOverride || (damageType | vulnerableTo) != vulnerableTo)
-            dmg = 0;
-        if (currentHealth > 0 && dmg > 0)
+        if (remInvulnFrames > 0 || invulnerableOverride || (damageType | vulnerableTo) != vulnerableTo || currentHealth <= 0)
+        {
+            return 0;
+        }
+        if (currentHealth > 0)
         {
             currentHealth -= dmg;
             remInvulnFrames = invulnFrames;
@@ -85,6 +90,8 @@ public class Health : MonoBehaviour, ICustomSerializable, IDamageable
                 Instantiate(deathParticles, transform.position, Quaternion.identity);
             if (deathSound)
                 Camera.main.GetComponent<AudioSource>().PlayOneShot(deathSound);
+            if (onDeath != null)
+                onDeath(source);
             if (deathRespawnPoint != null)
                 Respawn();
             else

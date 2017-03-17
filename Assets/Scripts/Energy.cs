@@ -100,14 +100,13 @@ public class Energy : MonoBehaviour, IDamageable, IRespawnable
             dmg = 0;
         float actualEnergyDamage = ConvertDamageToEnergy(dmg);
         framesSinceEnergyUsed = 0;
+        if (knockback.magnitude > 0 && dmg > 0)
+            rb2d.AddForce(knockback);
         if (actualEnergyDamage > 0)
         {
             remInvulnFrames = invulnFrames;
-            if (damageParticles && knockback.magnitude > 0 && (damageType | DamageType.Fall) != damageType)
-            {
+            if (damageParticles && (damageType | DamageType.Fall) != damageType)
                 Instantiate(damageParticles, transform.position, Quaternion.LookRotation(knockback, Vector3.forward));
-                rb2d.AddForce(knockback);
-            }
             CheckDeath();
         }
         return dmg;

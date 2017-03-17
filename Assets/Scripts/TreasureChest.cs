@@ -20,13 +20,13 @@ public class TreasureChest : MonoBehaviour, ICustomSerializable
     public AudioClip collectSound;
 
     Collider2D collider2d;
-    SpriteRenderer spriteRenderer;
+    new Renderer renderer;
     Circuit circuit;
 
     void Start()
     {
         collider2d = GetComponent<Collider2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        renderer = GetComponent<Renderer>();
         SetupCircuit();
     }
 
@@ -36,7 +36,7 @@ public class TreasureChest : MonoBehaviour, ICustomSerializable
         if (circuit)
         {
             collider2d.enabled = circuit.Powered;
-            spriteRenderer.enabled = circuit.Powered;
+            renderer.enabled = circuit.Powered;
         }   
     }
 
@@ -56,7 +56,7 @@ public class TreasureChest : MonoBehaviour, ICustomSerializable
             return;
         enabled = false;
         collider2d.enabled = false;
-        spriteRenderer.enabled = false;
+        renderer.enabled = false;
         if (collectSound)
             AudioSource.PlayClipAtPoint(collectSound, transform.position);
         if (contents == ChestItem.None)

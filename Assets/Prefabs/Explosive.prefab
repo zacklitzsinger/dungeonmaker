@@ -158,6 +158,8 @@ MonoBehaviour:
   radius: 1.5
   knockback: 2000
   damage: 2
+  explosionPrefab: {fileID: 114646735326241496, guid: a28470c3a7a222248bd4732c4f80a583,
+    type: 2}
 --- !u!114 &114539856944044160
 MonoBehaviour:
   m_ObjectHideFlags: 1

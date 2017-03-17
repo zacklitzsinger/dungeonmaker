@@ -28,15 +28,8 @@ public class BasicAI : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();
         vision = GetComponent<VisionCone>();
         health = GetComponent<Health>();
-        // When damaged by the player, they should become the focus. This code can't be in the behaviors
-        // because they are in various states of enabled/disabled.
         health.onDamaged += (go) =>
         {
-            if (go.CompareTag("Player") && vision && attack as IAttack != null)
-            {
-                (attack as IAttack).SetTarget(go.transform);
-                SetCurrentState(attack);
-            }
             staggerFrames += hitStagger;
         };
     }
@@ -56,22 +49,12 @@ public class BasicAI : MonoBehaviour
 
     void PickRandomState()
     {
-        // Don't randomly pick attack state
         SetCurrentState(randomStates[UnityEngine.Random.Range(0, randomStates.Count)]);
         remFrames = decisionInterval;
     }
 
     void FixedUpdate()
     {
-        if (staggerFrames > 0)
-        {
-            SetCurrentState(null);
-            staggerFrames--;
-        }
-        else if (staggerFrames == 0 && currentState == null)
-        {
-            SetCurrentState(previousState);
-        }
         if (!LevelEditor.main.currentRoom.Contains(transform.position.ToGrid()))
         {
             SetCurrentState(null);
@@ -86,15 +69,26 @@ public class BasicAI : MonoBehaviour
             {
                 health.invulnerableOverride = true;
                 SetCurrentState(null);
+                previousState = null;
             }
             else
             {
                 health.invulnerableOverride = false;
             }
         }
+        if (staggerFrames > 0)
+        {
+            SetCurrentState(null);
+            staggerFrames--;
+            return;
+        }
+        else if (staggerFrames == 0 && currentState == null)
+        {
+            SetCurrentState(previousState);
+        }
         if (vision && vision.target != null)
             SetCurrentState(attack);
-        else if (!randomStates.Exists((s) => { return s && s.enabled; }) && (!attack || !attack.enabled) || remFrames-- <= 0)
+        else if ((!randomStates.Exists((s) => { return s && s.enabled; }) || remFrames-- <= 0) && randomStates.Contains(currentState) )
             PickRandomState();
         if (vision && vision.target != null && (vision.alwaysTrackPlayer || randomStates.Exists((s) => { return s && s.enabled; })))
             transform.localRotation = Quaternion.LookRotation(Vector3.forward, (vision.target.position - transform.position).normalized);

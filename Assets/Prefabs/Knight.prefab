@@ -329,6 +329,7 @@ MonoBehaviour:
   mask:
     serializedVersion: 2
     m_Bits: 1024
+  state: {fileID: 0}
   alwaysTrackPlayer: 1
 --- !u!114 &114764524402683612
 MonoBehaviour:
@@ -379,6 +380,7 @@ MonoBehaviour:
     type: 0
     frames: 0
     direction: {x: 0, y: 0}
+  framesBetweenPathRecalc: 30
 --- !u!114 &114918477643818858
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -32,7 +32,9 @@ public class KnightAttack : MonoBehaviour, IActionQueue, IAttack
 
     public Action currentAction;
     public Queue<Action> actions = new Queue<Action>();
+    public int framesBetweenPathRecalc = 30;
     List<Vector2> path;
+    private int framesUntilRecalcPath;
 
     VisionCone vision;
     Rigidbody2D rb2d;
@@ -97,11 +99,15 @@ public class KnightAttack : MonoBehaviour, IActionQueue, IAttack
 
     void RecalcPath()
     {
+        if (framesUntilRecalcPath > 0)
+            return;
+        framesUntilRecalcPath = framesBetweenPathRecalc;
         path = LevelEditor.main.navcalc.CalculatePath(transform.position, target.position);
     }
 
     void FixedUpdate()
     {
+        framesUntilRecalcPath = Mathf.Max(0, framesUntilRecalcPath-1);
         if (vision)
             target = target ?? vision.target;
         if (target)

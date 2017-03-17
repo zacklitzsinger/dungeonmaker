@@ -237,7 +237,7 @@ public class Player : MonoBehaviour, IActionQueue
     {
         if (animator)
             animator.SetBool("shadow", shadow);
-        colorCorrection.saturation = energy.Current / energy.Limit;
+        colorCorrection.saturation = energy.Current / energy.Limit * .95f + 0.05f;
     }
 
     void FixedUpdate()
@@ -326,6 +326,8 @@ public class Player : MonoBehaviour, IActionQueue
             if (firstAttackWindup != null)
                 firstAttackWindup.sticky = false;
         }
+        if (currentAction  != null && currentAction.type == State.ShootWindup && currentAction.sticky && !Input.GetButton("Shoot"))
+            currentAction.sticky = false;
 
         if (!CanQueueActions())
             return;

@@ -7,6 +7,8 @@ public class VisionCone : MonoBehaviour {
     public Transform target;
     public LayerMask mask;
 
+    public MonoBehaviour state;
+
     public bool alwaysTrackPlayer;
 
     Transform CheckAngle(float checkAngle)

@@ -46,7 +46,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public Text editModeLabel;
     public GameObject prefabButton;
     public GameObject sidebarContent;
-    public Texture selectionBox;
+    public GameObject selectionBox;
     public Toggle prefabToggle;
     public GameObject prefabIntSlider;
     public GameObject prefabDropdown;
@@ -746,20 +746,25 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         }
     }
 
+    void UpdateSelectionBox(Vector3? gridPos = null)
+    {
+        if (gridPos == null)
+        {
+            gridPos = GetScreenGridPosition(Input.mousePosition);
+            selectionBox.SetActive(true);
+        }
+        selectionBox.transform.position = (Vector3)gridPos;
+    }
+
     void OnGUI()
     {
+        selectionBox.SetActive(false);
         switch (mode)
         {
             case EditMode.Create:
                 if (EventSystem.current.IsPointerOverGameObject() || PauseMenu.main.Open)
                     return;
-                // Draw currently selected grid square
-                Vector2 gridPos = GetGridMousePosition();
-                gridPos += Vector2.up;
-                Vector2 screenPos = Camera.main.WorldToScreenPoint(gridPos);
-                screenPos.y = Screen.height - screenPos.y;
-                screenPos -= Vector2.one * Constants.GRID_SIZE / 2;
-                GUI.DrawTexture(new Rect(screenPos, new Vector2(selectionBox.width, selectionBox.height)), selectionBox);
+                UpdateSelectionBox();
                 if (selectedPrefab && selectedPrefab.GetComponentInChildren<SpriteRenderer>())
                 {
                     Sprite sprite = selectedPrefab.GetComponentInChildren<SpriteRenderer>().sprite;
@@ -779,9 +784,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             case EditMode.Edit:
                 if (selectedGameObject)
                 {
-                    Vector2 rectPoint = Camera.main.WorldToScreenPoint((Vector2)selectedGameObject.transform.position + Vector2.up);
-                    rectPoint.y = Screen.height - rectPoint.y;
-                    GUI.DrawTexture(new Rect(rectPoint - Vector2.one * Constants.GRID_SIZE / 2, new Vector2(selectionBox.width, selectionBox.height)), selectionBox);
+                    UpdateSelectionBox(selectedGameObject.transform.position);
                 }
 
                 break;

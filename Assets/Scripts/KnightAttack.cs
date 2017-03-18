@@ -94,6 +94,8 @@ public class KnightAttack : MonoBehaviour, IActionQueue, IAttack
                     actions.Enqueue(new Action() { type = State.Chase });
             }
         }
+        else
+            enabled = false;
         return currentAction = new Action();
     }
 

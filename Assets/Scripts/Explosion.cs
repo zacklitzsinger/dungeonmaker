@@ -2,8 +2,11 @@
 
 public class Explosion : MonoBehaviour {
 
+    [HideInInspector]
     public float radius;
+    [HideInInspector]
     public int damage;
+    [HideInInspector]
     public float knockback;
     public AudioClip sound;
 

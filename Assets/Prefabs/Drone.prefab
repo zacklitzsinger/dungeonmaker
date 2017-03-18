@@ -329,7 +329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca79f91a826bce94084e76754c6d0f01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 3
+  radius: 1
   knockback: 3000
   damage: 2
   explosionPrefab: {fileID: 114646735326241496, guid: a28470c3a7a222248bd4732c4f80a583,

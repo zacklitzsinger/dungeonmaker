@@ -131,6 +131,6 @@ MonoBehaviour:
   type: 3
   seeThrough: 1
   ground: 0
-  blocksPathing: 0
+  blocksPathing: 1
   sortOrderModifier: 0
   hideInPlayMode: 0

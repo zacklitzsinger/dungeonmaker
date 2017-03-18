@@ -88,7 +88,7 @@ public class BasicAI : MonoBehaviour
         }
         if (vision && vision.target != null)
             SetCurrentState(attack);
-        else if ((!randomStates.Exists((s) => { return s && s.enabled; }) || remFrames-- <= 0) && randomStates.Contains(currentState) )
+        else if ((!randomStates.Exists((s) => { return s && s.enabled; }) || remFrames-- <= 0) && (currentState == null || randomStates.Contains(currentState)) )
             PickRandomState();
         if (vision && vision.target != null && (vision.alwaysTrackPlayer || randomStates.Exists((s) => { return s && s.enabled; })))
             transform.localRotation = Quaternion.LookRotation(Vector3.forward, (vision.target.position - transform.position).normalized);

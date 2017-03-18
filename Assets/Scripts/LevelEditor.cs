@@ -158,24 +158,25 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                     SidebarSelectGroup((Category)Enum.Parse(typeof(Category), groupName));
             });
 
-            foreach (GameObject option in ObjectMasterList.main.options)
+            foreach (ObjectData data in ObjectMasterList.main.options)
             {
-                if (option.GetComponent<ObjectData>().category != (Category)Enum.Parse(typeof(Category), groupName))
+                GameObject option = data.gameObject;
+                if (data.category != (Category)Enum.Parse(typeof(Category), groupName))
                     continue;
                 GameObject button = Instantiate(prefabButton, sidebarContent.transform);
-                button.name = option.GetComponent<ObjectData>().uiName;
+                button.name = data.uiName;
                 RectTransform rectTransform = button.GetComponent<RectTransform>();
                 rectTransform.offsetMin = Vector2.zero;
                 rectTransform.offsetMax = Vector2.zero;
                 var textComponent = button.GetComponentInChildren<Text>();
-                textComponent.text = option.GetComponent<ObjectData>().uiName;
+                textComponent.text = data.uiName;
                 button.GetComponent<Button>().onClick.AddListener(() =>
                 {
                     rotation = 0f;
                     selectedPrefab = option;
                 });
                 Tooltip tooltip = button.AddComponent<Tooltip>();
-                tooltip.text = option.GetComponent<ObjectData>().createText;
+                tooltip.text = data.createText;
             }
         }
 
@@ -953,7 +954,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 // TODO: Should separate deserialization with instantiating game objects so levels can easily be reset
                 string goName = br.ReadString();
                 Guid id = br.ReadGuid();
-                GameObject prefab = Array.Find(ObjectMasterList.main.options, (o) => { return o.name == goName; });
+                GameObject prefab = Array.Find(ObjectMasterList.main.options, (o) => { return o.name == goName; }).gameObject;
                 if (prefab == null)
                 {
                     throw new Exception("Could not find prefab in level named " + goName);

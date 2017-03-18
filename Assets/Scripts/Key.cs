@@ -11,7 +11,7 @@ public class Key : MonoBehaviour {
     void Start()
     {
         collider2d = GetComponent<Collider2D>();
-        meshRenderer = GetComponent<MeshRenderer>();
+        meshRenderer = GetComponentInChildren<MeshRenderer>();
         SetupCircuit();
     }
 
@@ -21,7 +21,7 @@ public class Key : MonoBehaviour {
         if (circuit)
         {
             collider2d.enabled = circuit.Powered;
-            meshRenderer.enabled = circuit.Powered;
+            meshRenderer.gameObject.SetActive(circuit.Powered);
         }
     }
 
@@ -41,7 +41,7 @@ public class Key : MonoBehaviour {
         {
             enabled = false;
             collider2d.enabled = false;
-            meshRenderer.enabled = false;
+            meshRenderer.gameObject.SetActive(false);
             other.GetComponentInParent<Player>().keys++;
             AudioSource.PlayClipAtPoint(sound, transform.position);
         }

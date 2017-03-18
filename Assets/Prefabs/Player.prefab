@@ -331,7 +331,7 @@ MonoBehaviour:
   attackForce: 1000
   energyPerAttack: 25
   energyMovementModifier: 0.75
-  overdrawPenaltyFrames: 60
+  overdrawPenaltyFrames: 90
   overdrawSound: {fileID: 8300000, guid: 64b2139150ca8ac4398257423d0d362e, type: 3}
   shootWindupFrames: 6
   shootFrames: 4
@@ -354,7 +354,6 @@ MonoBehaviour:
   - F
   roomEntrance: {x: 0, y: 0}
   shadow: 0
-  smoke: {fileID: 0}
 --- !u!114 &114554694894238124
 MonoBehaviour:
   m_ObjectHideFlags: 1

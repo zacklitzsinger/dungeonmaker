@@ -5,10 +5,10 @@ public class ObjectMasterList : MonoBehaviour {
 
     public static ObjectMasterList main;
 
-    public GameObject[] options;
+    public ObjectData[] options;
 
 	void Awake () {
         main = this;
-        Array.Sort(options, (a, b) => { return a.GetComponent<ObjectData>().uiName.CompareTo(b.GetComponent<ObjectData>().uiName); });
+        Array.Sort(options, (a, b) => { return a.uiName.CompareTo(b.uiName); });
 	}
 }

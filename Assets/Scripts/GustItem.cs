@@ -29,7 +29,7 @@ public class GustItem : MonoBehaviour, IItem {
         if (remFrames > 0)
             return;
         remFrames = cooldownFrames;
-        Vector2 direction = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - player.transform.position).normalized;
+        Vector2 direction = (LevelEditor.main.GetXYPlanePosition(Input.mousePosition) - (Vector2)player.transform.position).normalized;
         GameObject gust = Instantiate(prefabGust, (Vector2)transform.position, Quaternion.LookRotation(Vector3.forward, direction));
         gust.GetComponent<Rigidbody2D>().AddForce(direction * force);
         player.GetComponent<Rigidbody2D>().AddForce(-direction * force);

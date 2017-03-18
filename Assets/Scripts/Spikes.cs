@@ -14,7 +14,7 @@ public class Spikes : MonoBehaviour {
 
     void Awake()
     {
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     void OnTriggerEnter2D(Collider2D other)

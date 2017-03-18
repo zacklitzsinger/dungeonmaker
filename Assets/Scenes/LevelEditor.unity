@@ -3206,6 +3206,7 @@ MonoBehaviour:
   mode: 3
   canEdit: 1
   selectedPrefab: {fileID: 0}
+  selectedPrefabInstance: {fileID: 0}
   selectedGameObject: {fileID: 0}
   rotation: 0
   playFrames: 0

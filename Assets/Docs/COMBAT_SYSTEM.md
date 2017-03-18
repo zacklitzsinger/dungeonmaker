@@ -16,7 +16,7 @@
 - Fluidity: should control very well, should provide good range of motion since limited by 2D
 - Dangerous: should feel inherently risky but rewarding when done well
 - Modular: would be nice for the player to be able to customize their layout
-- Skillful: ability to really push the limits of the character with precise timing
+- Skillful: ability to really push the limits of the character
 
 ## New combat system
 - Projectile-based instead of melee based
@@ -30,6 +30,7 @@
   - Left click to shoot, right click to aim, middle mouse to switch weapons
   - Space to roll
 - Adapt combo system to new style where applicable
+- Overdraw: When below a certain power threshold, attacks do additional damage, mobility options are better, etc. However, taking damage will stun you and cause you to explode, dealing damage to enemies near you
 
 ## Enemy ideas
 - Some enemies appear when you get too close

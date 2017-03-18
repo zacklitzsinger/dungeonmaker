@@ -33,7 +33,7 @@ public class Switch : MonoBehaviour, ICustomSerializable
 
     void Awake()
     {
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     void Start()

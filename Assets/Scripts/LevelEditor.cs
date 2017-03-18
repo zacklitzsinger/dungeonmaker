@@ -31,6 +31,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public bool canEdit = false;
     [ReadOnly]
     public GameObject selectedPrefab;
+    public GameObject selectedPrefabInstance;
     [ReadOnly]
     public GameObject selectedGameObject;
     [ReadOnly]
@@ -173,6 +174,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 button.GetComponent<Button>().onClick.AddListener(() =>
                 {
                     rotation = 0f;
+                    if (selectedPrefabInstance)
+                        Destroy(selectedPrefabInstance);
+                    selectedPrefabInstance = Instantiate(option);
                     selectedPrefab = option;
                 });
                 Tooltip tooltip = button.AddComponent<Tooltip>();
@@ -260,6 +264,11 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         EditMode prevMode = mode;
         mode = newMode;
         selectedGameObject = null;
+        if (selectedPrefabInstance)
+        {
+            Destroy(selectedPrefabInstance);
+            selectedPrefabInstance = null;
+        }
         ClearSidebar();
         // Pause time while editing
         Time.timeScale = (mode >= EditMode.Create ? 0 : 1);
@@ -765,28 +774,13 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 if (EventSystem.current.IsPointerOverGameObject() || PauseMenu.main.Open)
                     return;
                 UpdateSelectionBox();
-                if (selectedPrefab && selectedPrefab.GetComponentInChildren<SpriteRenderer>())
-                {
-                    Sprite sprite = selectedPrefab.GetComponentInChildren<SpriteRenderer>().sprite;
-                    Vector2 pos = Input.mousePosition;
-                    pos.y = Screen.height - pos.y;
-                    // Tex coords are in % of the full texture rather than being a direct source rectangle
-                    Rect texCoords = new Rect(sprite.rect.x / sprite.texture.width, sprite.rect.y / sprite.texture.height, sprite.rect.width / sprite.texture.width, sprite.rect.height / sprite.texture.height);
-                    // Rotate texture
-                    Matrix4x4 matrixTemp = GUI.matrix;
-                    GUIUtility.RotateAroundPivot(rotation, pos);
-                    GUI.DrawTextureWithTexCoords(new Rect(pos - sprite.rect.size / 2, sprite.rect.size), sprite.texture, texCoords);
-                    GUI.matrix = matrixTemp;
-                }
-
+                if (selectedPrefabInstance)
+                    selectedPrefabInstance.transform.position = GetScreenGridPosition(Input.mousePosition);
                 break;
 
             case EditMode.Edit:
                 if (selectedGameObject)
-                {
                     UpdateSelectionBox(selectedGameObject.transform.position);
-                }
-
                 break;
 
             case EditMode.Circuit:

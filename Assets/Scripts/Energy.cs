@@ -105,7 +105,7 @@ public class Energy : MonoBehaviour, IDamageable, IRespawnable
         if (actualEnergyDamage > 0)
         {
             remInvulnFrames = invulnFrames;
-            if (damageParticles && (damageType | DamageType.Fall) != damageType)
+            if (damageParticles && knockback.magnitude > 0 && (damageType | DamageType.Fall) != damageType)
                 Instantiate(damageParticles, transform.position, Quaternion.LookRotation(knockback, Vector3.forward));
             CheckDeath();
         }

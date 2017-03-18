@@ -374,7 +374,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                     // Start by selecting an object
                     if (Input.GetMouseButtonDown(0))
                     {
-                        selectedGameObject = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                        selectedGameObject = GetGameObjectAtPoint(GetGridMousePosition());
                         if (selectedGameObject)
                         {
                             ClearSidebar();
@@ -387,7 +387,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 case EditMode.Circuit:
                     if (Input.GetMouseButtonDown(0))
                     {
-                        GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                        GameObject go = GetGameObjectAtPoint(GetGridMousePosition());
                         if (!selectedGameObject)
                         {
                             // Start creating a connection
@@ -419,7 +419,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                             selectedGameObject = null;
                         else
                         {
-                            GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                            GameObject go = GetGameObjectAtPoint(GetGridMousePosition());
                             if (go)
                             {
                                 Circuit circuit = go.GetComponent<Circuit>();
@@ -758,10 +758,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     void UpdateSelectionBox(Vector3? gridPos = null)
     {
         if (gridPos == null)
-        {
             gridPos = GetScreenGridPosition(Input.mousePosition);
-            selectionBox.SetActive(true);
-        }
+        selectionBox.SetActive(true);
         selectionBox.transform.position = (Vector3)gridPos;
     }
 
@@ -775,7 +773,10 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                     return;
                 UpdateSelectionBox();
                 if (selectedPrefabInstance)
+                {
                     selectedPrefabInstance.transform.position = GetScreenGridPosition(Input.mousePosition);
+                    selectedPrefabInstance.transform.localRotation = Quaternion.Euler(Vector3.back * rotation);
+                }
                 break;
 
             case EditMode.Edit:
@@ -788,7 +789,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 // Draw line from selected object to mouse if we are placing a circuit
                 if (selectedGameObject && !PauseMenu.main.Open)
                 {
-                    line.DrawArrow(selectedGameObject.transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition), selectedConnectionColor);
+                    line.DrawArrow(selectedGameObject.transform.position, GetGridMousePosition(), selectedConnectionColor);
                 }
 
                 // Draw circuits - technically draws each line twice, but shouldn't matter

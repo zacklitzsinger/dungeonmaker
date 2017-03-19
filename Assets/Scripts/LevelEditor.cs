@@ -766,6 +766,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     void OnGUI()
     {
         selectionBox.SetActive(false);
+        if (selectedPrefabInstance)
+            selectedPrefabInstance.SetActive(false);
         switch (mode)
         {
             case EditMode.Create:
@@ -774,6 +776,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 UpdateSelectionBox();
                 if (selectedPrefabInstance)
                 {
+                    selectedPrefabInstance.SetActive(true);
                     selectedPrefabInstance.transform.position = GetScreenGridPosition(Input.mousePosition);
                     selectedPrefabInstance.transform.localRotation = Quaternion.Euler(Vector3.back * rotation);
                 }

@@ -118,7 +118,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Size: {x: 0.4, y: 0.4}
+  m_Size: {x: 0.75, y: 0.75}
 --- !u!114 &114023323705220298
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   invulnerableOverride: 0
-  vulnerableTo: 15
+  vulnerableTo: 31
   maxHealth: 1
   invulnFrames: 0
   currentHealth: 0

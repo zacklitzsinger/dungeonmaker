@@ -56,7 +56,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4905669690125584}
-  - component: {fileID: 114289572334733198}
   - component: {fileID: 33045808576952822}
   - component: {fileID: 23310516300017424}
   m_Layer: 0
@@ -283,17 +282,6 @@ MonoBehaviour:
   active: 1
   size: 5
   knockback: 6000
---- !u!114 &114289572334733198
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1214633431916838}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d08b0162c2fcca499881b2d15b6b0e3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114508477817913022
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -322,6 +310,8 @@ MonoBehaviour:
   maxIntensity: 0.31
   minIntensity: 0.29
   frequency: 0.35
+  active: 1
+  modifier: 1
 --- !u!114 &114744713971349162
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -397,7 +387,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1452992534
+  randomSeed: -1773118943
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -2947,7 +2937,7 @@ ParticleSystem:
   lengthInSec: 5
   speed: 1
   looping: 1
-  prewarm: 1
+  prewarm: 0
   playOnAwake: 1
   autoRandomSeed: 1
   startDelay:
@@ -2992,7 +2982,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -674826265
+  randomSeed: -1067852720
   InitialModule:
     serializedVersion: 3
     enabled: 1

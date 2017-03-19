@@ -6,6 +6,7 @@ public class Shield : MonoBehaviour
     [Tooltip("How many frames the player must idle after blocking successfully")]
     public int blockStunnedFrames;
 
+    public float maxBlockAngle;
     public AudioClip blockSound;
 
     IActionQueue actionQueue;
@@ -13,6 +14,15 @@ public class Shield : MonoBehaviour
     void Start()
     {
         actionQueue = GetComponentInParent<IActionQueue>();
+    }
+
+    public bool TryBlock(Vector2 direction, IActionQueue source)
+    {
+        float angle = Vector3.Angle(direction, transform.up);
+        if (angle > maxBlockAngle)
+            return false;
+        Block(source);
+        return true;
     }
 
     public void Block(IActionQueue source)

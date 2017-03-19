@@ -282,6 +282,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockStunnedFrames: 30
+  maxBlockAngle: 0
   blockSound: {fileID: 8300000, guid: 96b9310ba50992441af8b946b2df905a, type: 3}
 --- !u!114 &114250035270361940
 MonoBehaviour:
@@ -388,7 +389,7 @@ MonoBehaviour:
   invulnFrames: 120
   max: 100
   framesUntilRechargeBegins: 30
-  rechargeRate: 0.5
+  rechargeRate: 0.3
   damageToEnergy: 40
   damageToLimit: 10
   vulnerableTo: 63

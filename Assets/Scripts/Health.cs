@@ -39,6 +39,7 @@ public class Health : MonoBehaviour, ICustomSerializable, IDamageable
     Rigidbody2D rb2d;
     Player player;
     SpriteRenderer spriteRenderer;
+    Shield shield;
 
     void Start()
     {
@@ -47,6 +48,7 @@ public class Health : MonoBehaviour, ICustomSerializable, IDamageable
         rb2d = GetComponentInParent<Rigidbody2D>();
         player = GetComponentInParent<Player>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        shield = GetComponentInChildren<Shield>(true);
     }
 
     public bool Heal(int amt)
@@ -67,6 +69,11 @@ public class Health : MonoBehaviour, ICustomSerializable, IDamageable
         if (remInvulnFrames > 0 || invulnerableOverride || (damageType | vulnerableTo) != vulnerableTo || currentHealth <= 0)
         {
             return 0;
+        }
+        if (shield && shield.enabled && knockback.magnitude > 0)
+        {
+            if (shield.TryBlock(knockback.normalized, source.GetComponentInParent<IActionQueue>()))
+                return 0;
         }
         if (currentHealth > 0)
         {

@@ -248,7 +248,7 @@ public class Player : MonoBehaviour, IActionQueue
     {
         if (animator)
             animator.SetBool("shadow", shadow);
-        colorCorrection.saturation = energy.Current / energy.Limit * .75f + 0.25f;
+        colorCorrection.saturation = energy.Current / energy.Limit * .65f + 0.35f;
         noiseAndGrain.intensityMultiplier = 2 * (1 - energy.Current / energy.Limit);
     }
 

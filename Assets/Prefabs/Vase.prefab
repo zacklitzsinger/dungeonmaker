@@ -163,7 +163,7 @@ MonoBehaviour:
   deathRespawnPoint: {fileID: 0}
   itemChanceDropOnDeath: 0.8
   itemChoices:
-  - {fileID: 1906677971985918, guid: 18988c1a83705c645be824996fdde668, type: 2}
+  - {fileID: 1457690271036580, guid: 18988c1a83705c645be824996fdde668, type: 2}
   damageParticles: {fileID: 0}
   deathParticles: {fileID: 0}
   hitSound: {fileID: 8300000, guid: 87e372e39fc06b14794ec2523cb17664, type: 3}

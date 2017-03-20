@@ -215,9 +215,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 662e72fd0985a894c9f0b637c77cc490, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  previousState: {fileID: 0}
   currentState: {fileID: 0}
   decisionInterval: 60
   hitStagger: 15
+  staggerFrames: 0
   randomStates:
   - {fileID: 114879424544061262}
   - {fileID: 114789258443482190}
@@ -288,6 +290,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockStunnedFrames: 45
+  maxBlockAngle: 0
   blockSound: {fileID: 8300000, guid: 96b9310ba50992441af8b946b2df905a, type: 3}
 --- !u!114 &114610941385884982
 MonoBehaviour:
@@ -360,7 +363,7 @@ MonoBehaviour:
   deathRespawnPoint: {fileID: 0}
   itemChanceDropOnDeath: 0.25
   itemChoices:
-  - {fileID: 1906677971985918, guid: 18988c1a83705c645be824996fdde668, type: 2}
+  - {fileID: 1457690271036580, guid: 18988c1a83705c645be824996fdde668, type: 2}
   damageParticles: {fileID: 198637271435436188, guid: 3203b49ec00b44246bc810d433c37f3c,
     type: 2}
   deathParticles: {fileID: 198977816518499610, guid: 59fc8ce2bd8b7c643a73e3c731fd27ee,

@@ -109,7 +109,7 @@ public class KnightAttack : MonoBehaviour, IActionQueue, IAttack
 
     void FixedUpdate()
     {
-        framesUntilRecalcPath = Mathf.Max(0, framesUntilRecalcPath-1);
+        framesUntilRecalcPath = Mathf.Max(0, framesUntilRecalcPath - 1);
         if (vision)
             target = target ?? vision.target;
         if (target)
@@ -124,7 +124,8 @@ public class KnightAttack : MonoBehaviour, IActionQueue, IAttack
             // TODO: Do some movement prediction
             if (target != null && Vector2.Distance(path[path.Count - 1], target.position) > 1)
                 RecalcPath();
-            Debug.DrawLine(transform.position, path[0], Color.blue);
+            if (path.Count > 0)
+                Debug.DrawLine(transform.position, path[0], Color.blue);
             Vector2 delta = path[0] - (Vector2)transform.position;
             // Close enough to point
             if (delta.magnitude <= 0.5f)

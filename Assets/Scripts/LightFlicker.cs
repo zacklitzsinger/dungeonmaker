@@ -14,6 +14,7 @@ public class LightFlicker : MonoBehaviour {
     void Start()
     {
         light = GetComponent<Light>();
+        light.intensity = minIntensity / 2 + maxIntensity / 2;
     }
 
     void FixedUpdate()

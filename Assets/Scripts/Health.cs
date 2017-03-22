@@ -86,7 +86,7 @@ public class Health : MonoBehaviour, ICustomSerializable, IDamageable
             remInvulnFrames = invulnFrames;
             if (invulnFrames > 0 && spriteRenderer)
                 StartCoroutine(Flash(spriteRenderer, invulnFrames));
-            if (damageParticles && (damageType | DamageType.Fall) != damageType)
+            if (damageParticles && knockback.magnitude > 0 && (damageType | DamageType.Fall) != damageType)
             {
                 Instantiate(damageParticles, transform.position, Quaternion.LookRotation(knockback, Vector3.forward));
                 rb2d.AddForce(knockback);

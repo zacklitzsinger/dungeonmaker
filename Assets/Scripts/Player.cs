@@ -35,6 +35,8 @@ public class Player : MonoBehaviour, IActionQueue
 
     public GameObject swordPrefab;
     public GameObject bulletPrefab;
+    public Sprite swordIcon;
+    public Sprite gunIcon;
     public Sprite dodgeIcon;
 
     public float acceleration;
@@ -409,11 +411,9 @@ public class Player : MonoBehaviour, IActionQueue
             if (i < keybinds.Length)
                 itemSlots[i].slot.text = keybinds[i];
             if (i == 0)
-                continue;
-            //    itemSlots[i].ItemSprite = swordPrefab.GetComponentInChildren<SpriteRenderer>().sprite;
+                itemSlots[i].ItemSprite = swordIcon;
             else if (i == 1)
-                continue;
-            //itemSlots[i].ItemSprite = shield.GetComponent<SpriteRenderer>().sprite;
+                itemSlots[i].ItemSprite = gunIcon;
             else if (i == 2)
                 itemSlots[i].ItemSprite = dodgeIcon;
             else if (i - 3 < Items.Length)

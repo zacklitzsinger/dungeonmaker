@@ -127,8 +127,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             });
         }
 
-        // Pause time while editing
-        Time.timeScale = (mode >= EditMode.Create ? 0 : 1);
+        UpdateLightingAndTimescale();
     }
 
     void OnApplicationFocus(bool focus)
@@ -254,6 +253,13 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         }
     }
 
+    void UpdateLightingAndTimescale()
+    {
+        // Pause time while editing
+        Time.timeScale = (mode >= EditMode.Create ? 0 : 1);
+        Camera.main.GetComponent<Light>().intensity = (mode >= EditMode.Create ? 0.3f : 0.03f);
+    }
+
     /// <summary>
     /// Change current level edit mode from one mode to another
     /// </summary>
@@ -270,8 +276,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             selectedPrefabInstance = null;
         }
         ClearSidebar();
-        // Pause time while editing
-        Time.timeScale = (mode >= EditMode.Create ? 0 : 1);
+        UpdateLightingAndTimescale();
         SetHelpTextMode(mode);
         switch (mode)
         {
@@ -619,7 +624,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 continue;
             foreach (ObjectData data in pair.Value)
                 if (data != null)
-                    SetTileVisibility(data.gameObject, data.CompareTag("Player") || active);
+                    SetTileVisibility(data.gameObject, data.CompareTag("Player") || active, true);
         }
 
         // Update camera
@@ -645,11 +650,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         {
             float targetAlpha = active ? 1f : 0f;
             if (immediate)
-            {
-                Color c = renderer.material.color;
-                c.a = targetAlpha;
-                renderer.material.color = c;
-            }
+                renderer.enabled = active;
             // This is a hack - we want to skip doors and walls that have become see through.
             else if (go.layer != LayerMask.NameToLayer("CollisionDisabled") || go.GetComponent<ObjectData>().type != ObjectType.Wall)
             {

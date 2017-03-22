@@ -169,16 +169,16 @@ Light:
   m_Enabled: 1
   serializedVersion: 7
   m_Type: 2
-  m_Color: {r: 1, g: 0.8118661, b: 0.6102941, a: 1}
-  m_Intensity: 0.3
-  m_Range: 25
-  m_SpotAngle: 30
+  m_Color: {r: 1, g: 0.7712982, b: 0.5955882, a: 1}
+  m_Intensity: 1
+  m_Range: 50
+  m_SpotAngle: 179
   m_CookieSize: 10
   m_Shadows:
     m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
-    m_Strength: 1
+    m_Strength: 0.2
     m_Bias: 0.05
     m_NormalBias: 0.4
     m_NearPlane: 0.2
@@ -236,8 +236,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bdb5e7a5ba83df43b8ccd912d40fab9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxIntensity: 0.31
-  minIntensity: 0.29
+  maxIntensity: 0.51
+  minIntensity: 0.48
   frequency: 0.35
   active: 1
   modifier: 1

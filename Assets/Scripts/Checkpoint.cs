@@ -10,7 +10,7 @@ public class Checkpoint : MonoBehaviour {
 
     void Start()
     {
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     void OnTriggerEnter2D(Collider2D other)

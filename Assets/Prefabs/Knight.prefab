@@ -318,6 +318,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   acceleration: 270
+  pathLeniancy: 0.5
   framesBetweenPathRecalc: 30
 --- !u!114 &114610941385884982
 MonoBehaviour:

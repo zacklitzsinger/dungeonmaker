@@ -13,7 +13,7 @@
 - Melee attacks are very liberal in hitting, aiming is not a challenge
 
 ## Combat system goals
-- Fluidity: should control very well, should provide good range of motion since limited by 2D
+- Fluid: should control very well, should provide good range of motion since limited by 2D
 - Dangerous: should feel inherently risky but rewarding when done well
 - Modular: would be nice for the player to be able to customize their layout
 - Skillful: ability to really push the limits of the character

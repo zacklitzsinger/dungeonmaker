@@ -15,6 +15,8 @@ public class Explosion : MonoBehaviour {
         RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, radius, Vector2.zero);
         foreach (RaycastHit2D hit in hits)
         {
+            if (hit.collider.isTrigger)
+                continue;
             IDamageable hitHealth = hit.transform.GetComponentInParent<IDamageable>();
             if (hitHealth == null)
                 continue;

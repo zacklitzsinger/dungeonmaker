@@ -32,7 +32,7 @@ public class Explosive : MonoBehaviour
         }
         if (circuit && circuit.Powered)
         {
-            health.Damage(1, gameObject, Vector2.zero);
+            health.Die();
         }
     }
 }

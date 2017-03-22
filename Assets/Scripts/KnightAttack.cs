@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class KnightAttack : MonoBehaviour, IActionQueue, IAttack
+public class KnightAttack : MonoBehaviour, IActionQueue, ITarget
 {
     [Serializable]
     public class Action

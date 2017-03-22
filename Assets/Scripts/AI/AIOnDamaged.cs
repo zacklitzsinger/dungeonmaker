@@ -14,9 +14,9 @@ public class AIOnDamaged : MonoBehaviour {
         health.onDamaged += (go) =>
         {
             ai.SetCurrentState(state);
-            if (go.CompareTag("Player") && state as IAttack != null)
+            if (go.CompareTag("Player") && state as ITarget != null)
             {
-                (state as IAttack).SetTarget(go.transform);
+                (state as ITarget).SetTarget(go.transform);
                 ai.SetCurrentState(state);
             }
         };

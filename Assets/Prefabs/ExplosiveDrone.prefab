@@ -24,10 +24,12 @@ GameObject:
   - component: {fileID: 114388379784414160}
   - component: {fileID: 114789258443482190}
   - component: {fileID: 114013204344090042}
+  - component: {fileID: 114616683600302002}
   - component: {fileID: 114763758773429928}
   - component: {fileID: 114486376812506046}
+  - component: {fileID: 114501722070894804}
   m_Layer: 0
-  m_Name: Drone
+  m_Name: ExplosiveDrone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -78,7 +80,6 @@ GameObject:
   - component: {fileID: 4605985993970130}
   - component: {fileID: 61550973897250896}
   - component: {fileID: 114838531033108368}
-  - component: {fileID: 114209528774074778}
   m_Layer: 0
   m_Name: Collider
   m_TagString: Untagged
@@ -154,7 +155,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: cd48c3bb4a4b2c44dbe2c024f266da01, type: 2}
+  - {fileID: 2100000, guid: 41197109c4a22944a86bfd8330065a0d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -239,19 +240,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   reset: 1
---- !u!114 &114209528774074778
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1599157843222470}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3c7349317724424eb285151a2abc252, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 2
-  knockback: 2400
 --- !u!114 &114269511763007934
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -276,7 +264,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   invulnerableOverride: 0
   vulnerableTo: 31
-  maxHealth: 9
+  maxHealth: 5
   invulnFrames: 0
   currentHealth: 0
   remInvulnFrames: 0
@@ -286,8 +274,7 @@ MonoBehaviour:
   - {fileID: 1457690271036580, guid: 18988c1a83705c645be824996fdde668, type: 2}
   damageParticles: {fileID: 198637271435436188, guid: 3203b49ec00b44246bc810d433c37f3c,
     type: 2}
-  deathParticles: {fileID: 198977816518499610, guid: 59fc8ce2bd8b7c643a73e3c731fd27ee,
-    type: 2}
+  deathParticles: {fileID: 0}
   hitSound: {fileID: 8300000, guid: 87e372e39fc06b14794ec2523cb17664, type: 3}
   deathSound: {fileID: 8300000, guid: 3816d71a485e3bf439d56a5f6d93f6ba, type: 3}
 --- !u!114 &114486376812506046
@@ -302,8 +289,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   acceleration: 45
-  pathLeniancy: 1.5
+  pathLeniancy: 1
   framesBetweenPathRecalc: 30
+--- !u!114 &114501722070894804
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147360471527010}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68c6f0f28a164e24590ac678860faefa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114554694894238124
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -315,8 +313,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ee4e40eca2f1241b95124f3997a91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiName: Drone
-  createText: A simple flying enemy.
+  uiName: Explosive Drone
+  createText: An enemy that flies at the player, exploding when close.
   category: 3
   type: 5
   seeThrough: 1
@@ -324,6 +322,22 @@ MonoBehaviour:
   blocksPathing: 0
   sortOrderModifier: 0
   hideInPlayMode: 0
+--- !u!114 &114616683600302002
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147360471527010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca79f91a826bce94084e76754c6d0f01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 1
+  knockback: 3000
+  damage: 2
+  explosionPrefab: {fileID: 114646735326241496, guid: a28470c3a7a222248bd4732c4f80a583,
+    type: 2}
 --- !u!114 &114763758773429928
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -342,12 +356,15 @@ MonoBehaviour:
   - name: Chase
     behavior: {fileID: 114486376812506046}
     value: 0
+  - name: Attack
+    behavior: {fileID: 114501722070894804}
+    value: 0
   target: {fileID: 0}
   currentState:
     name: 
     behavior: {fileID: 0}
     value: 0
-  attackRange: 0
+  attackRange: 1
 --- !u!114 &114783886964798618
 MonoBehaviour:
   m_ObjectHideFlags: 1

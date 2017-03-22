@@ -36,10 +36,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4873581228360806}
-  - component: {fileID: 61675792808411700}
   - component: {fileID: 114536522912404158}
   - component: {fileID: 50920199752967326}
   - component: {fileID: 114033671392210378}
+  - component: {fileID: 58432356132012492}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -67,7 +67,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1738082771738544}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 4.13, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4853296956313618}
@@ -94,8 +94,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!61 &61675792808411700
-BoxCollider2D:
+--- !u!58 &58432356132012492
+CircleCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -107,7 +107,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Size: {x: 0.15, y: 0.15}
+  m_Radius: 0.15
 --- !u!114 &114033671392210378
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -135,6 +135,7 @@ MonoBehaviour:
   damage: 1
   knockbackModifier: 3
   friendly: 0
+  owner: {fileID: 0}
   charge: 0
   chargeVelocityModifier: 1.5
   chargeSizeModifier: 3

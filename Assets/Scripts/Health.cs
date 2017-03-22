@@ -64,6 +64,11 @@ public class Health : MonoBehaviour, ICustomSerializable, IDamageable
         Heal(maxHealth - currentHealth);
     }
 
+    public void Die()
+    {
+        Damage(currentHealth, gameObject, Vector2.zero);
+    }
+
     public int Damage(int dmg, GameObject source, Vector2 knockback, DamageType damageType = DamageType.Generic)
     {
         if (remInvulnFrames > 0 || invulnerableOverride || (damageType | vulnerableTo) != vulnerableTo || currentHealth <= 0)

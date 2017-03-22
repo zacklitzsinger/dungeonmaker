@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Wander : MonoBehaviour
+public class AIWander : AIBehavior
 {
-
     public float acceleration;
     public bool flying = false;
 
@@ -49,6 +47,8 @@ public class Wander : MonoBehaviour
             if (path.Count == 0)
                 enabled = false;
         }
+        if (rb2d.velocity.magnitude > 0)
+            transform.localRotation = Quaternion.LookRotation(Vector3.forward, rb2d.velocity.normalized);
     }
 
     void ChooseTarget()

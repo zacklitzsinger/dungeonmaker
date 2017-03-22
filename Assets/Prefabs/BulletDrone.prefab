@@ -22,11 +22,11 @@ GameObject:
   - component: {fileID: 114554694894238124}
   - component: {fileID: 50582811179672188}
   - component: {fileID: 114388379784414160}
-  - component: {fileID: 114273422797300520}
+  - component: {fileID: 114658054141015194}
   - component: {fileID: 114789258443482190}
-  - component: {fileID: 114273653508190260}
   - component: {fileID: 114013204344090042}
-  - component: {fileID: 114974350140587408}
+  - component: {fileID: 114853732696202954}
+  - component: {fileID: 114118158460855254}
   m_Layer: 0
   m_Name: BulletDrone
   m_TagString: Untagged
@@ -240,6 +240,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   reset: 1
+--- !u!114 &114118158460855254
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147360471527010}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2d93d55ab7ffbf4ea1d6254a2522358, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minAttackDelay: 5
+  maxAttackDelay: 15
+  attackFrames: 5
+  attackMoveForce: 200
+  postAttackDelay: 30
+  angles:
+  - 0
+  - 15
+  - -15
+  bulletPrefab: {fileID: 1738082771738544, guid: 0861409d57b6f1e458ad8ffefb4c1d96,
+    type: 2}
+  combo: 0
+  comboChance: 0.25
+  maxCombo: 3
+  currentAction:
+    type: 0
+    frames: 0
+    direction: {x: 0, y: 0}
 --- !u!114 &114269511763007934
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -251,38 +280,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f371417c52363548a779879588ea96a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114273422797300520
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1147360471527010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 662e72fd0985a894c9f0b637c77cc490, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  previousState: {fileID: 0}
-  currentState: {fileID: 0}
-  decisionInterval: 60
-  hitStagger: 0
-  staggerFrames: 0
-  randomStates:
-  - {fileID: 114273653508190260}
-  - {fileID: 114789258443482190}
-  attack: {fileID: 0}
---- !u!114 &114273653508190260
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1147360471527010}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79a882d71a3f7ca409ecd5768d79e581, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  frames: 120
 --- !u!114 &114388379784414160
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -344,6 +341,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 1
   knockback: 1200
+--- !u!114 &114658054141015194
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147360471527010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc459df53355a4b449caf86636b35210, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  desires:
+  - name: Wander
+    behavior: {fileID: 114789258443482190}
+    value: 0
+  - name: Attack
+    behavior: {fileID: 114118158460855254}
+    value: 0
+  - name: Chase
+    behavior: {fileID: 114853732696202954}
+    value: 0
+  target: {fileID: 0}
+  currentState:
+    name: 
+    behavior: {fileID: 0}
+    value: 0
+  attackRange: 6
 --- !u!114 &114783886964798618
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -380,22 +404,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d08b0162c2fcca499881b2d15b6b0e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114974350140587408
+--- !u!114 &114853732696202954
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1147360471527010}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fa4fe2630489044e8c0cb998c3cbbc3, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f4175ae1687c6e4db3cd5bd1b3707c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  freqency: 180
-  directions:
-  - {x: 1, y: 0}
-  - {x: 0, y: 1}
-  - {x: -1, y: 0}
-  - {x: 0, y: -1}
-  bulletPrefab: {fileID: 114536522912404158, guid: 0861409d57b6f1e458ad8ffefb4c1d96,
-    type: 2}
+  acceleration: 15
+  framesBetweenPathRecalc: 30

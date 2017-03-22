@@ -395,7 +395,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   acceleration: 55
-  minAttackDelay: 10
+  minAttackDelay: 5
   maxAttackDelay: 120
   attackFrames: 30
   attackDistance: 3

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public interface IAttack
+public interface ITarget
 {
     void SetTarget(Transform target);
 }

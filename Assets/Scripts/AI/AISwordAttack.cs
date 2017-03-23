@@ -32,6 +32,7 @@ public class AISwordAttack : AIBehavior
         Attack
     }
 
+    [ReadOnly]
     public Action currentAction;
     public Queue<Action> actions = new Queue<Action>();
 
@@ -61,9 +62,12 @@ public class AISwordAttack : AIBehavior
             case State.Attack:
                 combo++;
                 Quaternion rotation = Quaternion.LookRotation(UnityEngine.Random.value < 0.5f ? Vector3.forward : Vector3.back, action.direction.normalized);
-                Sword swordInstance = Instantiate(sword, transform.position, rotation, transform).GetComponentInChildren<Sword>();
-                swordInstance.friendly = false;
-                swordInstance.owner = gameObject;
+                if (sword)
+                {
+                    Sword swordInstance = Instantiate(sword, transform.position, rotation, transform).GetComponentInChildren<Sword>();
+                    swordInstance.friendly = false;
+                    swordInstance.owner = gameObject;
+                }
                 rb2d.AddForce(action.direction * attackMoveForce);
                 if (combo < maxCombo && UnityEngine.Random.value < comboChance)
                     actions.Enqueue(new Action() { type = State.Attack, frames = attackFrames, direction = (Target.position - transform.position) });

@@ -19,18 +19,18 @@ public class KnightAI : DesireAI
 
     protected override void UpdateDesire(Desire desire)
     {
-        switch (desire.name)
+        switch (desire.state)
         {
-            case "Wander":
+            case State.Wander:
                 desire.value = 0.4f;
                 break;
-            case "Chase":
+            case State.Chase:
                 if (target)
                     desire.value = Vector2.Distance(transform.position, target.position) > attackRange ? 1f : 0f;
                 else
                     desire.value = 0;
                 break;
-            case "Attack":
+            case State.Attack:
                 if (target)
                     desire.value = Vector2.Distance(transform.position, target.position) <= attackRange ? 1f : 0f;
                 else

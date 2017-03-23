@@ -2,12 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DesireAI : MonoBehaviour
+public class DesireAI: MonoBehaviour
 {
+    public enum State
+    {
+        Wander,
+        Chase,
+        Attack
+    }
+
     [Serializable]
     public class Desire
     {
-        public string name;
+        public State state;
         public AIBehavior behavior;
         [ReadOnly]
         public float value;
@@ -56,7 +63,7 @@ public class DesireAI : MonoBehaviour
         {
             if (ai.behavior == null)
             {
-                Debug.LogWarning("Null behavior: " + ai.name + " on object " + gameObject.name);
+                Debug.LogWarning("Null behavior: " + ai.state + " on object " + gameObject.name);
                 continue;
             }
             ai.behavior.enabled = (ai == state);

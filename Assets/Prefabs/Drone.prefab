@@ -336,15 +336,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   desires:
-  - name: Wander
+  - state: 0
     behavior: {fileID: 114789258443482190}
     value: 0
-  - name: Chase
+  - state: 1
     behavior: {fileID: 114486376812506046}
     value: 0
   target: {fileID: 0}
   currentState:
-    name: 
+    state: 0
     behavior: {fileID: 0}
     value: 0
   attackRange: 0

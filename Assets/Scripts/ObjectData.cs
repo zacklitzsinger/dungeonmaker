@@ -33,14 +33,11 @@ public class ObjectData : MonoBehaviour, ICustomSerializable
 
     public Guid guid; // Set outside of this behavior...
     public ObjectType type;
+    [Tooltip("Can see through tile for the purposes of room calculation")]
     public bool seeThrough = true;
-    /// <summary>
-    /// Counts as ground for the purposes of falling.
-    /// </summary>
+    [Tooltip("Counts as ground for the purposes of falling")]
     public bool ground = false;
-    /// <summary>
-    /// Does the tile prevent pathing?
-    /// </summary>
+    [Tooltip("Does the tile prevent pathing?")]
     public bool blocksPathing = false;
     public int sortOrderModifier;
     public bool hideInPlayMode = false;

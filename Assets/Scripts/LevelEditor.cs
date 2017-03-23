@@ -482,7 +482,10 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         {
             // Don't replace if it's the same exact type of object
             if (sameGroup.name == selectedPrefab.name)
+            {
+                sameGroup.transform.rotation = Quaternion.AngleAxis(rotation, Vector3.back);
                 return null;
+            }
             DestroyGameObjectAtGridPosition(gridPos, sameGroup);
         }
         GameObject go = CreateObjectAtGrid(gridPos, selectedPrefab);

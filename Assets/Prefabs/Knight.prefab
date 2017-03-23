@@ -270,18 +270,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   desires:
-  - name: Attack
+  - state: 2
     behavior: {fileID: 114082045451117820}
     value: 0
-  - name: Wander
+  - state: 0
     behavior: {fileID: 114789258443482190}
     value: 0
-  - name: Chase
+  - state: 1
     behavior: {fileID: 114588938855250186}
     value: 0
   target: {fileID: 0}
   currentState:
-    name: 
+    state: 0
     behavior: {fileID: 0}
     value: 0
   attackRange: 3

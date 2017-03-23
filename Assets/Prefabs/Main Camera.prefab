@@ -23,7 +23,6 @@ GameObject:
   - component: {fileID: 92768930080942022}
   - component: {fileID: 124107238784270774}
   - component: {fileID: 81671882696921304}
-  - component: {fileID: 114001329128823432}
   - component: {fileID: 114951280893766148}
   - component: {fileID: 82683146094168692}
   - component: {fileID: 45498662985980996}
@@ -33,6 +32,7 @@ GameObject:
   - component: {fileID: 114031609202934442}
   - component: {fileID: 114373378473381180}
   - component: {fileID: 108334868757549184}
+  - component: {fileID: 114012860725015778}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -223,7 +223,7 @@ Light:
   m_BounceIntensity: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
---- !u!114 &114001329128823432
+--- !u!114 &114012860725015778
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -234,7 +234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a69472945b95d744bb8fbbe4f075f763, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lineMat: {fileID: 2100000, guid: fd997b21d16a58346a14fb70794700d8, type: 2}
+  lineMat: {fileID: 2100000, guid: 51eab8138a615474091644f15c2b5857, type: 2}
 --- !u!114 &114031609202934442
 MonoBehaviour:
   m_ObjectHideFlags: 1

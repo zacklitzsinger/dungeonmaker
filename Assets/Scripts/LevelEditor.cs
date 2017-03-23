@@ -31,6 +31,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public bool canEdit = false;
     [ReadOnly]
     public GameObject selectedPrefab;
+    [ReadOnly]
     public GameObject selectedPrefabInstance;
     [ReadOnly]
     public GameObject selectedGameObject;
@@ -63,6 +64,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public GameObject uploadProgress;
     public GameObject playerPanel;
     public GameObject helpPanel;
+    public GameObject modePanel;
+    public GameObject saveLoadUploadPanel;
 
     // Circuits
     public Color circuitColor;
@@ -126,6 +129,18 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                     SceneManager.LoadScene("MainMenu");
             });
         }
+
+        if (modePanel)
+            foreach (Toggle child in modePanel.GetComponentsInChildren<Toggle>())
+            {
+                EditMode childMode = (EditMode)Enum.Parse(typeof(EditMode), child.name);
+                child.isOn = mode == childMode;
+                child.onValueChanged.AddListener((val) =>
+                {
+                    if (val)
+                        ChangeMode(childMode);
+                });
+            }
 
         UpdateLightingAndTimescale();
     }
@@ -236,7 +251,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         {
 
             case EditMode.Create:
-                SetHelpPanelText("Place new objects into the level. Left click to place the selected object. Right click to remove objects.");
+                SetHelpPanelText("Place new objects into the level. Left click to place the selected object. Right click to remove objects. Use Q/E to rotate.");
                 break;
             case EditMode.Edit:
                 SetHelpPanelText("Edit properties of objects. Left click to select an object to edit, then modify the fields in the sidebar.");
@@ -260,6 +275,11 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         Camera.main.GetComponent<Light>().intensity = (mode >= EditMode.Create ? 0.3f : 0.03f);
     }
 
+    public void ChangeMode(string newMode)
+    {
+        ChangeMode((EditMode)Enum.Parse(typeof(EditMode), newMode));
+    }
+
     /// <summary>
     /// Change current level edit mode from one mode to another
     /// </summary>
@@ -276,6 +296,18 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             selectedPrefabInstance = null;
         }
         ClearSidebar();
+        if (modePanel)
+        {
+            foreach (Toggle child in modePanel.GetComponentsInChildren<Toggle>())
+            {
+                bool val = child.name == newMode.ToString();
+                // Since these are in a toggle group, only set the one that ends up being true
+                if (!child.isOn && val)
+                    child.isOn = val;
+            }
+        }
+        if (saveLoadUploadPanel)
+            saveLoadUploadPanel.SetActive(mode >= EditMode.Create);
         UpdateLightingAndTimescale();
         SetHelpTextMode(mode);
         switch (mode)
@@ -883,6 +915,11 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     public void LoadFromTemp()
     {
+        if (!File.Exists(tempFilename))
+        {
+            Debug.LogWarning("Cannot load file: " + tempFilename);
+            return;
+        }
         LoadFromStream(File.OpenRead(tempFilename));
         File.Delete(tempFilename);
     }

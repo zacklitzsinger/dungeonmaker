@@ -2,7 +2,6 @@
 
 public class Fire : MonoBehaviour
 {
-
     [ReadOnly]
     public bool active = true;
     public float size = 5;

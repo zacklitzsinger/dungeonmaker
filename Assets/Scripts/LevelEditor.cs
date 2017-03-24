@@ -178,15 +178,18 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 GameObject option = data.gameObject;
                 if (data.category != (Category)Enum.Parse(typeof(Category), groupName))
                     continue;
-                GameObject button = Instantiate(prefabButton, sidebarContent.transform);
+                GameObject button = Instantiate(prefabToggleButton.gameObject, sidebarContent.transform);
                 button.name = data.uiName;
                 RectTransform rectTransform = button.GetComponent<RectTransform>();
                 rectTransform.offsetMin = Vector2.zero;
                 rectTransform.offsetMax = Vector2.zero;
                 var textComponent = button.GetComponentInChildren<Text>();
                 textComponent.text = data.uiName;
-                button.GetComponent<Button>().onClick.AddListener(() =>
+                button.GetComponent<Toggle>().group = sidebarContent.GetComponent<ToggleGroup>();
+                button.GetComponent<Toggle>().onValueChanged.AddListener((val) =>
                 {
+                    if (!val)
+                        return;
                     rotation = 0f;
                     if (selectedPrefabInstance)
                         Destroy(selectedPrefabInstance);
@@ -204,6 +207,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     void SidebarSelectGroup(Category category)
     {
         selectedPrefab = null;
+        if (selectedPrefabInstance)
+            Destroy(selectedPrefabInstance);
         foreach (Transform child in sidebarContent.transform)
         {
             bool active = Array.Exists(ObjectMasterList.main.options, (go) =>
@@ -295,6 +300,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             Destroy(selectedPrefabInstance);
             selectedPrefabInstance = null;
         }
+        // TODO: Don't destroy all sidebar buttons on each mode change - instead, store each set under a separate gameobject under content and selectively enable/disable them.
         ClearSidebar();
         if (modePanel)
         {

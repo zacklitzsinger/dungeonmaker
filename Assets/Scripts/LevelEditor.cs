@@ -215,6 +215,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             {
                 return go.GetComponent<ObjectData>().uiName == child.name && go.GetComponent<ObjectData>().category == category;
             });
+            child.GetComponent<Toggle>().isOn = false;
             child.gameObject.SetActive(active);
         }
     }

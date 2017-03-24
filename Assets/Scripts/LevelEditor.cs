@@ -694,7 +694,12 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         }
         // Enable/disable particle systems (including inactive ones).
         foreach (ParticleSystem ps in go.GetComponentsInChildren<ParticleSystem>(true))
-            ps.gameObject.SetActive(active);
+        {
+            if (active)
+                ps.Play();
+            else
+                ps.Stop();
+        }
     }
 
     public IEnumerator ControlAlpha(Renderer r, float targetAlpha)
@@ -801,7 +806,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     void OnGUI()
     {
-        selectionBox.SetActive(false);
+        if (selectionBox)
+            selectionBox.SetActive(false);
         if (selectedPrefabInstance)
             selectedPrefabInstance.SetActive(false);
         switch (mode)
@@ -996,12 +1002,12 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 // TODO: Should separate deserialization with instantiating game objects so levels can easily be reset
                 string goName = br.ReadString();
                 Guid id = br.ReadGuid();
-                GameObject prefab = Array.Find(ObjectMasterList.main.options, (o) => { return o.name == goName; }).gameObject;
-                if (prefab == null)
+                ObjectData prefabData = Array.Find(ObjectMasterList.main.options, (o) => { return o && o.name == goName; });
+                if (prefabData == null)
                 {
                     throw new Exception("Could not find prefab in level named " + goName);
                 }
-                GameObject go = CreateObjectAtGrid(pos, prefab);
+                GameObject go = CreateObjectAtGrid(pos, prefabData.gameObject);
                 go.GetComponent<ObjectData>().guid = id;
                 goList.Add(go);
                 guidmap[id] = go;

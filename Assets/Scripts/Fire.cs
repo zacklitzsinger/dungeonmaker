@@ -7,12 +7,6 @@ public class Fire : MonoBehaviour
     public bool active = true;
     public float size = 5;
     public float knockback;
-    LightFlicker lightFlicker;
-
-    void Start()
-    {
-        lightFlicker = GetComponentInChildren<LightFlicker>();
-    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -44,12 +38,10 @@ public class Fire : MonoBehaviour
         main.startSpeedMultiplier = (size + 1) * .8f;
         if (active && size > 0)
         {
-            lightFlicker.active = true;
             ps.Play();
         }
         else
         {
-            lightFlicker.active = false;
             ps.Stop();
         }
     }

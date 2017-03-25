@@ -13,6 +13,7 @@ public class Bullet : MonoBehaviour
     public float chargeVelocityModifier;
     public float chargeSizeModifier;
     public float chargeDamageModifier;
+    public ParticleSystem particlesOnDeath;
 
     public AudioClip sound;
 
@@ -59,9 +60,13 @@ public class Bullet : MonoBehaviour
 
     void Stop()
     {
+        if (!enabled)
+            return;
         enabled = false;
         if (ps)
             ps.Stop();
+        if (particlesOnDeath)
+            Instantiate(particlesOnDeath, transform.position + Vector3.back, Quaternion.Inverse(transform.rotation));
     }
 
 }

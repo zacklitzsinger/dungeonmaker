@@ -67,7 +67,7 @@ public class Energy : MonoBehaviour, IDamageable, IRespawnable
             if (current / max < pulseThreshold && framesSinceLastPulse >= Mathf.FloorToInt(current / max * 50 + 8))
             {
                 framesSinceLastPulse = 0;
-                AudioSource.PlayClipAtPoint(pulseSound, transform.position);
+                AudioSource.PlayClipAtPoint(pulseSound, transform.position, 0.5f);
             }
         }
 

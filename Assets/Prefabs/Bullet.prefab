@@ -140,6 +140,8 @@ MonoBehaviour:
   chargeVelocityModifier: 1.5
   chargeSizeModifier: 3
   chargeDamageModifier: 5
+  particlesOnDeath: {fileID: 198637271435436188, guid: 9daebda5d1bafb044bebfd87416c5333,
+    type: 2}
   sound: {fileID: 8300000, guid: d2a65324da3af35468cffe8c751f02dc, type: 3}
 --- !u!198 &198746851483222450
 ParticleSystem:

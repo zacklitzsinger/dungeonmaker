@@ -46,15 +46,23 @@ public class Player : MonoBehaviour, IActionQueue
     public float rollForce; // Force with which to roll
     public float energyPerRoll;
     public float rollGravityModifier;
+    public AudioClip dodgeSound;
 
     // Combat
     public int attackWindupFrames;
     public int attackFrames;
     public int attackForce;
     public int energyPerAttack;
+    public int energyCostPerAttackCombo;
     public float energyMovementModifier;
     public int overdrawPenaltyFrames;
     public AudioClip overdrawSound;
+    public AudioClip chargeSound;
+
+    // Sword charge attack
+    public float swordChargeEnergyPerFrame;
+    public int minSwordChargeFrames;
+    public int maxSwordChargeFrames;
 
     //Gunplay
     public int shootWindupFrames; // Max number of frames to actually start attacking
@@ -64,24 +72,28 @@ public class Player : MonoBehaviour, IActionQueue
     public float scatterAngle; // Degrees by which to randomly scatter shots
     public float attackMovementModifier; // % modifier on movement while attacking
 
-    // Charging attack
-    public float energyPerCharge; // energy consumed per frame by charging up an attack
-    public int maxChargeFrames; // max frames to charge
+    // Gun charge attack
+    public float gunChargeEnergyPerFrame; // energy consumed per frame by charging up an attack
+    public int maxGunChargeFrames; // max frames to charge
 
     [ReadOnly]
-    public int remStateFrames; // Remaining frames to continue current state; 0 when in idle
+    public int remStateFrames; // Remaining frames to continue current state; <= 0 when in idle
+    /// <summary>
+    /// How many frames have passed under the current action - important for charge attacks
+    /// </summary>
     [ReadOnly]
-    public int currentActionFrames; // How many frames have passed under the current action
+    public int currentActionFrames;
     public int combo; // Current number of actions in a row
 
     public int keys = 0;
     public IItem[] Items { get { return GetComponentsInChildren<IItem>(); } }
     public string[] keybinds;
 
+    [ReadOnly]
     public Vector2 roomEntrance;
 
     public Action currentAction;
-    public Action LastAction { get { return actions.Count > 0 ? actions[actions.Count - 1] : currentAction; } }
+    public Action LastQueuedAction { get { return actions.Count > 0 ? actions[actions.Count - 1] : currentAction; } }
     public List<Action> actions = new List<Action>();
 
     // State
@@ -98,6 +110,8 @@ public class Player : MonoBehaviour, IActionQueue
     SpriteRenderer spriteRenderer;
     Animator animator;
     Energy energy;
+    public ParticleSystem chargeParticles;
+    public ParticleSystem dashParticles;
 
     void Awake()
     {
@@ -121,6 +135,8 @@ public class Player : MonoBehaviour, IActionQueue
     {
         Quaternion rotation;
         remStateFrames = action.frames;
+        int previousActionFrames = currentActionFrames;
+        currentActionFrames = 0;
         if (action.combo)
             combo++;
         if (action.type == State.Idle)
@@ -138,11 +154,17 @@ public class Player : MonoBehaviour, IActionQueue
             case State.Attack:
                 if (action.vector.magnitude > 0)
                 {
-                    rotation = Quaternion.LookRotation((combo % 2 == 0 ? Vector3.forward : Vector3.back), action.vector.normalized);
+                    rotation = Quaternion.LookRotation((combo % 3 == 1 ? Vector3.forward : Vector3.back), action.vector.normalized);
                     Sword sword = Instantiate(swordPrefab, transform.position, rotation, transform).GetComponentInChildren<Sword>();
                     sword.owner = gameObject;
-                    UseEnergy(energyPerAttack);
-                    if (combo % 3 == 0)
+                    UseEnergy(energyPerAttack + energyCostPerAttackCombo * (combo - 1));
+                    if (previousActionFrames - attackWindupFrames >= minSwordChargeFrames)
+                    {
+                        sword.style = Sword.Style.Spin;
+                        sword.damage *= 2;
+                        currentAction.frames = 30;
+                    }
+                    else if (combo % 3 == 0)
                         sword.style = Sword.Style.Thrust;
                 }
                 break;
@@ -162,15 +184,17 @@ public class Player : MonoBehaviour, IActionQueue
                 Bullet bullet = Instantiate(bulletPrefab, transform.position, rotation * scatter, transform).GetComponentInChildren<Bullet>();
                 bullet.friendly = true;
                 bullet.owner = gameObject;
-                bullet.charge = Mathf.Clamp01((currentActionFrames - shootWindupFrames) / (float)maxChargeFrames);
+                bullet.charge = Mathf.Clamp01((previousActionFrames - shootWindupFrames) / (float)maxGunChargeFrames);
                 UseEnergy(energyPerShot);
                 break;
 
             case State.Rolling:
+                AudioSource.PlayClipAtPoint(dodgeSound, transform.position);
                 gravity.dragModifier = rollGravityModifier;
                 if (action.vector.magnitude > 0)
                     rb2d.AddForce(action.vector);
                 UseEnergy(energyPerRoll);
+                dashParticles.gameObject.SetActive(true);
                 break;
 
             case State.Shadow:
@@ -181,7 +205,6 @@ public class Player : MonoBehaviour, IActionQueue
                 combo = 0;
                 break;
         }
-        currentActionFrames = 0;
     }
 
     float GetScatter()
@@ -208,7 +231,7 @@ public class Player : MonoBehaviour, IActionQueue
 
     bool CanQueueActions()
     {
-        return (remStateFrames <= 15 && actions.Count <= 1);
+        return (remStateFrames <= 15 && actions.Count <= 1 && (currentAction == null || currentAction.type != State.Stun));
     }
 
     /// <summary>
@@ -246,6 +269,13 @@ public class Player : MonoBehaviour, IActionQueue
         InterruptAfterCurrent(overdrawPenaltyFrames, State.Stun);
     }
 
+    Action GetFirstStickyActionOfType(State state)
+    {
+        if (currentAction.sticky && currentAction.type == state)
+            return currentAction;
+        return actions.Find((action) => { return action.sticky && action.type == state; });
+    }
+
     void Update()
     {
         if (animator)
@@ -275,12 +305,12 @@ public class Player : MonoBehaviour, IActionQueue
         float xMotion = Input.GetAxis("Horizontal");
         float yMotion = Input.GetAxis("Vertical");
         Vector2 targetMotion = Vector2.right * xMotion + Vector2.up * yMotion;
-        if (currentAction.type == State.ShootWindup || currentAction.type == State.Shoot || currentAction.type == State.Idle)
+        if (currentAction.type == State.AttackWindup || currentAction.type == State.ShootWindup || currentAction.type == State.Shoot || currentAction.type == State.Idle)
         {
             float modifiedAcceleration = acceleration;
             modifiedAcceleration *= (floorData ? floorData.accelerationModifier : 1f);
             modifiedAcceleration *= Mathf.Lerp(energyMovementModifier, 1f, energy.Current / energy.max);
-            modifiedAcceleration *= (currentAction.type == State.ShootWindup ? attackMovementModifier : 1f);
+            modifiedAcceleration *= (currentAction.type == State.ShootWindup || currentAction.type == State.AttackWindup ? attackMovementModifier : 1f);
             rb2d.AddForce((targetMotion.magnitude > 1 ? targetMotion.normalized : targetMotion) * modifiedAcceleration);
         }
 
@@ -304,6 +334,8 @@ public class Player : MonoBehaviour, IActionQueue
         }
         else if (!currentAction.sticky)
         {
+            chargeParticles.gameObject.SetActive(false);
+            dashParticles.gameObject.SetActive(false);
             remStateFrames = 0;
             if (actions.Count > 0)
             {
@@ -313,35 +345,60 @@ public class Player : MonoBehaviour, IActionQueue
             }
             else
             {
+                if (currentActionFrames >= 30)
+                    combo = 0;
                 currentAction = new Action();
             }
-            currentActionFrames = 0;
         }
-        else
+        else // Handle sticky actions
         {
             if (currentAction.type == State.ShootWindup)
             {
-                if (currentActionFrames - shootWindupFrames >= maxChargeFrames)
-                    currentAction.sticky = false;
                 // Must release early because the shot takes energy too, so it shouldn't always trigger overdraw.
-                else if (energy.Current < energyPerShot / 2)
+                if (currentActionFrames - shootWindupFrames >= maxGunChargeFrames || energy.Current < energyPerShot / 2)
+                {
                     currentAction.sticky = false;
+                }
                 else
-                    UseEnergy(energyPerCharge);
+                {
+                    if (Time.frameCount % 15 == 0)
+                        AudioSource.PlayClipAtPoint(chargeSound, transform.position);
+                    chargeParticles.gameObject.SetActive(true);
+                    UseEnergy(gunChargeEnergyPerFrame);
+                }
+            }
+            else if (currentAction.type == State.AttackWindup)
+            {
+                if (currentActionFrames - attackWindupFrames >= maxSwordChargeFrames || energy.Current < energyPerAttack / 2)
+                {
+                    currentAction.sticky = false;
+                }
+                else
+                {
+                    if (Time.frameCount % 15 == 0)
+                        AudioSource.PlayClipAtPoint(chargeSound, transform.position);
+                    chargeParticles.gameObject.SetActive(true);
+                    UseEnergy(swordChargeEnergyPerFrame);
+                }
             }
         }
 
         if (Input.GetButtonUp("Shoot"))
         {
-            Action firstAttackWindup;
-            if (currentAction.sticky && currentAction.type == State.ShootWindup)
-                firstAttackWindup = currentAction;
-            else
-                firstAttackWindup = actions.Find((action) => { return action.sticky && action.type == State.ShootWindup; });
+            Action firstShootWindup = GetFirstStickyActionOfType(State.ShootWindup);
+            if (firstShootWindup != null)
+                firstShootWindup.sticky = false;
+        }
+        if (currentAction != null && currentAction.type == State.ShootWindup && currentAction.sticky && !Input.GetButton("Shoot"))
+            currentAction.sticky = false;
+
+        if (Input.GetButtonUp("Attack"))
+        {
+            Action firstAttackWindup = GetFirstStickyActionOfType(State.AttackWindup);
             if (firstAttackWindup != null)
                 firstAttackWindup.sticky = false;
         }
-        if (currentAction != null && currentAction.type == State.ShootWindup && currentAction.sticky && !Input.GetButton("Shoot"))
+        if (currentAction != null && currentAction.type == State.AttackWindup && currentAction.sticky && !Input.GetButton("Attack"))
             currentAction.sticky = false;
 
         if (!CanQueueActions())
@@ -364,11 +421,8 @@ public class Player : MonoBehaviour, IActionQueue
         if (Input.GetButtonDown("Attack"))
         {
             TryCancelBackswing();
-            //string variation = "";
-            //if (LastAction.type == State.Rolling)
-            //    variation = "thrust";
             Vector2 targetDirection = (LevelEditor.main.GetXYPlanePosition(Input.mousePosition) - (Vector2)transform.position).normalized;
-            actions.Add(new Action() { type = State.AttackWindup, frames = attackWindupFrames, vector = targetDirection * attackForce });
+            actions.Add(new Action() { type = State.AttackWindup, frames = attackWindupFrames, vector = targetDirection * attackForce, sticky = true });
             actions.Add(new Action() { type = State.Attack, frames = attackFrames, vector = targetDirection, combo = true });
         }
 

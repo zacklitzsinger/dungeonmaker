@@ -225,7 +225,7 @@ BoxCollider2D:
   m_Material: {fileID: 6200000, guid: 952289ca829067a46a08985de041b5af, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_Offset: {x: 0, y: 0.3}
+  m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Size: {x: 0.5, y: 0.5}
 --- !u!114 &114013204344090042

@@ -18,6 +18,7 @@ public class AIShoot : AIBehavior
     public float attackMoveForce;
     public int postAttackDelay;
     public List<float> angles = new List<float>();
+    public float scatterAngle;
     public GameObject bulletPrefab;
     public Transform Target { get { return GetComponent<DesireAI>().target; } }
     [ReadOnly]
@@ -65,7 +66,8 @@ public class AIShoot : AIBehavior
                 {
                     Vector2 targetDir = (Target.position - transform.position).normalized;
                     Vector3 bulletDir = Quaternion.AngleAxis(angle, Vector3.forward) * targetDir;
-                    Bullet bullet = Instantiate(bulletPrefab, transform.position, Quaternion.LookRotation(Vector3.forward, bulletDir)).GetComponent<Bullet>();
+                    Quaternion scatter = Quaternion.AngleAxis(UnityEngine.Random.Range(-scatterAngle/2, scatterAngle/2), Vector3.forward);
+                    Bullet bullet = Instantiate(bulletPrefab, transform.position, scatter * Quaternion.LookRotation(Vector3.forward, bulletDir)).GetComponent<Bullet>();
                     bullet.friendly = false;
                     bullet.owner = gameObject;
                     rb2d.AddForce(targetDir * attackMoveForce);

@@ -93,6 +93,7 @@ public class Player : MonoBehaviour, IActionQueue
     public Vector2 roomEntrance;
 
     public Action currentAction;
+    public Action NextQueuedAction {  get { return actions.Count > 0 ? actions[0] : null; } }
     public Action LastQueuedAction { get { return actions.Count > 0 ? actions[actions.Count - 1] : currentAction; } }
     public List<Action> actions = new List<Action>();
 
@@ -231,7 +232,9 @@ public class Player : MonoBehaviour, IActionQueue
 
     bool CanQueueActions()
     {
-        return (remStateFrames <= 15 && actions.Count <= 1 && (currentAction == null || currentAction.type != State.Stun));
+        return (remStateFrames <= 15 && actions.Count <= 1 && 
+            (currentAction == null || currentAction.type != State.Stun) && 
+            (NextQueuedAction == null || NextQueuedAction.type != State.Stun));
     }
 
     /// <summary>

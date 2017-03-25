@@ -13,6 +13,7 @@ public class Energy : MonoBehaviour, IDamageable, IRespawnable
     public float rechargeRate;
     public float damageToEnergy; // How much energy to take off per point of damage.
     public float damageToLimit; // How much energy limit to reduce per point of damage
+    public float permanentDamageToEnergyGain; // How much temporary energy to regain once taking damage
     [EnumFlag]
     public DamageType vulnerableTo = DamageType.Generic | DamageType.Slash | DamageType.Explosive | DamageType.Ground;
     [ReadOnly]
@@ -35,6 +36,7 @@ public class Energy : MonoBehaviour, IDamageable, IRespawnable
     public AudioClip hitSound;
     public AudioClip deathSound;
     public AudioClip pulseSound;
+    public AudioClip dangerSound;
 
     ObjectData data;
     Rigidbody2D rb2d;
@@ -54,6 +56,8 @@ public class Energy : MonoBehaviour, IDamageable, IRespawnable
         framesSinceEnergyUsed = 0;
         float previous = Current;
         Current -= amt;
+        if (current == 0)
+            AudioSource.PlayClipAtPoint(dangerSound, transform.position);
         return (previous - Current);
     }
 
@@ -98,12 +102,13 @@ public class Energy : MonoBehaviour, IDamageable, IRespawnable
     {
         if (remInvulnFrames > 0 || (damageType | vulnerableTo) != vulnerableTo)
             dmg = 0;
-        float actualEnergyDamage = ConvertDamageToEnergy(dmg);
+        float permanentDamage = ConvertDamageToEnergy(dmg);
         framesSinceEnergyUsed = 0;
         if (knockback.magnitude > 0 && dmg > 0)
             rb2d.AddForce(knockback);
-        if (actualEnergyDamage > 0)
+        if (permanentDamage > 0)
         {
+            Current += permanentDamage * permanentDamageToEnergyGain;
             remInvulnFrames = invulnFrames;
             if (damageParticles && knockback.magnitude > 0 && (damageType | DamageType.Fall) != damageType)
                 Instantiate(damageParticles, transform.position, Quaternion.LookRotation(knockback, Vector3.forward));

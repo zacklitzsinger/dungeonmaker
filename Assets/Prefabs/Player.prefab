@@ -387,8 +387,8 @@ MonoBehaviour:
   gunIcon: {fileID: 21300000, guid: 49f458bd2ab7ef54585cbe172dbe39a9, type: 3}
   dodgeIcon: {fileID: 21300000, guid: af8cf2bd83ed29747b03cbf2619d8150, type: 3}
   acceleration: 400
-  rollFrames: 15
-  rollForce: 5000
+  rollFrames: 12
+  rollForce: 6000
   energyPerRoll: 20
   rollGravityModifier: 0.4
   dodgeSound: {fileID: 8300000, guid: 608936d3f271cf2458cf505e0d2b44e2, type: 3}
@@ -464,6 +464,7 @@ MonoBehaviour:
   rechargeRate: 0.3
   damageToEnergy: 40
   damageToLimit: 10
+  permanentDamageToEnergyGain: 5
   vulnerableTo: 63
   framesSinceEnergyUsed: 0
   remInvulnFrames: 0
@@ -478,6 +479,7 @@ MonoBehaviour:
   hitSound: {fileID: 8300000, guid: 87e372e39fc06b14794ec2523cb17664, type: 3}
   deathSound: {fileID: 8300000, guid: 3816d71a485e3bf439d56a5f6d93f6ba, type: 3}
   pulseSound: {fileID: 8300000, guid: 41925ee8ac56b104eb6ac7cfc32959e9, type: 3}
+  dangerSound: {fileID: 8300000, guid: b801cc2312587fc4995a2c1aa07188f6, type: 3}
 --- !u!114 &114626465262783684
 MonoBehaviour:
   m_ObjectHideFlags: 1

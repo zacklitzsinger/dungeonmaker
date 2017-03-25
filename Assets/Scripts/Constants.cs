@@ -2,5 +2,5 @@
 
     public const int GRID_SIZE = 32;
 
-    public const int HIT_PAUSE = 3;
+    public const int HIT_PAUSE = 2;
 }

@@ -14,7 +14,7 @@ public class Bridge : MonoBehaviour, ICustomSerializable {
 
     void Awake()
     {
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     void Update()

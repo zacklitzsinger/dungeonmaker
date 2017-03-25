@@ -10,17 +10,17 @@ public class Checkpoint : MonoBehaviour {
 
     void Start()
     {
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (!other.CompareTag("Player") || other.isTrigger)
             return;
-        Health health = other.GetComponentInParent<Health>();
-        if (health == null)
+        IRespawnable respawn = other.GetComponentInParent<IRespawnable>();
+        if (respawn == null)
             return;
-        health.SetDeathRespawnPoint(this);
+        respawn.SetDeathRespawnPoint(this);
         active = true;
     }
 

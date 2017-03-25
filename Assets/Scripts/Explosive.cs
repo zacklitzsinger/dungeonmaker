@@ -6,6 +6,7 @@ public class Explosive : MonoBehaviour
     public float radius;
     public float knockback;
     public int damage;
+    public Explosion explosionPrefab;
 
     Health health;
     Circuit circuit;
@@ -14,24 +15,13 @@ public class Explosive : MonoBehaviour
     void Start()
     {
         health = GetComponent<Health>();
-        health.onDamaged += (go) =>
+        health.onDeath += (go) =>
         {
-            Explode();
+            Explosion explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            explosion.radius = radius;
+            explosion.knockback = knockback;
+            explosion.damage = damage;
         };
-    }
-
-    void Explode()
-    {
-        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, radius, Vector2.zero);
-        foreach (RaycastHit2D hit in hits)
-        {
-            Health hitHealth = hit.transform.GetComponentInParent<Health>();
-            if (!hitHealth || hitHealth.gameObject == gameObject)
-                continue;
-            Vector2 dir = (hitHealth.transform.position - transform.position).normalized;
-            hitHealth.Damage(damage, gameObject, dir * knockback, DamageType.Explosive);
-
-        }
     }
 
     void FixedUpdate()
@@ -42,7 +32,7 @@ public class Explosive : MonoBehaviour
         }
         if (circuit && circuit.Powered)
         {
-            health.Damage(1, gameObject, Vector2.zero);
+            health.Die();
         }
     }
 }

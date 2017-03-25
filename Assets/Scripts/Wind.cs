@@ -29,10 +29,8 @@ public class Wind : MonoBehaviour {
         ParticleSystem ps = GetComponentInChildren<ParticleSystem>();
         if (ps == null)
             return;
-        ParticleSystem.EmissionModule emission = ps.emission;
-        emission.rateOverTimeMultiplier = (size + 1) * 40;
         ParticleSystem.MainModule main = ps.main;
-        main.startSpeedMultiplier = (size + 1) * 1.25f;
+        main.startLifetime = size * .25f;
         if (active && size > 0)
             ps.Play();
         else

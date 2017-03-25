@@ -1,0 +1,31 @@
+fileFormatVersion: 2
+guid: dfc82754f3197334298f303eefc7f162
+timeCreated: 1490337544
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Nunito Sans
+  fontNames:
+  - Nunito Sans
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 5225893030ae01a47b2f0942e98cb59e, type: 3}
+  - {fileID: 12800000, guid: d79cbdc437c69b9449748fa7c4576a5f, type: 3}
+  - {fileID: 12800000, guid: 6bd02cc58b798b34fb9f165fdff083d5, type: 3}
+  - {fileID: 12800000, guid: a7b67216c55a39541820738b15327fb0, type: 3}
+  - {fileID: 12800000, guid: 7dd09cf66eb7ce84e9f1574d94276139, type: 3}
+  - {fileID: 12800000, guid: 6d35dd1854f120a49a4071d8d6d06a81, type: 3}
+  - {fileID: 12800000, guid: 523e12f8d4c9f424392b79512fa44ec2, type: 3}
+  - {fileID: 12800000, guid: 4b9fd26fea806df4aba1a2c679d75fa4, type: 3}
+  - {fileID: 12800000, guid: 55e259af2f6f0d1428b3a9325a36663c, type: 3}
+  - {fileID: 12800000, guid: 6d6eb3df0fa0e0e4681dae8568bbd45e, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

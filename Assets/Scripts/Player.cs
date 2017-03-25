@@ -1,36 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-
-public enum PlayerState
-{
-    Idle,
-    Rolling,
-    AttackWindup,
-    Attacking,
-    // Below are time independent states (not dictated by frame count)
-    Shadow,
-    Victory
-}
-
-public struct PlayerAction
-{
-    public PlayerState type;
-    public int frames;
-    public Vector2 vector;
-    public bool combo;
-    public string variation;
-
-    public override string ToString()
-    {
-        return "[" + type + "|" + frames + "|" + vector + "]";
-    }
-}
+using UnityStandardAssets.ImageEffects;
 
 public class Player : MonoBehaviour, IActionQueue
 {
+    public enum State
+    {
+        Idle,
+        Stun,
+        Rolling,
+        AttackWindup,
+        Attack,
+        ShootWindup,
+        Shoot,
+        // Below are time independent states (not dictated by frame count)
+        Shadow,
+        Victory
+    }
+
+    // This could be an enum, but we want to preserve null as a value.
+    public class Action
+    {
+        public State type;
+        public int frames;
+        public Vector2 vector;
+        public bool sticky; // Should action stay around even when frames == 0?
+        public bool combo; // Count this as part of the combo?
+
+        public override string ToString()
+        {
+            return "[" + type + "|" + frames + "|" + vector + "]";
+        }
+    }
 
     public GameObject swordPrefab;
+    public GameObject bulletPrefab;
+    public Sprite swordIcon;
+    public Sprite gunIcon;
     public Sprite dodgeIcon;
 
     public float acceleration;
@@ -38,113 +44,194 @@ public class Player : MonoBehaviour, IActionQueue
     // Rolling
     public int rollFrames; // Number of frames it takes to roll
     public float rollForce; // Force with which to roll
+    public float energyPerRoll;
+    public float rollGravityModifier;
+    public AudioClip dodgeSound;
 
-    // Melee combat
-    public int attackWindup; // Max number of frames to actually start attacking
-    public int attackFrames; // Number of frames after attack starts before player can take another action.
-    public float attackForce; // Force to apply when attacking
+    // Combat
+    public int attackWindupFrames;
+    public int attackFrames;
+    public int attackForce;
+    public int energyPerAttack;
+    public int energyCostPerAttackCombo;
+    public float energyMovementModifier;
+    public int overdrawPenaltyFrames;
+    public AudioClip overdrawSound;
+    public AudioClip chargeSound;
 
-    // Combo
-    public int maxCombo; // Max number of attacks to be done in sequence
-    [ReadOnly]
-    public int combo; // Current combo
-    public int postComboCooldown; // Number of frames to idle per combo executed after comboing.
+    // Sword charge attack
+    public float swordChargeEnergyPerFrame;
+    public int minSwordChargeFrames;
+    public int maxSwordChargeFrames;
+
+    //Gunplay
+    public int shootWindupFrames; // Max number of frames to actually start attacking
+    public int shootFrames; // Number of frames after attack starts before player can take another action.
+    public float shootKnockback; // Force to apply when attacking
+    public float energyPerShot; // Energy to consume per shot
+    public float scatterAngle; // Degrees by which to randomly scatter shots
+    public float attackMovementModifier; // % modifier on movement while attacking
+
+    // Gun charge attack
+    public float gunChargeEnergyPerFrame; // energy consumed per frame by charging up an attack
+    public int maxGunChargeFrames; // max frames to charge
 
     [ReadOnly]
-    public int remStateFrames; // Remaining frames to continue current state; 0 when in idle
+    public int remStateFrames; // Remaining frames to continue current state; <= 0 when in idle
+    /// <summary>
+    /// How many frames have passed under the current action - important for charge attacks
+    /// </summary>
     [ReadOnly]
-    public int currentActionFrames; // How many frames have passed under the current action
+    public int currentActionFrames;
+    public int combo; // Current number of actions in a row
 
     public int keys = 0;
     public IItem[] Items { get { return GetComponentsInChildren<IItem>(); } }
     public string[] keybinds;
 
+    [ReadOnly]
     public Vector2 roomEntrance;
 
-    public PlayerAction currentAction;
-    public PlayerAction LastAction { get { return actions.Count > 0 ? actions.Last.Value : currentAction; } }
-    public LinkedList<PlayerAction> actions = new LinkedList<PlayerAction>();
+    public Action currentAction;
+    public Action LastQueuedAction { get { return actions.Count > 0 ? actions[actions.Count - 1] : currentAction; } }
+    public List<Action> actions = new List<Action>();
 
-    // Items
+    // State
     [ReadOnly]
     public bool shadow = false;
 
     GameObject playerPanel;
-    HealthUI healthIndicator;
     KeyUI keyIndicator;
+    ColorCorrectionCurves colorCorrection;
+    NoiseAndGrain noiseAndGrain;
 
     Rigidbody2D rb2d;
-    Health health;
     Gravity gravity;
     SpriteRenderer spriteRenderer;
     Animator animator;
-    Shield shield;
+    Energy energy;
+    public ParticleSystem chargeParticles;
+    public ParticleSystem dashParticles;
 
     void Awake()
     {
         rb2d = GetComponent<Rigidbody2D>();
-        health = GetComponentInChildren<Health>();
         gravity = GetComponentInChildren<Gravity>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        shield = GetComponentInChildren<Shield>(true);
         animator = GetComponent<Animator>();
         playerPanel = LevelEditor.main.playerPanel;
-        healthIndicator = playerPanel.GetComponentInChildren<HealthUI>(true);
         keyIndicator = playerPanel.GetComponentInChildren<KeyUI>(true);
+        energy = GetComponent<Energy>();
+        energy.indicator = playerPanel.GetComponentInChildren<EnergyIndicator>(true);
+        colorCorrection = Camera.main.GetComponent<ColorCorrectionCurves>();
+        noiseAndGrain = Camera.main.GetComponent<NoiseAndGrain>();
+        currentAction = new Action();
     }
 
     /// <summary>
     /// Called the first frame an action becomes active
     /// </summary>
-    public void TriggerAction(PlayerAction action)
+    public void TriggerAction(Action action)
     {
+        Quaternion rotation;
+        remStateFrames = action.frames;
+        int previousActionFrames = currentActionFrames;
+        currentActionFrames = 0;
         if (action.combo)
             combo++;
-        if (action.type != PlayerState.Shadow)
+        if (action.type == State.Idle)
+            combo = 0;
+        if (action.type != State.Shadow)
             shadow = false;
         switch (action.type)
         {
-            case PlayerState.AttackWindup:
-                gravity.dragModifier = 1;
-                if (action.vector.magnitude > 0)
-                    rb2d.AddForce(action.vector * (combo + 2) / 3f);
-                break;
-
-            case PlayerState.Attacking:
-                if (action.vector.magnitude > 0)
-                {
-                    Quaternion rotation = Quaternion.LookRotation((combo % 2 == 1 ? Vector3.forward : Vector3.back), action.vector.normalized);
-                    Sword sword = Instantiate(swordPrefab, transform.position, rotation, transform).GetComponentInChildren<Sword>();
-                    sword.owner = gameObject;
-                    if (action.variation == "thrust" || combo > 2)
-                        sword.style = Sword.Style.Thrust;
-                }
-                break;
-
-            case PlayerState.Rolling:
+            case State.AttackWindup:
                 gravity.dragModifier = 1;
                 if (action.vector.magnitude > 0)
                     rb2d.AddForce(action.vector);
                 break;
 
-            case PlayerState.Shadow:
+            case State.Attack:
+                if (action.vector.magnitude > 0)
+                {
+                    rotation = Quaternion.LookRotation((combo % 3 == 1 ? Vector3.forward : Vector3.back), action.vector.normalized);
+                    Sword sword = Instantiate(swordPrefab, transform.position, rotation, transform).GetComponentInChildren<Sword>();
+                    sword.owner = gameObject;
+                    UseEnergy(energyPerAttack + energyCostPerAttackCombo * (combo - 1));
+                    if (previousActionFrames - attackWindupFrames >= minSwordChargeFrames)
+                    {
+                        sword.style = Sword.Style.Spin;
+                        sword.damage *= 2;
+                        currentAction.frames = 30;
+                    }
+                    else if (combo % 3 == 0)
+                        sword.style = Sword.Style.Thrust;
+                }
+                break;
+
+            case State.ShootWindup:
+                gravity.dragModifier = 1;
+                if (action.vector.magnitude > 0)
+                    rb2d.AddForce(action.vector);
+                break;
+
+            case State.Shoot:
+                Vector2 targetDirection = (LevelEditor.main.GetXYPlanePosition(Input.mousePosition) - (Vector2)transform.position).normalized;
+                rotation = Quaternion.LookRotation(Vector3.forward, targetDirection);
+                // Hacky way of doing a bell curve
+                float angle = GetScatter() / 2 + GetScatter() / 2;
+                Quaternion scatter = Quaternion.AngleAxis(angle, Vector3.forward);
+                Bullet bullet = Instantiate(bulletPrefab, transform.position, rotation * scatter, transform).GetComponentInChildren<Bullet>();
+                bullet.friendly = true;
+                bullet.owner = gameObject;
+                bullet.charge = Mathf.Clamp01((previousActionFrames - shootWindupFrames) / (float)maxGunChargeFrames);
+                UseEnergy(energyPerShot);
+                break;
+
+            case State.Rolling:
+                AudioSource.PlayClipAtPoint(dodgeSound, transform.position);
+                gravity.dragModifier = rollGravityModifier;
+                if (action.vector.magnitude > 0)
+                    rb2d.AddForce(action.vector);
+                UseEnergy(energyPerRoll);
+                dashParticles.gameObject.SetActive(true);
+                break;
+
+            case State.Shadow:
                 shadow = !shadow;
                 break;
+            case State.Idle:
+            case State.Stun:
+                combo = 0;
+                break;
         }
-        currentActionFrames = 0;
-        remStateFrames = action.frames;
+    }
+
+    float GetScatter()
+    {
+        return Random.Range(-scatterAngle / 2, scatterAngle / 2);
+    }
+
+    public void Interrupt(int frames, State type)
+    {
+        currentAction = new Action() { type = type, frames = frames };
+        TriggerAction(currentAction);
     }
 
     public void Interrupt(int frames)
     {
-        currentAction = new PlayerAction() { type = PlayerState.Idle, frames = frames };
-        TriggerAction(currentAction);
-        combo = 0;
+        Interrupt(frames, State.Idle);
+    }
+
+    public void InterruptAfterCurrent(int frames, State type = State.Idle)
+    {
+        actions.Clear();
+        actions.Add(new Action() { type = type, frames = frames });
     }
 
     bool CanQueueActions()
     {
-        return (remStateFrames <= 15 && actions.Count == 0);
+        return (remStateFrames <= 15 && actions.Count <= 1 && (currentAction == null || currentAction.type != State.Stun));
     }
 
     /// <summary>
@@ -152,7 +239,8 @@ public class Player : MonoBehaviour, IActionQueue
     /// </summary>
     bool CanCancelBackswing()
     {
-        return (1 < remStateFrames && remStateFrames < 10 && combo < maxCombo && currentAction.type != PlayerState.Idle && actions.Count == 0);
+        return false;
+        //return (1 < remStateFrames && remStateFrames < 10 && currentAction.type != State.Idle && actions.Count == 0);
     }
 
     void TryCancelBackswing()
@@ -161,15 +249,45 @@ public class Player : MonoBehaviour, IActionQueue
             remStateFrames = 0;
     }
 
+    // Consumes a certain amount of energy. Can trigger overdraw inactivity period.
+    float UseEnergy(float amt)
+    {
+        // Don't allow player to overdraw by queueing actions
+        float actual = energy.UseEnergy(amt);
+        if (energy.Current == 0)
+            actions.Clear();
+        if (actual == 0)
+            TriggerOverdraw();
+        return actual;
+    }
+
+    void TriggerOverdraw()
+    {
+        if (overdrawSound)
+            Camera.main.GetComponent<AudioSource>().PlayOneShot(overdrawSound);
+        //energy.Damage(overdrawDamage, gameObject, Vector2.zero);
+        InterruptAfterCurrent(overdrawPenaltyFrames, State.Stun);
+    }
+
+    Action GetFirstStickyActionOfType(State state)
+    {
+        if (currentAction.sticky && currentAction.type == state)
+            return currentAction;
+        return actions.Find((action) => { return action.sticky && action.type == state; });
+    }
+
     void Update()
     {
-        animator.SetBool("shadow", shadow);
+        if (animator)
+            animator.SetBool("shadow", shadow);
+        colorCorrection.saturation = energy.Current / energy.Limit * .65f + 0.35f;
+        noiseAndGrain.intensityMultiplier = 2 * (1 - energy.Current / energy.Limit);
     }
 
     void FixedUpdate()
     {
         currentActionFrames++;
-        if (currentAction.type == PlayerState.Victory)
+        if (currentAction.type == State.Victory)
             return;
 
         UpdateLayer();
@@ -182,59 +300,106 @@ public class Player : MonoBehaviour, IActionQueue
         FloorData floorData = null;
         if (floor != null)
             floorData = floor.GetComponent<FloorData>();
-        gravity.dragModifier = 1;
 
         //Handle movement
         float xMotion = Input.GetAxis("Horizontal");
         float yMotion = Input.GetAxis("Vertical");
         Vector2 targetMotion = Vector2.right * xMotion + Vector2.up * yMotion;
-        if (currentAction.type == PlayerState.AttackWindup || currentAction.type == PlayerState.Attacking || currentAction.type == PlayerState.Idle)
+        if (currentAction.type == State.AttackWindup || currentAction.type == State.ShootWindup || currentAction.type == State.Shoot || currentAction.type == State.Idle)
         {
             float modifiedAcceleration = acceleration;
-            modifiedAcceleration *= (floorData ? floorData.accelerationModifier : 1);
-            modifiedAcceleration *= (shield.enabled ? 0.5f : 1f);
+            modifiedAcceleration *= (floorData ? floorData.accelerationModifier : 1f);
+            modifiedAcceleration *= Mathf.Lerp(energyMovementModifier, 1f, energy.Current / energy.max);
+            modifiedAcceleration *= (currentAction.type == State.ShootWindup || currentAction.type == State.AttackWindup ? attackMovementModifier : 1f);
             rb2d.AddForce((targetMotion.magnitude > 1 ? targetMotion.normalized : targetMotion) * modifiedAcceleration);
         }
 
-        spriteRenderer.color = Color.white;
+        if (spriteRenderer)
+            spriteRenderer.color = Color.white;
         if (remStateFrames > 0)
         {
             remStateFrames--;
             switch (currentAction.type)
             {
-                case PlayerState.Rolling:
-                    if (remStateFrames < rollFrames / 4)
+                case State.Rolling:
+                    if (remStateFrames == 0)
+                        gravity.dragModifier = 1;
+                    else if (remStateFrames < rollFrames / 5)
                         gravity.dragModifier = 5;
                     break;
             }
-            if (CanCancelBackswing())
+            if (CanCancelBackswing() && spriteRenderer)
                 // Visual effect for combo opportunity
                 spriteRenderer.color = new Color(.95f, .9f, 1f);
         }
-        else
+        else if (!currentAction.sticky)
         {
+            chargeParticles.gameObject.SetActive(false);
+            dashParticles.gameObject.SetActive(false);
             remStateFrames = 0;
-            if (combo >= maxCombo)
-                actions.Clear();
             if (actions.Count > 0)
             {
-                currentAction = actions.First.Value;
-                actions.RemoveFirst();
+                currentAction = actions[0];
+                actions.RemoveAt(0);
                 TriggerAction(currentAction);
             }
             else
             {
-                currentAction = new PlayerAction();
-                if (combo > 0)
-                {
-                    remStateFrames = combo * postComboCooldown;
+                if (currentActionFrames >= 30)
                     combo = 0;
+                currentAction = new Action();
+            }
+        }
+        else // Handle sticky actions
+        {
+            if (currentAction.type == State.ShootWindup)
+            {
+                // Must release early because the shot takes energy too, so it shouldn't always trigger overdraw.
+                if (currentActionFrames - shootWindupFrames >= maxGunChargeFrames || energy.Current < energyPerShot / 2)
+                {
+                    currentAction.sticky = false;
+                }
+                else
+                {
+                    if (Time.frameCount % 15 == 0)
+                        AudioSource.PlayClipAtPoint(chargeSound, transform.position);
+                    chargeParticles.gameObject.SetActive(true);
+                    UseEnergy(gunChargeEnergyPerFrame);
                 }
             }
-            currentActionFrames = 0;
+            else if (currentAction.type == State.AttackWindup)
+            {
+                if (currentActionFrames - attackWindupFrames >= maxSwordChargeFrames || energy.Current < energyPerAttack / 2)
+                {
+                    currentAction.sticky = false;
+                }
+                else
+                {
+                    if (Time.frameCount % 15 == 0)
+                        AudioSource.PlayClipAtPoint(chargeSound, transform.position);
+                    chargeParticles.gameObject.SetActive(true);
+                    UseEnergy(swordChargeEnergyPerFrame);
+                }
+            }
         }
 
-        shield.gameObject.SetActive(false);
+        if (Input.GetButtonUp("Shoot"))
+        {
+            Action firstShootWindup = GetFirstStickyActionOfType(State.ShootWindup);
+            if (firstShootWindup != null)
+                firstShootWindup.sticky = false;
+        }
+        if (currentAction != null && currentAction.type == State.ShootWindup && currentAction.sticky && !Input.GetButton("Shoot"))
+            currentAction.sticky = false;
+
+        if (Input.GetButtonUp("Attack"))
+        {
+            Action firstAttackWindup = GetFirstStickyActionOfType(State.AttackWindup);
+            if (firstAttackWindup != null)
+                firstAttackWindup.sticky = false;
+        }
+        if (currentAction != null && currentAction.type == State.AttackWindup && currentAction.sticky && !Input.GetButton("Attack"))
+            currentAction.sticky = false;
 
         if (!CanQueueActions())
             return;
@@ -242,23 +407,23 @@ public class Player : MonoBehaviour, IActionQueue
         if (Input.GetButtonDown("Roll") && targetMotion.magnitude > 0)
         {
             TryCancelBackswing();
-            actions.AddLast(new PlayerAction() { type = PlayerState.Rolling, frames = rollFrames, vector = targetMotion.normalized * rollForce, combo = true });
+            actions.Add(new Action() { type = State.Rolling, frames = rollFrames, vector = targetMotion.normalized * rollForce, combo = true });
+        }
+
+        if (Input.GetButtonDown("Shoot"))
+        {
+            TryCancelBackswing();
+            Vector2 targetDirection = (LevelEditor.main.GetXYPlanePosition(Input.mousePosition) - (Vector2)transform.position).normalized;
+            actions.Add(new Action() { type = State.ShootWindup, frames = shootWindupFrames, vector = -targetDirection * shootKnockback, sticky = true });
+            actions.Add(new Action() { type = State.Shoot, frames = shootFrames });
         }
 
         if (Input.GetButtonDown("Attack"))
         {
             TryCancelBackswing();
-            string variation = "";
-            if (LastAction.type == PlayerState.Rolling)
-                variation = "thrust";
-            Vector2 targetDirection = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized;
-            actions.AddLast(new PlayerAction() { type = PlayerState.AttackWindup, frames = attackWindup, vector = targetDirection * attackForce });
-            actions.AddLast(new PlayerAction() { type = PlayerState.Attacking, frames = attackFrames, vector = targetDirection, combo = true, variation = variation });
-        }
-
-        if (Input.GetButton("Shield") && currentAction.type == PlayerState.Idle && currentAction.frames <= 0)
-        {
-            shield.gameObject.SetActive(true);
+            Vector2 targetDirection = (LevelEditor.main.GetXYPlanePosition(Input.mousePosition) - (Vector2)transform.position).normalized;
+            actions.Add(new Action() { type = State.AttackWindup, frames = attackWindupFrames, vector = targetDirection * attackForce, sticky = true });
+            actions.Add(new Action() { type = State.Attack, frames = attackFrames, vector = targetDirection, combo = true });
         }
 
         if (Input.GetButtonDown("Use item 1") && Items.Length >= 1)
@@ -293,7 +458,6 @@ public class Player : MonoBehaviour, IActionQueue
             return;
         }
         playerPanel.SetActive(true);
-        healthIndicator.Amount = health.currentHealth;
         keyIndicator.Amount = keys;
         ItemSlot[] itemSlots = playerPanel.GetComponentsInChildren<ItemSlot>();
         for (int i = 0; i < itemSlots.Length; i++)
@@ -301,9 +465,9 @@ public class Player : MonoBehaviour, IActionQueue
             if (i < keybinds.Length)
                 itemSlots[i].slot.text = keybinds[i];
             if (i == 0)
-                itemSlots[i].ItemSprite = swordPrefab.GetComponentInChildren<SpriteRenderer>().sprite;
+                itemSlots[i].ItemSprite = swordIcon;
             else if (i == 1)
-                itemSlots[i].ItemSprite = shield.GetComponent<SpriteRenderer>().sprite;
+                itemSlots[i].ItemSprite = gunIcon;
             else if (i == 2)
                 itemSlots[i].ItemSprite = dodgeIcon;
             else if (i - 3 < Items.Length)

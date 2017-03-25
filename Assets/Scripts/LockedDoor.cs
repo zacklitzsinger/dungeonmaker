@@ -3,6 +3,7 @@
 public class LockedDoor : MonoBehaviour {
 
     public bool locked = true;
+    public Material unlockMaterial;
     Animator animator;
     Door door;
 
@@ -23,6 +24,7 @@ public class LockedDoor : MonoBehaviour {
                 locked = false;
                 door.enabled = true;
                 door.Open = true;
+                GetComponent<Renderer>().material = unlockMaterial;
             }
         }
     }

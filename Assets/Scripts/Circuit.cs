@@ -36,6 +36,9 @@ public class Circuit : MonoBehaviour, ICustomSerializable
     [ReadOnly]
     public List<Circuit> outputs = new List<Circuit>();
 
+    public bool SelfPowered { get { return lastPowerTest; } }
+    public int IncomingPower { get { return powerAmount - (lastPowerTest ? 1 : 0); } }
+
     void Awake()
     {
         powerConditions.Add(() =>
@@ -149,7 +152,7 @@ public class Circuit : MonoBehaviour, ICustomSerializable
     public void Serialize(BinaryWriter bw)
     {
         bw.Write(inputs.Count);
-        foreach(Circuit input in inputs)
+        foreach (Circuit input in inputs)
             bw.Write(input.GetComponent<ObjectData>().guid);
         bw.Write(outputs.Count);
         foreach (Circuit output in outputs)

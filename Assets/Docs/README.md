@@ -1,19 +1,24 @@
 # README
-For now, this is just a collection of random thoughts.
 
-## Basic game feature todos
-- [x] Puzzle mechanics
-  - [x] Locked doors and keys
-- [x] Saving/loading levels
-- [x] Central server to store/browse levels
-- [x] Combat
-  - [x]Damage
-  - [ ] Maneuvers
-  - [ ] Items
-  - [x] Enemies
-- [x] Level layouting (connecting various rooms together)
-- [ ] World layouting (connecting various dungeons together as a 'campaign')
-- [ ] Multiplayer?
+## Vision
+### Level creation
+  - Simple to create basic levels
+  - High ceiling: complex levels are possible with enough time investment
+  - Large amount of things that can be done
+  - Emphasis on modular systems
+### Puzzle solving
+  - Backtracking using key items
+  - Visual aids - skid marks on ground, lights, camera, special effects to all help give clues
+  - Complex circuit system
+### Combat
+  -
+### Aesthetic
+  - Exploration based, discovering the alien unknown
+  - Main character is a mix of Samus Aran and Indiana Jones
+  - Abandoned space stations, alien tombs
+  - Strong pastels
+  - Perhaps cel-shaded or posterized?
+  - Glitchy, neon look for aliens
 
 ## Object ideas
 This is a list of potential game objects to include.

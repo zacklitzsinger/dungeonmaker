@@ -32,6 +32,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     [ReadOnly]
     public GameObject selectedPrefab;
     [ReadOnly]
+    public GameObject selectedPrefabInstance;
+    [ReadOnly]
     public GameObject selectedGameObject;
     [ReadOnly]
     public float rotation;
@@ -46,7 +48,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public Text editModeLabel;
     public GameObject prefabButton;
     public GameObject sidebarContent;
-    public Texture selectionBox;
+    public GameObject selectionBox;
     public Toggle prefabToggle;
     public GameObject prefabIntSlider;
     public GameObject prefabDropdown;
@@ -62,6 +64,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public GameObject uploadProgress;
     public GameObject playerPanel;
     public GameObject helpPanel;
+    public GameObject modePanel;
+    public GameObject saveLoadUploadPanel;
 
     // Circuits
     public Color circuitColor;
@@ -76,10 +80,9 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     public Dictionary<Guid, GameObject> guidmap = new Dictionary<Guid, GameObject>();
     public NavMap navmap;
     public NavigationCalculator navcalc;
-    [ReadOnly]
     public HashSet<Vector2> previousRoom;
-    [ReadOnly]
     public HashSet<Vector2> currentRoom = new HashSet<Vector2>();
+    [ReadOnly]
     public bool currentRoomDirty = false; // Set to true to guarantee the room is recalculated next frame.
     public UnityEvent onRoomChanged;
 
@@ -87,7 +90,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     /// When testing, save to a temporary file beforehand so we can reload the level after finishing
     /// </summary>
     private string tempFilename;
-    Vector2 lastMousePosition;
+    Vector3 lastMousePosition;
     /// <summary>
     /// Was the app focused last frame? If false, app just became focused, so we should ignore many UI inputs.
     /// </summary>
@@ -127,8 +130,19 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
             });
         }
 
-        // Pause time while editing
-        Time.timeScale = (mode >= EditMode.Create ? 0 : 1);
+        if (modePanel)
+            foreach (Toggle child in modePanel.GetComponentsInChildren<Toggle>())
+            {
+                EditMode childMode = (EditMode)Enum.Parse(typeof(EditMode), child.name);
+                child.isOn = mode == childMode;
+                child.onValueChanged.AddListener((val) =>
+                {
+                    if (val)
+                        ChangeMode(childMode);
+                });
+            }
+
+        UpdateLightingAndTimescale();
     }
 
     void OnApplicationFocus(bool focus)
@@ -159,24 +173,31 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                     SidebarSelectGroup((Category)Enum.Parse(typeof(Category), groupName));
             });
 
-            foreach (GameObject option in ObjectMasterList.main.options)
+            foreach (ObjectData data in ObjectMasterList.main.options)
             {
-                if (option.GetComponent<ObjectData>().category != (Category)Enum.Parse(typeof(Category), groupName))
+                GameObject option = data.gameObject;
+                if (data.category != (Category)Enum.Parse(typeof(Category), groupName))
                     continue;
-                GameObject button = Instantiate(prefabButton, sidebarContent.transform);
-                button.name = option.GetComponent<ObjectData>().uiName;
+                GameObject button = Instantiate(prefabToggleButton.gameObject, sidebarContent.transform);
+                button.name = data.uiName;
                 RectTransform rectTransform = button.GetComponent<RectTransform>();
                 rectTransform.offsetMin = Vector2.zero;
                 rectTransform.offsetMax = Vector2.zero;
                 var textComponent = button.GetComponentInChildren<Text>();
-                textComponent.text = option.gameObject.name;
-                button.GetComponent<Button>().onClick.AddListener(() =>
+                textComponent.text = data.uiName;
+                button.GetComponent<Toggle>().group = sidebarContent.GetComponent<ToggleGroup>();
+                button.GetComponent<Toggle>().onValueChanged.AddListener((val) =>
                 {
+                    if (!val)
+                        return;
                     rotation = 0f;
+                    if (selectedPrefabInstance)
+                        Destroy(selectedPrefabInstance);
+                    selectedPrefabInstance = Instantiate(option);
                     selectedPrefab = option;
                 });
                 Tooltip tooltip = button.AddComponent<Tooltip>();
-                tooltip.text = option.GetComponent<ObjectData>().createText;
+                tooltip.text = data.createText;
             }
         }
 
@@ -185,12 +206,16 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     void SidebarSelectGroup(Category category)
     {
+        selectedPrefab = null;
+        if (selectedPrefabInstance)
+            Destroy(selectedPrefabInstance);
         foreach (Transform child in sidebarContent.transform)
         {
             bool active = Array.Exists(ObjectMasterList.main.options, (go) =>
             {
                 return go.GetComponent<ObjectData>().uiName == child.name && go.GetComponent<ObjectData>().category == category;
             });
+            child.GetComponent<Toggle>().isOn = false;
             child.gameObject.SetActive(active);
         }
     }
@@ -232,7 +257,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         {
 
             case EditMode.Create:
-                SetHelpPanelText("Place new objects into the level. Left click to place the selected object. Right click to remove objects.");
+                SetHelpPanelText("Place new objects into the level. Left click to place the selected object. Right click to remove objects. Use Q/E to rotate.");
                 break;
             case EditMode.Edit:
                 SetHelpPanelText("Edit properties of objects. Left click to select an object to edit, then modify the fields in the sidebar.");
@@ -249,6 +274,18 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         }
     }
 
+    void UpdateLightingAndTimescale()
+    {
+        // Pause time while editing
+        Time.timeScale = (mode >= EditMode.Create ? 0 : 1);
+        Camera.main.GetComponent<Light>().intensity = (mode >= EditMode.Create ? 0.3f : 0.03f);
+    }
+
+    public void ChangeMode(string newMode)
+    {
+        ChangeMode((EditMode)Enum.Parse(typeof(EditMode), newMode));
+    }
+
     /// <summary>
     /// Change current level edit mode from one mode to another
     /// </summary>
@@ -259,9 +296,26 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         EditMode prevMode = mode;
         mode = newMode;
         selectedGameObject = null;
+        if (selectedPrefabInstance)
+        {
+            Destroy(selectedPrefabInstance);
+            selectedPrefabInstance = null;
+        }
+        // TODO: Don't destroy all sidebar buttons on each mode change - instead, store each set under a separate gameobject under content and selectively enable/disable them.
         ClearSidebar();
-        // Pause time while editing
-        Time.timeScale = (mode >= EditMode.Create ? 0 : 1);
+        if (modePanel)
+        {
+            foreach (Toggle child in modePanel.GetComponentsInChildren<Toggle>())
+            {
+                bool val = child.name == newMode.ToString();
+                // Since these are in a toggle group, only set the one that ends up being true
+                if (!child.isOn && val)
+                    child.isOn = val;
+            }
+        }
+        if (saveLoadUploadPanel)
+            saveLoadUploadPanel.SetActive(mode >= EditMode.Create);
+        UpdateLightingAndTimescale();
         SetHelpTextMode(mode);
         switch (mode)
         {
@@ -364,7 +418,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                     // Start by selecting an object
                     if (Input.GetMouseButtonDown(0))
                     {
-                        selectedGameObject = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                        selectedGameObject = GetGameObjectAtPoint(GetGridMousePosition());
                         if (selectedGameObject)
                         {
                             ClearSidebar();
@@ -377,7 +431,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 case EditMode.Circuit:
                     if (Input.GetMouseButtonDown(0))
                     {
-                        GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                        GameObject go = GetGameObjectAtPoint(GetGridMousePosition());
                         if (!selectedGameObject)
                         {
                             // Start creating a connection
@@ -409,7 +463,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                             selectedGameObject = null;
                         else
                         {
-                            GameObject go = GetGameObjectAtPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                            GameObject go = GetGameObjectAtPoint(GetGridMousePosition());
                             if (go)
                             {
                                 Circuit circuit = go.GetComponent<Circuit>();
@@ -434,18 +488,18 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     /// <summary>
     /// Gets points in the grid along a line.
     /// </summary>
-    List<Vector2> GetGridPointsAlongLine(Vector2 from, Vector2 to, int pxFreq = 8)
+    List<Vector2> GetGridPointsAlongLine(Vector3 from, Vector3 to, int pxFreq = 1)
     {
-        List<Vector2> list = new List<Vector2>();
+        List<Vector3> list = new List<Vector3>();
         list.Add(from);
         int count = (int)Math.Floor((to - from).magnitude / pxFreq);
         for (int i = 1; i <= count; i++)
             list.Add(from + (to - from).normalized * i * pxFreq);
         list.Add(to);
         List<Vector2> gridPoints = new List<Vector2>();
-        foreach (Vector2 item in list)
+        foreach (Vector3 item in list)
         {
-            Vector2 point = ConvertPositionToGrid(Camera.main.ScreenToWorldPoint(item));
+            Vector2 point = GetScreenGridPosition(item);
             if (!gridPoints.Contains(point))
                 gridPoints.Add(point);
         }
@@ -467,7 +521,10 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         {
             // Don't replace if it's the same exact type of object
             if (sameGroup.name == selectedPrefab.name)
+            {
+                sameGroup.transform.rotation = Quaternion.AngleAxis(rotation, Vector3.back);
                 return null;
+            }
             DestroyGameObjectAtGridPosition(gridPos, sameGroup);
         }
         GameObject go = CreateObjectAtGrid(gridPos, selectedPrefab);
@@ -508,7 +565,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     }
 
     /// <summary>
-    /// Returns the grid position under the mouse.
+    /// Returns the 2D position under the mouse.
     /// </summary>
     /// <returns></returns>
     Vector2 GetGridMousePosition()
@@ -516,12 +573,22 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         return GetScreenGridPosition(Input.mousePosition);
     }
 
+    public Vector2 GetXYPlanePosition(Vector3 pos)
+    {
+        Plane plane = new Plane(Vector3.forward, Vector3.zero);
+        Ray ray = Camera.main.ScreenPointToRay(pos);
+        float dist;
+        if (plane.Raycast(ray, out dist))
+            return ray.GetPoint(dist);
+        return Vector2.zero;
+    }
+
     /// <summary>
     /// Returns the grid position under the given screen coordinates.
     /// </summary>
-    Vector2 GetScreenGridPosition(Vector2 pos)
+    Vector2 GetScreenGridPosition(Vector3 pos)
     {
-        return ConvertPositionToGrid(Camera.main.ScreenToWorldPoint(pos));
+        return ConvertPositionToGrid(GetXYPlanePosition(pos));
     }
 
     /// <summary>
@@ -599,7 +666,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 continue;
             foreach (ObjectData data in pair.Value)
                 if (data != null)
-                    SetTileVisibility(data.gameObject, data.CompareTag("Player") || active);
+                    SetTileVisibility(data.gameObject, data.CompareTag("Player") || active, true);
         }
 
         // Update camera
@@ -621,15 +688,11 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     {
         if (go == null)
             return;
-        foreach (SpriteRenderer renderer in go.GetComponentsInChildren<SpriteRenderer>())
+        foreach (Renderer renderer in go.GetComponentsInChildren<Renderer>())
         {
             float targetAlpha = active ? 1f : 0f;
             if (immediate)
-            {
-                Color c = renderer.color;
-                c.a = targetAlpha;
-                renderer.color = c;
-            }
+                renderer.enabled = active;
             // This is a hack - we want to skip doors and walls that have become see through.
             else if (go.layer != LayerMask.NameToLayer("CollisionDisabled") || go.GetComponent<ObjectData>().type != ObjectType.Wall)
             {
@@ -638,20 +701,29 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         }
         // Enable/disable particle systems (including inactive ones).
         foreach (ParticleSystem ps in go.GetComponentsInChildren<ParticleSystem>(true))
-            ps.gameObject.SetActive(active);
+        {
+            if (active)
+                ps.Play();
+            else
+                ps.Stop();
+        }
     }
 
-    public IEnumerator ControlAlpha(SpriteRenderer r, float targetAlpha)
+    public IEnumerator ControlAlpha(Renderer r, float targetAlpha)
     {
-        float alpha = r.color.a;
+        float alpha = r.material.color.a;
         while (alpha != targetAlpha && r != null)
         {
             alpha = Mathf.Lerp(alpha, targetAlpha, 0.15f);
             if (Mathf.Abs(alpha - targetAlpha) < 0.05f)
                 alpha = targetAlpha;
-            Color c = r.color;
+            Color c = r.material.color;
             c.a = alpha;
-            r.color = c;
+            r.material.color = c;
+            if (alpha == 0)
+                r.enabled = false;
+            else if (alpha == 1)
+                r.enabled = true;
             yield return new WaitForFixedUpdate();
         }
     }
@@ -731,44 +803,37 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         }
     }
 
+    void UpdateSelectionBox(Vector3? gridPos = null)
+    {
+        if (gridPos == null)
+            gridPos = GetScreenGridPosition(Input.mousePosition);
+        selectionBox.SetActive(true);
+        selectionBox.transform.position = (Vector3)gridPos;
+    }
+
     void OnGUI()
     {
+        if (selectionBox)
+            selectionBox.SetActive(false);
+        if (selectedPrefabInstance)
+            selectedPrefabInstance.SetActive(false);
         switch (mode)
         {
             case EditMode.Create:
                 if (EventSystem.current.IsPointerOverGameObject() || PauseMenu.main.Open)
                     return;
-                // Draw currently selected grid square
-                Vector2 gridPos = ConvertPositionToGrid(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                gridPos += Vector2.up;
-                Vector2 screenPos = Camera.main.WorldToScreenPoint(gridPos);
-                screenPos.y = Screen.height - screenPos.y;
-                screenPos -= Vector2.one * Constants.GRID_SIZE / 2;
-                GUI.DrawTexture(new Rect(screenPos, new Vector2(selectionBox.width, selectionBox.height)), selectionBox);
-                if (selectedPrefab)
+                UpdateSelectionBox();
+                if (selectedPrefabInstance)
                 {
-                    Sprite sprite = selectedPrefab.GetComponentInChildren<SpriteRenderer>().sprite;
-                    Vector2 pos = Input.mousePosition;
-                    pos.y = Screen.height - pos.y;
-                    // Tex coords are in % of the full texture rather than being a direct source rectangle
-                    Rect texCoords = new Rect(sprite.rect.x / sprite.texture.width, sprite.rect.y / sprite.texture.height, sprite.rect.width / sprite.texture.width, sprite.rect.height / sprite.texture.height);
-                    // Rotate texture
-                    Matrix4x4 matrixTemp = GUI.matrix;
-                    GUIUtility.RotateAroundPivot(rotation, pos);
-                    GUI.DrawTextureWithTexCoords(new Rect(pos - sprite.rect.size / 2, sprite.rect.size), sprite.texture, texCoords);
-                    GUI.matrix = matrixTemp;
+                    selectedPrefabInstance.SetActive(true);
+                    selectedPrefabInstance.transform.position = GetScreenGridPosition(Input.mousePosition);
+                    selectedPrefabInstance.transform.localRotation = Quaternion.Euler(Vector3.back * rotation);
                 }
-
                 break;
 
             case EditMode.Edit:
                 if (selectedGameObject)
-                {
-                    Vector2 rectPoint = Camera.main.WorldToScreenPoint((Vector2)selectedGameObject.transform.position + Vector2.up);
-                    rectPoint.y = Screen.height - rectPoint.y;
-                    GUI.DrawTexture(new Rect(rectPoint - Vector2.one * Constants.GRID_SIZE / 2, new Vector2(selectionBox.width, selectionBox.height)), selectionBox);
-                }
-
+                    UpdateSelectionBox(selectedGameObject.transform.position);
                 break;
 
             case EditMode.Circuit:
@@ -776,7 +841,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 // Draw line from selected object to mouse if we are placing a circuit
                 if (selectedGameObject && !PauseMenu.main.Open)
                 {
-                    line.DrawArrow(selectedGameObject.transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition), selectedConnectionColor);
+                    line.DrawArrow(selectedGameObject.transform.position, GetGridMousePosition(), selectedConnectionColor);
                 }
 
                 // Draw circuits - technically draws each line twice, but shouldn't matter
@@ -863,6 +928,11 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
 
     public void LoadFromTemp()
     {
+        if (!File.Exists(tempFilename))
+        {
+            Debug.LogWarning("Cannot load file: " + tempFilename);
+            return;
+        }
         LoadFromStream(File.OpenRead(tempFilename));
         File.Delete(tempFilename);
     }
@@ -939,12 +1009,12 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 // TODO: Should separate deserialization with instantiating game objects so levels can easily be reset
                 string goName = br.ReadString();
                 Guid id = br.ReadGuid();
-                GameObject prefab = Array.Find(ObjectMasterList.main.options, (o) => { return o.name == goName; });
-                if (prefab == null)
+                ObjectData prefabData = Array.Find(ObjectMasterList.main.options, (o) => { return o && o.name == goName; });
+                if (prefabData == null)
                 {
                     throw new Exception("Could not find prefab in level named " + goName);
                 }
-                GameObject go = CreateObjectAtGrid(pos, prefab);
+                GameObject go = CreateObjectAtGrid(pos, prefabData.gameObject);
                 go.GetComponent<ObjectData>().guid = id;
                 goList.Add(go);
                 guidmap[id] = go;

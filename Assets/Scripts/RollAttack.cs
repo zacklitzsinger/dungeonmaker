@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class RollAttack : MonoBehaviour {
+public class RollAttack : AIBehavior {
 
     public enum State
     {
@@ -21,6 +19,11 @@ public class RollAttack : MonoBehaviour {
     int remFrames = 0;
 
     Rigidbody2D rb2d;
+
+    public override bool CanRelinquishControl()
+    {
+        return enabled;
+    }
 
     void Start()
     {

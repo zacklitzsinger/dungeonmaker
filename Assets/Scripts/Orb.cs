@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Orb : MonoBehaviour
 {
@@ -38,7 +36,7 @@ public class Orb : MonoBehaviour
             return;
 
         Player player = other.GetComponentInParent<Player>();
-        player.actions.AddLast(new PlayerAction() { type = PlayerState.Victory });
+        player.actions.Add(new Player.Action() { type = Player.State.Victory });
         LevelEditor.main.ChangeMode(EditMode.Victory);
         Destroy(gameObject);
     }

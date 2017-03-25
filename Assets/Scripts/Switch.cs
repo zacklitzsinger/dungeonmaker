@@ -33,7 +33,7 @@ public class Switch : MonoBehaviour, ICustomSerializable
 
     void Awake()
     {
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     void Start()
@@ -44,7 +44,7 @@ public class Switch : MonoBehaviour, ICustomSerializable
     void OnTriggerEnter2D(Collider2D other)
     {
         ObjectData data = other.GetComponentInParent<ObjectData>();
-        if (data == null || other.isTrigger)
+        if (data == null || other.isTrigger || !other.GetComponent<Gravity>())
             return;
         touching.Add(data);
         Active = true;
@@ -55,7 +55,7 @@ public class Switch : MonoBehaviour, ICustomSerializable
         if (permanent)
             return;
         ObjectData data = other.GetComponentInParent<ObjectData>();
-        if (data == null || other.isTrigger)
+        if (data == null || other.isTrigger || !other.GetComponent<Gravity>())
             return;
         touching.Remove(data);
         if (touching.Count <= 0)

@@ -19,10 +19,11 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4238989630657178}
-  - component: {fileID: 212390731372897270}
   - component: {fileID: 114744713971349162}
   - component: {fileID: 61334987829417686}
   - component: {fileID: 114073071677959366}
+  - component: {fileID: 33516386924590822}
+  - component: {fileID: 23203568866753424}
   m_Layer: 12
   m_Name: TreasureChest
   m_TagString: Untagged
@@ -43,6 +44,44 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &23203568866753424
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1002282342740670}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 439ea9e82ed851c4991fccddbbb76e16, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &33516386924590822
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1002282342740670}
+  m_Mesh: {fileID: 4300000, guid: 6b3620f5703fe974f88d31efb261eb11, type: 3}
 --- !u!61 &61334987829417686
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -56,7 +95,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1, y: 0.5}
 --- !u!114 &114073071677959366
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -73,6 +112,7 @@ MonoBehaviour:
   - {fileID: 1313807820324858, guid: 11884e9f6512f7a41964d8dc081f0054, type: 2}
   - {fileID: 1313807820324858, guid: f65d8d3d11b2d474aaee455224eb95e8, type: 2}
   - {fileID: 0}
+  collectSound: {fileID: 0}
 --- !u!114 &114744713971349162
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -94,38 +134,3 @@ MonoBehaviour:
   blocksPathing: 0
   sortOrderModifier: 0
   hideInPlayMode: 0
---- !u!212 &212390731372897270
-SpriteRenderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1002282342740670}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
-  m_Materials:
-  - {fileID: 2100000, guid: fd997b21d16a58346a14fb70794700d8, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: ea06abac7aa4ade41886fe053112c708, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0

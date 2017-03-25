@@ -5,13 +5,13 @@ public class Key : MonoBehaviour {
     public AudioClip sound;
 
     Collider2D collider2d;
-    SpriteRenderer spriteRenderer;
+    MeshRenderer meshRenderer;
     Circuit circuit;
 
     void Start()
     {
         collider2d = GetComponent<Collider2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        meshRenderer = GetComponentInChildren<MeshRenderer>();
         SetupCircuit();
     }
 
@@ -21,7 +21,7 @@ public class Key : MonoBehaviour {
         if (circuit)
         {
             collider2d.enabled = circuit.Powered;
-            spriteRenderer.enabled = circuit.Powered;
+            meshRenderer.gameObject.SetActive(circuit.Powered);
         }
     }
 
@@ -41,7 +41,7 @@ public class Key : MonoBehaviour {
         {
             enabled = false;
             collider2d.enabled = false;
-            spriteRenderer.enabled = false;
+            meshRenderer.gameObject.SetActive(false);
             other.GetComponentInParent<Player>().keys++;
             AudioSource.PlayClipAtPoint(sound, transform.position);
         }

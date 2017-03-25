@@ -21,14 +21,14 @@ GameObject:
   - component: {fileID: 4023337709139090}
   - component: {fileID: 114554694894238124}
   - component: {fileID: 50582811179672188}
-  - component: {fileID: 114043181614006576}
+  - component: {fileID: 114095065785055150}
   - component: {fileID: 114789258443482190}
-  - component: {fileID: 114904661763868058}
+  - component: {fileID: 114588938855250186}
+  - component: {fileID: 114082045451117820}
   - component: {fileID: 114081175117869926}
   - component: {fileID: 114918477643818858}
   - component: {fileID: 114610941385884982}
   - component: {fileID: 114689978433671992}
-  - component: {fileID: 114436679227108570}
   m_Layer: 0
   m_Name: Knight
   m_TagString: Untagged
@@ -44,9 +44,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4445055096168218}
-  - component: {fileID: 212990247468001212}
   - component: {fileID: 61297572645366790}
   - component: {fileID: 114764524402683612}
+  - component: {fileID: 33667293218290186}
+  - component: {fileID: 23319087809060776}
   m_Layer: 0
   m_Name: Collider
   m_TagString: Untagged
@@ -113,6 +114,44 @@ Transform:
   m_Father: {fileID: 4023337709139090}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &23319087809060776
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1304098404920314}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 7043ebd90366bb447b21a2267e9f4b09, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &33667293218290186
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1304098404920314}
+  m_Mesh: {fileID: 4300000, guid: 882e411f03a56394dab8da69fd171910, type: 3}
 --- !u!50 &50582811179672188
 Rigidbody2D:
   serializedVersion: 4
@@ -161,24 +200,6 @@ BoxCollider2D:
   m_Offset: {x: 0, y: -0.75}
   serializedVersion: 2
   m_Size: {x: 1.2, y: 1}
---- !u!114 &114043181614006576
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1147360471527010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 662e72fd0985a894c9f0b637c77cc490, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentState: {fileID: 0}
-  decisionInterval: 120
-  hitStagger: 15
-  randomStates:
-  - {fileID: 114436679227108570}
-  - {fileID: 114789258443482190}
-  attack: {fileID: 114904661763868058}
 --- !u!114 &114043723279324714
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -202,6 +223,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   reset: 1
+--- !u!114 &114082045451117820
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147360471527010}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31b5014f1eef87d4f9fe67dacb444359, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minAttackDelay: 6
+  maxAttackDelay: 15
+  attackFrames: 15
+  attackMoveForce: 1200
+  postAttackDelay: 60
+  sword: {fileID: 1002282342740670, guid: 05e94e4be2872ea4b9c33c51b7f2b372, type: 2}
+  combo: 0
+  comboChance: 0.5
+  maxCombo: 3
+  currentAction:
+    type: 0
+    frames: 0
+    direction: {x: 0, y: 0}
 --- !u!114 &114082781792062102
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -213,18 +258,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f371417c52363548a779879588ea96a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114436679227108570
+--- !u!114 &114095065785055150
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1147360471527010}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79a882d71a3f7ca409ecd5768d79e581, type: 3}
+  m_Script: {fileID: 11500000, guid: dc459df53355a4b449caf86636b35210, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frames: 60
+  desires:
+  - state: 2
+    behavior: {fileID: 114082045451117820}
+    value: 0
+  - state: 0
+    behavior: {fileID: 114789258443482190}
+    value: 0
+  - state: 1
+    behavior: {fileID: 114588938855250186}
+    value: 0
+  target: {fileID: 0}
+  currentState:
+    state: 0
+    behavior: {fileID: 0}
+    value: 0
+  attackRange: 3
 --- !u!114 &114554694894238124
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -246,6 +306,20 @@ MonoBehaviour:
   blocksPathing: 0
   sortOrderModifier: 0
   hideInPlayMode: 0
+--- !u!114 &114588938855250186
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1147360471527010}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f4175ae1687c6e4db3cd5bd1b3707c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  acceleration: 270
+  pathLeniancy: 0.5
+  framesBetweenPathRecalc: 30
 --- !u!114 &114610941385884982
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -270,7 +344,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   angle: 60
-  distance: 4.5
+  distance: 8
   target: {fileID: 0}
   mask:
     serializedVersion: 2
@@ -298,28 +372,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63493e8285cb7d449b3f3deb5d8ff5c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  acceleration: 30
+  acceleration: 100
   flying: 0
   path: []
---- !u!114 &114904661763868058
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1147360471527010}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cab804a2f8937146a0e75745e76034b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  acceleration: 65
-  minAttackDelay: 10
-  maxAttackDelay: 30
-  attackFrames: 30
-  attackDistance: 2.5
-  attackMoveForce: 200
-  sword: {fileID: 1002282342740670, guid: 05e94e4be2872ea4b9c33c51b7f2b372, type: 2}
-  staggerFrames: 0
 --- !u!114 &114918477643818858
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -332,53 +387,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   invulnerableOverride: 0
-  vulnerableTo: 15
-  maxHealth: 15
+  vulnerableTo: 31
+  maxHealth: 12
   invulnFrames: 0
   currentHealth: 0
   remInvulnFrames: 0
   deathRespawnPoint: {fileID: 0}
   itemChanceDropOnDeath: 0.2
   itemChoices:
-  - {fileID: 1906677971985918, guid: 18988c1a83705c645be824996fdde668, type: 2}
+  - {fileID: 0}
   damageParticles: {fileID: 198637271435436188, guid: 3203b49ec00b44246bc810d433c37f3c,
     type: 2}
   deathParticles: {fileID: 198977816518499610, guid: 59fc8ce2bd8b7c643a73e3c731fd27ee,
     type: 2}
   hitSound: {fileID: 8300000, guid: 87e372e39fc06b14794ec2523cb17664, type: 3}
   deathSound: {fileID: 8300000, guid: 3816d71a485e3bf439d56a5f6d93f6ba, type: 3}
---- !u!212 &212990247468001212
-SpriteRenderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1304098404920314}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
-  m_Materials:
-  - {fileID: 2100000, guid: fd997b21d16a58346a14fb70794700d8, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 08d6efef98555dc48aa38a56c6dfea5a, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0

@@ -6,10 +6,12 @@ public class Sword : MonoBehaviour
     public enum Style
     {
         Swing,
-        Thrust
+        Thrust,
+        Spin
     }
 
     public Style style;
+    [ReadOnly]
     public int remainingFrames;
     public int damage;
     public int stagger;
@@ -24,21 +26,30 @@ public class Sword : MonoBehaviour
 
     Rigidbody2D ownerRb2d;
     Animator animator;
+    SpriteRenderer sprite;
 
     void Start()
     {
         Camera.main.GetComponent<AudioSource>().PlayOneShot(swordSwingSound);
         ownerRb2d = owner.GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        sprite = GetComponentInChildren<SpriteRenderer>();
+        sprite.transform.position = transform.position + Vector3.back;
+        if (style == Style.Swing)
+            remainingFrames = 16;
+        else if (style == Style.Thrust)
+            remainingFrames = 20;
+        else if (style == Style.Spin)
+            remainingFrames = 22;
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (friendly == other.CompareTag("Player") || hits.Contains(other.gameObject))
             return;
-        Health health = other.GetComponentInParent<Health>();
+        IDamageable health = other.GetComponentInParent<IDamageable>();
         Shield shield = other.GetComponent<Shield>();
-        if (!health || !shield && other.isTrigger)
+        if (health == null || !shield && other.isTrigger)
             return;
         hits.Add(other.gameObject);
         Vector2 direction = (other.transform.position - transform.position).normalized;

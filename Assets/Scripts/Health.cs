@@ -1,19 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-[Flags]
-public enum DamageType
-{
-    Generic = 1,
-    Slash = 2,
-    Explosive = 4,
-    Ground = 8
-}
-
-public class Health : MonoBehaviour, ICustomSerializable
+public class Health : MonoBehaviour, ICustomSerializable, IDamageable
 {
     [PlayerEditable("Invulnerable")]
     [ReadOnly]
@@ -42,10 +32,14 @@ public class Health : MonoBehaviour, ICustomSerializable
     public delegate void OnDamagedDelegate(GameObject source);
     public event OnDamagedDelegate onDamaged;
 
+    public delegate void OnDeathDelegate(GameObject source);
+    public event OnDeathDelegate onDeath;
+
     ObjectData data;
     Rigidbody2D rb2d;
     Player player;
     SpriteRenderer spriteRenderer;
+    Shield shield;
 
     void Start()
     {
@@ -54,24 +48,45 @@ public class Health : MonoBehaviour, ICustomSerializable
         rb2d = GetComponentInParent<Rigidbody2D>();
         player = GetComponentInParent<Player>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        shield = GetComponentInChildren<Shield>(true);
     }
 
-    public void Heal(int amt)
+    public bool Heal(int amt)
     {
+        if (amt == 0 || currentHealth >= maxHealth)
+            return false;
         currentHealth = Mathf.Min(maxHealth, amt + currentHealth);
+        return true;
     }
 
-    public int Damage(int dmg, GameObject source, Vector2 knockback, DamageType damageType = DamageType.Generic, bool fall = false)
+    public void FullHeal()
     {
-        if (remInvulnFrames > 0 || invulnerableOverride || (damageType | vulnerableTo) != vulnerableTo)
-            dmg = 0;
-        if (currentHealth > 0 && dmg > 0)
+        Heal(maxHealth - currentHealth);
+    }
+
+    public void Die()
+    {
+        Damage(currentHealth, gameObject, Vector2.zero);
+    }
+
+    public int Damage(int dmg, GameObject source, Vector2 knockback, DamageType damageType = DamageType.Generic)
+    {
+        if (remInvulnFrames > 0 || invulnerableOverride || (damageType | vulnerableTo) != vulnerableTo || currentHealth <= 0)
+        {
+            return 0;
+        }
+        if (shield && shield.enabled && knockback.magnitude > 0)
+        {
+            if (shield.TryBlock(knockback.normalized, source.GetComponentInParent<IActionQueue>()))
+                return 0;
+        }
+        if (currentHealth > 0)
         {
             currentHealth -= dmg;
             remInvulnFrames = invulnFrames;
-            if (invulnFrames > 0)
+            if (invulnFrames > 0 && spriteRenderer)
                 StartCoroutine(Flash(spriteRenderer, invulnFrames));
-            if (damageParticles && !fall)
+            if (damageParticles && knockback.magnitude > 0 && (damageType | DamageType.Fall) != damageType)
             {
                 Instantiate(damageParticles, transform.position, Quaternion.LookRotation(knockback, Vector3.forward));
                 rb2d.AddForce(knockback);
@@ -87,11 +102,13 @@ public class Health : MonoBehaviour, ICustomSerializable
                 Instantiate(deathParticles, transform.position, Quaternion.identity);
             if (deathSound)
                 Camera.main.GetComponent<AudioSource>().PlayOneShot(deathSound);
+            if (onDeath != null)
+                onDeath(source);
             if (deathRespawnPoint != null)
                 Respawn();
             else
             {
-                if (UnityEngine.Random.value <= itemChanceDropOnDeath && itemChoices.Count > 0)
+                if (Random.value <= itemChanceDropOnDeath && itemChoices.Count > 0)
                 {
                     GameObject itemChoice = itemChoices[UnityEngine.Random.Range(0, itemChoices.Count)];
                     LevelEditor.main.CreateObjectAtGrid(transform.position, itemChoice);
@@ -99,7 +116,7 @@ public class Health : MonoBehaviour, ICustomSerializable
                 data.gameObject.SetActive(false);
             }
         }
-        else if (fall && player)
+        else if ((damageType & DamageType.Fall) == DamageType.Fall && player)
         {
             RespawnAtRoomEntrance();
         }

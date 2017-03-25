@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CleanupParticle : MonoBehaviour {
 
@@ -8,7 +6,7 @@ public class CleanupParticle : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        ps = GetComponent<ParticleSystem>();
+        ps = GetComponentInChildren<ParticleSystem>();
 	}
 	
 	// Update is called once per frame

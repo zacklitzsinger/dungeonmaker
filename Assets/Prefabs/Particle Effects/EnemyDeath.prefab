@@ -19,9 +19,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4107106525789728}
-  - component: {fileID: 198977816518499610}
-  - component: {fileID: 199814653797995964}
-  - component: {fileID: 114925485547431776}
+  - component: {fileID: 198046204104575580}
+  - component: {fileID: 199099315959615774}
+  - component: {fileID: 114399410248614872}
   m_Layer: 0
   m_Name: EnemyDeath
   m_TagString: Untagged
@@ -42,7 +42,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114925485547431776
+--- !u!114 &114399410248614872
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -53,7 +53,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b08fd6aa4a796d049984a7a7c00d6045, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!198 &198977816518499610
+--- !u!198 &198046204104575580
 ParticleSystem:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -108,7 +108,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1745444841
+  randomSeed: -2122504544
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -2600,7 +2600,7 @@ ParticleSystem:
       minColor: {r: 1, g: 1, b: 1, a: 1}
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       minMaxState: 0
---- !u!199 &199814653797995964
+--- !u!199 &199099315959615774
 ParticleSystemRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 1

@@ -443,7 +443,7 @@ MonoBehaviour:
   attackFrames: 15
   attackForce: 1000
   energyPerAttack: 20
-  energyCostPerAttackCombo: 5
+  energyCostPerAttackCombo: 10
   energyMovementModifier: 0.6
   overdrawPenaltyFrames: 0
   overdrawSound: {fileID: 8300000, guid: 64b2139150ca8ac4398257423d0d362e, type: 3}
@@ -507,13 +507,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   invulnFrames: 120
   max: 100
-  framesUntilRechargeBegins: 45
   rechargeRate: 0.4
+  energyToRechargeDelay: 2.8
+  minPenaltyFramesForZero: 40
   damageToEnergy: 40
   damageToLimit: 10
   permanentDamageToEnergyGain: 5
   vulnerableTo: 63
-  framesSinceEnergyUsed: 0
+  framesUntilRechargeBegins: 45
+  framesSinceRechargeStarted: 0
   remInvulnFrames: 0
   framesSinceLastPulse: 0
   pulseThreshold: 0.5

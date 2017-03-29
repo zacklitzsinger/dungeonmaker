@@ -281,7 +281,7 @@ MonoBehaviour:
   remainingFrames: 15
   damage: 1
   stagger: 15
-  knockback: 600
+  knockback: 2000
   friendly: 0
   owner: {fileID: 0}
   swordSwingSound: {fileID: 8300000, guid: d076a85372b79c34a8debd950f7d86dc, type: 3}

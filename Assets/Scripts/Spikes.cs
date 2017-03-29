@@ -25,6 +25,14 @@ public class Spikes : MonoBehaviour {
         health.Damage(damage, gameObject, (other.transform.position - transform.position).normalized * knockback, DamageType.Ground);
     }
 
+    void OnTriggerStay2D(Collider2D other)
+    {
+        IDamageable health = other.GetComponentInParent<IDamageable>();
+        if (health == null)
+            return;
+        health.Damage(damage, gameObject, (other.transform.position - transform.position).normalized * knockback, DamageType.Ground);
+    }
+
     void FixedUpdate()
     {
         Circuit circuit = GetComponent<Circuit>();

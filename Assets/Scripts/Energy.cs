@@ -9,15 +9,18 @@ public class Energy : MonoBehaviour, IDamageable, IRespawnable
     private float limit;
     public float Limit { get { return limit; } set { limit = Mathf.Clamp(value, 0, max); } }
     public float max;
-    public int framesUntilRechargeBegins;
     public float rechargeRate;
+    public float energyToRechargeDelay; // How many recharge delay frames per point of energy consumed.
+    public int minPenaltyFramesForZero; // How many recharge delay frames to add when hitting zero minimum (affects spamming at zero)
     public float damageToEnergy; // How much energy to take off per point of damage.
     public float damageToLimit; // How much energy limit to reduce per point of damage
     public float permanentDamageToEnergyGain; // How much temporary energy to regain once taking damage
     [EnumFlag]
     public DamageType vulnerableTo = DamageType.Generic | DamageType.Slash | DamageType.Explosive | DamageType.Ground;
     [ReadOnly]
-    public int framesSinceEnergyUsed;
+    public float framesUntilRechargeBegins;
+    [ReadOnly]
+    public int framesSinceRechargeStarted;
     [ReadOnly]
     public int remInvulnFrames;
 
@@ -53,11 +56,14 @@ public class Energy : MonoBehaviour, IDamageable, IRespawnable
     /// </summary>
     public float UseEnergy(float amt)
     {
-        framesSinceEnergyUsed = 0;
+        framesUntilRechargeBegins += amt * energyToRechargeDelay;
         float previous = Current;
         Current -= amt;
         if (current == 0)
+        {
             AudioSource.PlayClipAtPoint(dangerSound, transform.position);
+            framesUntilRechargeBegins = Mathf.Max(framesUntilRechargeBegins, minPenaltyFramesForZero);
+        }
         return (previous - Current);
     }
 
@@ -71,13 +77,18 @@ public class Energy : MonoBehaviour, IDamageable, IRespawnable
             if (current / max < pulseThreshold && framesSinceLastPulse >= Mathf.FloorToInt(current / max * 50 + 8))
             {
                 framesSinceLastPulse = 0;
-                AudioSource.PlayClipAtPoint(pulseSound, transform.position, 0.5f);
+                AudioSource.PlayClipAtPoint(pulseSound, transform.position, 0.7f);
             }
         }
 
-        if (Current < max)
-            framesSinceEnergyUsed++;
-        Current += rechargeRate * Mathf.Max(0, (framesSinceEnergyUsed - framesUntilRechargeBegins) / 60f);
+        if (framesUntilRechargeBegins > 0)
+        {
+            framesSinceRechargeStarted = 0;
+            framesUntilRechargeBegins--;
+        }
+        else
+            framesSinceRechargeStarted++;
+        Current += rechargeRate * Mathf.Max(0, framesSinceRechargeStarted / 60f);
         if (indicator)
         {
             indicator.percentage = current / max;
@@ -104,8 +115,8 @@ public class Energy : MonoBehaviour, IDamageable, IRespawnable
         if (remInvulnFrames > 0 || (damageType | vulnerableTo) != vulnerableTo)
             dmg = 0;
         float permanentDamage = ConvertDamageToEnergy(dmg);
-        framesSinceEnergyUsed = 0;
-        if (knockback.magnitude > 0 && dmg > 0)
+        framesSinceRechargeStarted = 0;
+        if (knockback.magnitude > 0)
             rb2d.AddForce(knockback);
         if (permanentDamage > 0)
         {

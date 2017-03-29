@@ -219,7 +219,7 @@ MonoBehaviour:
   uiName: Torch
   createText: Lighting.
   category: 4
-  type: 3
+  type: 2
   seeThrough: 1
   ground: 0
   blocksPathing: 1

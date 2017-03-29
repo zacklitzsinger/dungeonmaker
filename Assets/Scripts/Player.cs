@@ -108,7 +108,6 @@ public class Player : MonoBehaviour, IActionQueue
 
     Rigidbody2D rb2d;
     Gravity gravity;
-    SpriteRenderer spriteRenderer;
     Animator animator;
     Energy energy;
     public ParticleSystem chargeParticles;
@@ -118,8 +117,7 @@ public class Player : MonoBehaviour, IActionQueue
     {
         rb2d = GetComponent<Rigidbody2D>();
         gravity = GetComponentInChildren<Gravity>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
         playerPanel = LevelEditor.main.playerPanel;
         keyIndicator = playerPanel.GetComponentInChildren<KeyUI>(true);
         energy = GetComponent<Energy>();
@@ -182,7 +180,7 @@ public class Player : MonoBehaviour, IActionQueue
                 // Hacky way of doing a bell curve
                 float angle = GetScatter() / 2 + GetScatter() / 2;
                 Quaternion scatter = Quaternion.AngleAxis(angle, Vector3.forward);
-                Bullet bullet = Instantiate(bulletPrefab, transform.position, rotation * scatter, transform).GetComponentInChildren<Bullet>();
+                Bullet bullet = Instantiate(bulletPrefab, transform.position, rotation * scatter).GetComponentInChildren<Bullet>();
                 bullet.friendly = true;
                 bullet.owner = gameObject;
                 bullet.charge = Mathf.Clamp01((previousActionFrames - shootWindupFrames) / (float)maxGunChargeFrames);
@@ -233,6 +231,7 @@ public class Player : MonoBehaviour, IActionQueue
     bool CanQueueActions()
     {
         return (remStateFrames <= 15 && actions.Count <= 1 && 
+            energy.Current > 0 &&
             (currentAction == null || currentAction.type != State.Stun) && 
             (NextQueuedAction == null || NextQueuedAction.type != State.Stun));
     }
@@ -317,8 +316,6 @@ public class Player : MonoBehaviour, IActionQueue
             rb2d.AddForce((targetMotion.magnitude > 1 ? targetMotion.normalized : targetMotion) * modifiedAcceleration);
         }
 
-        if (spriteRenderer)
-            spriteRenderer.color = Color.white;
         if (remStateFrames > 0)
         {
             remStateFrames--;
@@ -331,9 +328,6 @@ public class Player : MonoBehaviour, IActionQueue
                         gravity.dragModifier = 5;
                     break;
             }
-            if (CanCancelBackswing() && spriteRenderer)
-                // Visual effect for combo opportunity
-                spriteRenderer.color = new Color(.95f, .9f, 1f);
         }
         else if (!currentAction.sticky)
         {

@@ -1,15 +1,22 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(Light))]
-public class LightFlicker : MonoBehaviour {
+public class LightFlicker : MonoBehaviour
+{
 
     public float maxIntensity;
     public float minIntensity;
     public float frequency;
     public bool active;
-    new Light light;
+    Light light;
     [ReadOnly]
     public float modifier = 1f;
+
+    void OnDisable()
+    {
+        if (light)
+            light.enabled = false;
+    }
 
     void Start()
     {

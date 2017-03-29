@@ -4,7 +4,8 @@ using UnityEngine;
 /// <summary>
 /// Handles objects that should touching floor or else fall.
 /// </summary>
-public class Gravity : MonoBehaviour {
+public class Gravity : MonoBehaviour
+{
 
     [ReadOnly]
     public HashSet<Collider2D> touching = new HashSet<Collider2D>();
@@ -41,7 +42,7 @@ public class Gravity : MonoBehaviour {
     {
         if (touching.Count > 0)
             return;
-            health.Damage(1, gameObject, Vector2.zero, DamageType.Fall);
+        health.Damage(1, gameObject, Vector2.zero, DamageType.Fall);
         Player player = GetComponentInParent<Player>();
         if (player)
         {

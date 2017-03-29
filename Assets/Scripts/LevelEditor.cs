@@ -194,6 +194,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                     if (selectedPrefabInstance)
                         Destroy(selectedPrefabInstance);
                     selectedPrefabInstance = Instantiate(option);
+                    selectedPrefabInstance.SetActive(false);
                     selectedPrefab = option;
                 });
                 Tooltip tooltip = button.AddComponent<Tooltip>();
@@ -699,6 +700,11 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 StartCoroutine(ControlAlpha(renderer, targetAlpha));
             }
         }
+        foreach(LightFlicker lightFlicker in go.GetComponentsInChildren<LightFlicker>())
+        {
+            if (immediate)
+                lightFlicker.enabled = active;
+        }
         // Enable/disable particle systems (including inactive ones).
         foreach (ParticleSystem ps in go.GetComponentsInChildren<ParticleSystem>(true))
         {
@@ -837,6 +843,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 break;
 
             case EditMode.Circuit:
+                UpdateSelectionBox();
                 Line line = Camera.main.GetComponent<Line>();
                 // Draw line from selected object to mouse if we are placing a circuit
                 if (selectedGameObject && !PauseMenu.main.Open)

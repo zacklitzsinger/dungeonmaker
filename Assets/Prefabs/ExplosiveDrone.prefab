@@ -290,7 +290,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   acceleration: 45
   pathLeniancy: 1
-  framesBetweenPathRecalc: 30
+  framesBetweenPathRecalc: 15
+  mask:
+    serializedVersion: 2
+    m_Bits: 4096
 --- !u!114 &114501722070894804
 MonoBehaviour:
   m_ObjectHideFlags: 1

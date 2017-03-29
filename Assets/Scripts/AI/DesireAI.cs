@@ -43,6 +43,11 @@ public class DesireAI: MonoBehaviour
 
     }
 
+    public Desire GetDesire(State state)
+    {
+        return desires.Find((d) => { return d.state == state; });
+    }
+
     void ChooseBehavior()
     {
         if (currentState != null && currentState.behavior != null && !currentState.behavior.CanRelinquishControl())

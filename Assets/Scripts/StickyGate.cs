@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using System.IO;
+using UnityEngine;
 
-public class StickyGate : MonoBehaviour
+public class StickyGate : MonoBehaviour, ICustomSerializable
 {
 
     [PlayerEditableRange("Stickiness", 1, 30)]
@@ -39,5 +41,15 @@ public class StickyGate : MonoBehaviour
     void SetupCircuit()
     {
         circuit.powerConditions.Add(() => { return on; });
+    }
+
+    public void Serialize(BinaryWriter bw)
+    {
+        ObjectSerializer.Serialize(bw, this);
+    }
+
+    public void Deserialize(BinaryReader br)
+    {
+        ObjectSerializer.Deserialize(br, this);
     }
 }

@@ -22,17 +22,17 @@ public class KnightAI : DesireAI
         switch (desire.state)
         {
             case State.Wander:
-                desire.value = 0.4f;
+                desire.value = 0.1f;
                 break;
             case State.Chase:
                 if (target)
-                    desire.value = Vector2.Distance(transform.position, target.position) > attackRange ? 1f : 0f;
+                    desire.value = Vector2.Distance(transform.position, target.position) > attackRange ? 0.5f : 0f;
                 else
                     desire.value = 0;
                 break;
             case State.Attack:
                 if (target)
-                    desire.value = Vector2.Distance(transform.position, target.position) <= attackRange ? 1f : 0f;
+                    desire.value = Vector2.Distance(transform.position, target.position) <= attackRange ? 0.5f : 0f;
                 else
                     desire.value = 0;
                 break;

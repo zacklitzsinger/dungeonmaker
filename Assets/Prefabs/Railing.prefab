@@ -151,7 +151,7 @@ MonoBehaviour:
   uiName: Railing
   createText: A simple railing.
   category: 0
-  type: 3
+  type: 2
   seeThrough: 1
   ground: 0
   blocksPathing: 1

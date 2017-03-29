@@ -56,8 +56,6 @@ GameObject:
   - component: {fileID: 114357101590825330}
   - component: {fileID: 50582811179672188}
   - component: {fileID: 114554694894238124}
-  - component: {fileID: 33901930591371906}
-  - component: {fileID: 23049979150220000}
   - component: {fileID: 114589298458961086}
   m_Layer: 10
   m_Name: Player
@@ -118,6 +116,24 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1469771703024216
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4982548185350208}
+  - component: {fileID: 33606065331245122}
+  - component: {fileID: 23708174365921416}
+  - component: {fileID: 95032294527654804}
+  m_Layer: 10
+  m_Name: Model
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1551299663387298
 GameObject:
   m_ObjectHideFlags: 0
@@ -145,6 +161,7 @@ Transform:
   m_LocalPosition: {x: -5.224, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 4982548185350208}
   - {fileID: 4508309996000950}
   - {fileID: 4566434367239496}
   - {fileID: 4976762380479224}
@@ -177,7 +194,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4023337709139090}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4450142057873980
 Transform:
@@ -190,7 +207,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4023337709139090}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4508309996000950
 Transform:
@@ -203,7 +220,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4023337709139090}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4566434367239496
 Transform:
@@ -216,7 +233,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4023337709139090}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4976762380479224
 Transform:
@@ -230,14 +247,27 @@ Transform:
   m_Children:
   - {fileID: 4177977883853946}
   m_Father: {fileID: 4023337709139090}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
---- !u!23 &23049979150220000
+--- !u!4 &4982548185350208
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1469771703024216}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4023337709139090}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &23708174365921416
 MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1147360471527010}
+  m_GameObject: {fileID: 1469771703024216}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -263,12 +293,12 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
---- !u!33 &33901930591371906
+--- !u!33 &33606065331245122
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1147360471527010}
+  m_GameObject: {fileID: 1469771703024216}
   m_Mesh: {fileID: 4300000, guid: 882e411f03a56394dab8da69fd171910, type: 3}
 --- !u!50 &50582811179672188
 Rigidbody2D:
@@ -332,6 +362,23 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Size: {x: 0.7, y: 0.7}
+--- !u!95 &95032294527654804
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1469771703024216}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 47975b237747e4e40815a0c9038db9ac, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &114201570659321438
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -389,7 +436,7 @@ MonoBehaviour:
   acceleration: 400
   rollFrames: 12
   rollForce: 6000
-  energyPerRoll: 20
+  energyPerRoll: 10
   rollGravityModifier: 0.4
   dodgeSound: {fileID: 8300000, guid: 608936d3f271cf2458cf505e0d2b44e2, type: 3}
   attackWindupFrames: 5
@@ -398,7 +445,7 @@ MonoBehaviour:
   energyPerAttack: 20
   energyCostPerAttackCombo: 5
   energyMovementModifier: 0.6
-  overdrawPenaltyFrames: 90
+  overdrawPenaltyFrames: 0
   overdrawSound: {fileID: 8300000, guid: 64b2139150ca8ac4398257423d0d362e, type: 3}
   chargeSound: {fileID: 8300000, guid: 2c766258f6bc8104896983499d175c03, type: 3}
   swordChargeEnergyPerFrame: 0.25
@@ -460,8 +507,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   invulnFrames: 120
   max: 100
-  framesUntilRechargeBegins: 40
-  rechargeRate: 0.3
+  framesUntilRechargeBegins: 45
+  rechargeRate: 0.4
   damageToEnergy: 40
   damageToLimit: 10
   permanentDamageToEnergyGain: 5
@@ -474,8 +521,7 @@ MonoBehaviour:
   deathRespawnPoint: {fileID: 0}
   damageParticles: {fileID: 198637271435436188, guid: 3203b49ec00b44246bc810d433c37f3c,
     type: 2}
-  deathParticles: {fileID: 198977816518499610, guid: 59fc8ce2bd8b7c643a73e3c731fd27ee,
-    type: 2}
+  deathParticles: {fileID: 0}
   hitSound: {fileID: 8300000, guid: 87e372e39fc06b14794ec2523cb17664, type: 3}
   deathSound: {fileID: 8300000, guid: 3816d71a485e3bf439d56a5f6d93f6ba, type: 3}
   pulseSound: {fileID: 8300000, guid: 41925ee8ac56b104eb6ac7cfc32959e9, type: 3}

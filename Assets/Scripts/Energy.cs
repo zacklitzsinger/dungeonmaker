@@ -90,6 +90,7 @@ public class Energy : MonoBehaviour, IDamageable, IRespawnable
         if (Limit == max)
             return false;
         Limit += amt * damageToLimit;
+        Current += amt * damageToLimit;
         return true;
     }
 
@@ -112,6 +113,8 @@ public class Energy : MonoBehaviour, IDamageable, IRespawnable
             remInvulnFrames = invulnFrames;
             if (damageParticles && knockback.magnitude > 0 && (damageType | DamageType.Fall) != damageType)
                 Instantiate(damageParticles, transform.position, Quaternion.LookRotation(knockback, Vector3.forward));
+            if (hitSound)
+                AudioSource.PlayClipAtPoint(hitSound, transform.position);
             CheckDeath();
         }
         return dmg;

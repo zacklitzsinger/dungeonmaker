@@ -30,7 +30,7 @@ public class Explosive : MonoBehaviour
         {
             circuit = GetComponent<Circuit>();
         }
-        if (circuit && circuit.Powered)
+        if (circuit && circuit.Powered && circuit.IncomingPower > 0)
         {
             health.Die();
         }

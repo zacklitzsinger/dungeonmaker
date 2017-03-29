@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
-public class Wall : MonoBehaviour {
+public class Wall : MonoBehaviour
+{
 
     public bool active = true;
     public bool Active
@@ -33,11 +34,12 @@ public class Wall : MonoBehaviour {
     {
         if (!gameObject.activeSelf)
         {
-            data.seeThrough = true;
+            if (data)
+                data.seeThrough = true;
             LevelEditor.main.currentRoomDirty = true;
         }
     }
-    
+
     void FixedUpdate()
     {
         if (circuit == null)
@@ -58,7 +60,8 @@ public class Wall : MonoBehaviour {
                     c.a = targetAlpha;
                 meshRenderer.material.color = c;
             }
-        } else if (health == null)
+        }
+        else if (health == null)
         {
             enabled = false;
         }

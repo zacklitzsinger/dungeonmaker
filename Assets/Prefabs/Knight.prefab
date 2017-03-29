@@ -234,14 +234,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31b5014f1eef87d4f9fe67dacb444359, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minAttackDelay: 6
-  maxAttackDelay: 15
+  minAttackDelay: 8
+  maxAttackDelay: 30
   attackFrames: 15
   attackMoveForce: 1200
   postAttackDelay: 60
   sword: {fileID: 1002282342740670, guid: 05e94e4be2872ea4b9c33c51b7f2b372, type: 2}
   combo: 0
-  comboChance: 0.5
+  comboChance: 0.35
   maxCombo: 3
   currentAction:
     type: 0
@@ -317,9 +317,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f4175ae1687c6e4db3cd5bd1b3707c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  acceleration: 270
+  acceleration: 200
   pathLeniancy: 0.5
-  framesBetweenPathRecalc: 30
+  framesBetweenPathRecalc: 15
+  mask:
+    serializedVersion: 2
+    m_Bits: 4096
 --- !u!114 &114610941385884982
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -388,14 +391,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   invulnerableOverride: 0
   vulnerableTo: 31
-  maxHealth: 12
+  maxHealth: 10
   invulnFrames: 0
   currentHealth: 0
   remInvulnFrames: 0
   deathRespawnPoint: {fileID: 0}
   itemChanceDropOnDeath: 0.2
   itemChoices:
-  - {fileID: 0}
+  - {fileID: 1457690271036580, guid: 18988c1a83705c645be824996fdde668, type: 2}
   damageParticles: {fileID: 198637271435436188, guid: 3203b49ec00b44246bc810d433c37f3c,
     type: 2}
   deathParticles: {fileID: 198046204104575580, guid: 59fc8ce2bd8b7c643a73e3c731fd27ee,

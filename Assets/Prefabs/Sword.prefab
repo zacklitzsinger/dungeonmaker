@@ -96,7 +96,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1002282342740670}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -4.44, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4678555705649536}
@@ -219,10 +219,10 @@ TrailRenderer:
     colorGradient:
       key0:
         serializedVersion: 2
-        rgba: 852542678
+        rgba: 1351011058
       key1:
         serializedVersion: 2
-        rgba: 16777215
+        rgba: 5340594
       key2:
         serializedVersion: 2
         rgba: 0
@@ -279,7 +279,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   style: 0
   remainingFrames: 20
-  damage: 2
+  damage: 3
   stagger: 20
   knockback: 600
   friendly: 1

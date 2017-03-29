@@ -6,13 +6,13 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: InvisibleWall
+  m_Name: PlayerShadow
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: _ALPHAPREMULTIPLY_ON _EMISSION
+  m_ShaderKeywords: _ALPHATEST_ON _EMISSION
   m_LightmapFlags: 1
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: 2450
   stringTagMap:
-    RenderType: Transparent
+    RenderType: TransparentCutout
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
@@ -94,7 +94,7 @@ Material:
       second: 1
     - first:
         name: _DstBlend
-      second: 10
+      second: 0
     - first:
         name: _GlossMapScale
       second: 0
@@ -109,7 +109,7 @@ Material:
       second: 0
     - first:
         name: _Mode
-      second: 3
+      second: 1
     - first:
         name: _OcclusionStrength
       second: 1
@@ -133,11 +133,11 @@ Material:
       second: 0
     - first:
         name: _ZWrite
-      second: 0
+      second: 1
     m_Colors:
     - first:
         name: _Color
-      second: {r: 0.7794118, g: 0.55902636, b: 0.3897059, a: 0.472}
+      second: {r: 0.13235295, g: 0.104130626, b: 0.1257353, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}

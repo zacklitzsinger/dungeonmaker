@@ -40,7 +40,16 @@ public class Sword : MonoBehaviour
         else if (style == Style.Thrust)
             remainingFrames = 20;
         else if (style == Style.Spin)
-            remainingFrames = 22;
+            remainingFrames = 23;
+        TrailRenderer trail = GetComponentInChildren<TrailRenderer>();
+        if (style == Style.Thrust)
+            trail.enabled = false;
+        else if (style == Style.Spin)
+        {
+            Color c = trail.startColor;
+            c.a = 1f;
+            trail.startColor = c;
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)

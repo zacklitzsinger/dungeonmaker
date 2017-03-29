@@ -12,6 +12,8 @@ public class AIChase : AIBehavior
     List<Vector2> path;
     private int framesUntilRecalcPath;
 
+    public LayerMask mask;
+
     Rigidbody2D rb2d;
 
     void Start()
@@ -27,6 +29,20 @@ public class AIChase : AIBehavior
         path = LevelEditor.main.navcalc.CalculatePath(transform.position, Target.position);
     }
 
+    // If the path is overcomplicated (i.e., we can reach a point on the path very directly) then skip parts of the path.
+    void SimplifyPath()
+    {
+        if (path == null || path.Count == 0)
+            return;
+        while (path.Count >= 2)
+        {
+            RaycastHit2D[] hits = Physics2D.LinecastAll(transform.position, path[1], mask);
+            if (hits != null && hits.Length > 0)
+                return;
+            path.RemoveAt(0);
+        }
+    }
+
     void FixedUpdate()
     {
         framesUntilRecalcPath = Mathf.Max(0, framesUntilRecalcPath - 1);
@@ -40,6 +56,7 @@ public class AIChase : AIBehavior
             RecalcPath();
         if (path == null || path.Count == 0)
             return;
+        //SimplifyPath();
         // TODO: Do some movement prediction
         Debug.DrawLine(transform.position, path[0], Color.blue);
         Vector2 delta = path[0] - (Vector2)transform.position;

@@ -42,7 +42,7 @@ public class ObjectData : MonoBehaviour, ICustomSerializable
     public int sortOrderModifier;
     public bool hideInPlayMode = false;
 
-    new Renderer renderer;
+    Renderer renderer;
 
     void Start()
     {

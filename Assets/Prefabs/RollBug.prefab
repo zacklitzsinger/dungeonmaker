@@ -270,7 +270,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   acceleration: 25
   pathLeniancy: 0.5
-  framesBetweenPathRecalc: 30
+  framesBetweenPathRecalc: 15
+  mask:
+    serializedVersion: 2
+    m_Bits: 4096
 --- !u!114 &114043723279324714
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -367,8 +370,8 @@ MonoBehaviour:
   minAttackDelay: 5
   maxAttackDelay: 30
   attackFrames: 15
-  attackMoveForce: 2400
-  postAttackDelay: 0
+  attackMoveForce: 2000
+  postAttackDelay: 60
   sword: {fileID: 0}
   combo: 0
   comboChance: 0.25

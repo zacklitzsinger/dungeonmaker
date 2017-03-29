@@ -59,7 +59,9 @@ public class Door : MonoBehaviour, ICustomSerializable {
     {
         Circuit circuit = GetComponent<Circuit>();
         if (circuit)
+        {
             Open = circuit.Powered ^ invert;
+        }
         child.layer = Open ? LayerMask.NameToLayer("IgnorePlayer") : LayerMask.NameToLayer("Default");
         
     }

@@ -18,7 +18,7 @@ public class Key : MonoBehaviour {
     void FixedUpdate()
     {
         SetupCircuit();
-        if (circuit)
+        if (circuit && LevelEditor.main.currentRoom.Contains(transform.position.ToGrid()))
         {
             collider2d.enabled = circuit.Powered;
             meshRenderer.gameObject.SetActive(circuit.Powered);

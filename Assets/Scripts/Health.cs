@@ -111,7 +111,8 @@ public class Health : MonoBehaviour, ICustomSerializable, IDamageable
                 if (Random.value <= itemChanceDropOnDeath && itemChoices.Count > 0)
                 {
                     GameObject itemChoice = itemChoices[UnityEngine.Random.Range(0, itemChoices.Count)];
-                    LevelEditor.main.CreateObjectAtGrid(transform.position, itemChoice);
+                    if (itemChoice != null)
+                        LevelEditor.main.CreateObjectAtGrid(transform.position, itemChoice);
                 }
                 data.gameObject.SetActive(false);
             }

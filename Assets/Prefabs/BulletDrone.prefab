@@ -253,7 +253,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minAttackDelay: 5
   maxAttackDelay: 15
-  attackFrames: 5
+  attackFrames: 15
   attackMoveForce: 200
   postAttackDelay: 60
   angles:
@@ -292,7 +292,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   invulnerableOverride: 0
   vulnerableTo: 31
-  maxHealth: 6
+  maxHealth: 7
   invulnFrames: 0
   currentHealth: 0
   remInvulnFrames: 0
@@ -416,4 +416,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   acceleration: 15
   pathLeniancy: 0.5
-  framesBetweenPathRecalc: 30
+  framesBetweenPathRecalc: 15
+  mask:
+    serializedVersion: 2
+    m_Bits: 4096

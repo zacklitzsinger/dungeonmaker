@@ -215,7 +215,7 @@ MonoBehaviour:
   uiName: Lantern
   createText: Lighting.
   category: 4
-  type: 3
+  type: 2
   seeThrough: 1
   ground: 0
   blocksPathing: 1
@@ -232,8 +232,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bdb5e7a5ba83df43b8ccd912d40fab9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxIntensity: 1.02
-  minIntensity: 0.98
+  maxIntensity: 0.66
+  minIntensity: 0.64
   frequency: 0.1
   active: 1
   modifier: 1

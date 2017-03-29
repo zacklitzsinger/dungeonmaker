@@ -276,7 +276,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   invulnerableOverride: 0
   vulnerableTo: 31
-  maxHealth: 9
+  maxHealth: 7
   invulnFrames: 0
   currentHealth: 0
   remInvulnFrames: 0
@@ -303,7 +303,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   acceleration: 45
   pathLeniancy: 1.5
-  framesBetweenPathRecalc: 30
+  framesBetweenPathRecalc: 15
+  mask:
+    serializedVersion: 2
+    m_Bits: 4096
 --- !u!114 &114554694894238124
 MonoBehaviour:
   m_ObjectHideFlags: 1

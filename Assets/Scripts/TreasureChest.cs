@@ -20,7 +20,7 @@ public class TreasureChest : MonoBehaviour, ICustomSerializable
     public AudioClip collectSound;
 
     Collider2D collider2d;
-    new Renderer renderer;
+    Renderer renderer;
     Circuit circuit;
 
     void Start()
@@ -58,7 +58,7 @@ public class TreasureChest : MonoBehaviour, ICustomSerializable
         collider2d.enabled = false;
         renderer.enabled = false;
         if (collectSound)
-            AudioSource.PlayClipAtPoint(collectSound, transform.position);
+            Camera.main.GetComponent<AudioSource>().PlayOneShot(collectSound);
         if (contents == ChestItem.None)
             return;
         if (contents == ChestItem.Key)

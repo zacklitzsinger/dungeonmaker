@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityStandardAssets.ImageEffects;
 
 public class Player : MonoBehaviour, IActionQueue
 {
@@ -103,8 +102,8 @@ public class Player : MonoBehaviour, IActionQueue
 
     GameObject playerPanel;
     KeyUI keyIndicator;
-    ColorCorrectionCurves colorCorrection;
-    NoiseAndGrain noiseAndGrain;
+    //ColorCorrectionCurves colorCorrection;
+    //NoiseAndGrain noiseAndGrain;
 
     Rigidbody2D rb2d;
     Gravity gravity;
@@ -122,8 +121,8 @@ public class Player : MonoBehaviour, IActionQueue
         keyIndicator = playerPanel.GetComponentInChildren<KeyUI>(true);
         energy = GetComponent<Energy>();
         energy.indicator = playerPanel.GetComponentInChildren<EnergyIndicator>(true);
-        colorCorrection = Camera.main.GetComponent<ColorCorrectionCurves>();
-        noiseAndGrain = Camera.main.GetComponent<NoiseAndGrain>();
+        //colorCorrection = Camera.main.GetComponent<ColorCorrectionCurves>();
+        //noiseAndGrain = Camera.main.GetComponent<NoiseAndGrain>();
         currentAction = new Action();
     }
 
@@ -282,8 +281,8 @@ public class Player : MonoBehaviour, IActionQueue
     {
         if (animator)
             animator.SetBool("shadow", shadow);
-        colorCorrection.saturation = energy.Current / energy.Limit * .65f + 0.35f;
-        noiseAndGrain.intensityMultiplier = 2 * (1 - energy.Current / energy.Limit);
+        //colorCorrection.saturation = energy.Current / energy.Limit * .65f + 0.35f;
+        //noiseAndGrain.intensityMultiplier = 2 * (1 - energy.Current / energy.Limit);
     }
 
     void FixedUpdate()

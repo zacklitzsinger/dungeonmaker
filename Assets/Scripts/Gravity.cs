@@ -40,7 +40,7 @@ public class Gravity : MonoBehaviour
 
     void CheckForDeath()
     {
-        if (touching.Count > 0)
+        if (touching.Count > 0 || LevelEditor.main.mode != EditMode.Play)
             return;
         health.Damage(1, gameObject, Vector2.zero, DamageType.Fall);
         Player player = GetComponentInParent<Player>();

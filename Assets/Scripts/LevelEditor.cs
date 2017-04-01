@@ -700,7 +700,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
                 StartCoroutine(ControlAlpha(renderer, targetAlpha));
             }
         }
-        foreach(LightFlicker lightFlicker in go.GetComponentsInChildren<LightFlicker>())
+        foreach (LightFlicker lightFlicker in go.GetComponentsInChildren<LightFlicker>())
         {
             if (immediate)
                 lightFlicker.enabled = active;
@@ -746,7 +746,8 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         {
             yield return new WaitForEndOfFrame();
         }
-        Time.timeScale = 1;
+        if (mode == EditMode.Play)
+            Time.timeScale = 1;
     }
 
     /// <summary>

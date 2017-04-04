@@ -6,6 +6,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -279,7 +280,7 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
     {
         // Pause time while editing
         Time.timeScale = (mode >= EditMode.Create ? 0 : 1);
-        Camera.main.GetComponent<Light>().intensity = (mode >= EditMode.Create ? 0.3f : 0.03f);
+        //Camera.main.GetComponent<Light>().intensity = (mode >= EditMode.Create ? 0.3f : 0.03f);
     }
 
     public void ChangeMode(string newMode)
@@ -903,16 +904,18 @@ public class LevelEditor : MonoBehaviour, ICustomSerializable
         form.AddField("description", levelDesc);
         form.AddBinaryData("level", File.ReadAllBytes(filename));
         string url = WebServer.SERVER + "/levels";
-        WWW www = new WWW(url, form);
-        if (uploadProgress != null)
-            uploadProgress.SetActive(true);
-        while (www.error != null && www.uploadProgress < 1)
-        {
-            uploadProgress.GetComponentInChildren<ProgressBar>().percentage = www.uploadProgress;
-            yield return new WaitForFixedUpdate();
-        }
-        if (www.error != null)
-            Debug.Log(www.error);
+        UnityWebRequest www = UnityWebRequest.Post(url, form);
+        www.SetRequestHeader("Cookie", WebServer.COOKIE);
+        yield return www.Send();
+        //if (uploadProgress != null)
+        //    uploadProgress.SetActive(true);
+        //while (www && www.uploadProgress < 1)
+        //{
+        //    uploadProgress.GetComponentInChildren<ProgressBar>().percentage = www.uploadProgress;
+        //    yield return new WaitForFixedUpdate();
+        //}
+        if (www.isError)
+            Debug.LogError(www.error);
         else
             Debug.Log("Finished uploading level to: " + url);
         if (uploadProgress != null)

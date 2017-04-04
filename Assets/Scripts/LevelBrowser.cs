@@ -1,97 +1,56 @@
-﻿using System;
+﻿using SimpleJSON;
+using System;
 using System.Collections;
-using UnityEngine;
-using UnityEngine.UI;
-using SimpleJSON;
-using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.UI;
 
-public class LevelBrowser : MonoBehaviour {
+public class LevelBrowser : MonoBehaviour
+{
 
-    public GameObject levelInfo;
+    public LevelInfo levelDisplayPrefab;
     public Transform content;
 
-	// Use this for initialization
-	void Start () {
-        
-        DontDestroyOnLoad(gameObject);
-	}
-	
     public void LoadLevelList()
     {
         foreach (string filename in Directory.GetFiles(Application.persistentDataPath))
         {
-            GameObject infoPanel = Instantiate(levelInfo, content);
-            infoPanel.GetComponentInChildren<Text>().text = Path.GetFileNameWithoutExtension(filename);
-            infoPanel.GetComponentInChildren<Button>().onClick.AddListener(() =>
-            {
-                SceneManager.LoadScene("LevelPlay");
-                StartCoroutine(LoadLevelFromLocal(filename));
-            });
+            LevelInfo infoPanel = Instantiate(levelDisplayPrefab, content);
+            infoPanel.local = true;
+            infoPanel.LevelName = filename;
+            infoPanel.topSection.group = content.GetComponent<ToggleGroup>();
         }
         StartCoroutine(FetchLevelInfo());
     }
 
-    IEnumerator FetchLevelInfo() {
-        WWW www = new WWW(WebServer.SERVER + "/levels");
-        yield return www;
-        if (www.error != null)
+    IEnumerator FetchLevelInfo()
+    {
+        UnityWebRequest www = UnityWebRequest.Get(WebServer.SERVER + "/levels");
+        www.SetRequestHeader("Cookie", WebServer.COOKIE);
+        yield return www.Send();
+        if (www.isError || www.responseCode >= 400)
         {
             Debug.LogError(www.error);
             yield break;
         }
-        JSONNode json = JSON.Parse(www.text);
-        foreach(JSONNode info in json.Children)
+        JSONNode json = JSON.Parse(www.downloadHandler.text);
+        List<LevelInfo> levelInfos = new List<LevelInfo>();
+        foreach (JSONNode info in json.Children)
         {
-            GameObject infoPanel = Instantiate(levelInfo, content);
-            foreach (Text text in infoPanel.GetComponentsInChildren<Text>())
-            {
-                switch (text.name) {
-                    case "Name":
-                        text.text = info["name"];
-                        break;
-                    case "Description":
-                        text.text = info["description"];
-                        break;
-                    case "Size":
-                        string[] sizes = { "B", "KB", "MB", "GB", "TB" };
-                        int len = info["size"].AsInt;
-                        int order = 0;
-                        while (len >= 1024 && order < sizes.Length - 1)
-                        {
-                            order++;
-                            len = len / 1024;
-                        }
-
-                        // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
-                        // show a single decimal place, and no space.
-                        string result = String.Format("{0:0.##} {1}", len, sizes[order]);
-                        text.text = result;
-                        break;
-                }
-            }
-            infoPanel.GetComponentInChildren<Button>().onClick.AddListener(() =>
-            {
-                SceneManager.LoadScene("LevelPlay");
-                StartCoroutine(LoadLevelFromWeb(info["name"]));
-            });
+            LevelInfo infoPanel = Instantiate(levelDisplayPrefab);
+            levelInfos.Add(infoPanel);
+            infoPanel.local = false;
+            infoPanel.LevelName = info["name"];
+            infoPanel.Description = info["description"];
+            infoPanel.Size = info["size"].AsInt;
+            infoPanel.Author = info["author"];
+            infoPanel.LastUpdateDate = DateTime.Parse(info["utime"]);
+            infoPanel.topSection.group = content.GetComponent<ToggleGroup>();
         }
-    }
-
-    IEnumerator LoadLevelFromWeb(string levelName)
-    {
-        WWW www = new WWW(WebServer.SERVER + "/levels/download/" + levelName);
-        yield return www;
-        if (www.error != null)
-            Debug.LogError(www.error);
-        LevelEditor.main.ChangeMode(EditMode.Play);
-        LevelEditor.main.LoadFromBytes(www.bytes);
-    }
-
-    IEnumerator LoadLevelFromLocal(string levelName)
-    {
-        while (LevelEditor.main == null)
-            yield return new WaitForEndOfFrame();
-        LevelEditor.main.LoadFromDisk(levelName);
+        levelInfos.Sort((a, b) => { return a.LastUpdateDate.CompareTo(b.LastUpdateDate); });
+        foreach (LevelInfo info in levelInfos)
+            info.transform.SetParent(content);
     }
 }

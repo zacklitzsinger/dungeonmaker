@@ -1,5 +1,6 @@
 # Custom ignores
 /Builds/
+/Assets/Docs/
 
 # Windows image file caches
 Thumbs.db
